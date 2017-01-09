@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<appsettings>
+	<company>
+		<Name>Shortlanesend Store</Name>
+		<CompanyName>Shortlanesend Store</CompanyName>
+		<FinancialYear>01-04-2014</FinancialYear>
+		<webmaster>info@shortlanesendstore.co.uk</webmaster>
+		<telephone>01872 275102</telephone>
+		<po_telephone>01872 223670</po_telephone>
+		<vat_number>152 5803 21</vat_number>
+	</company>
+	<site>
+		<host>kweb</host>
+		<domain>epos.co.uk</domain>
+		<datasource0>kcc_cms</datasource0>
+		<datasource1>kcc_sle</datasource1>
+		<mapping1>/kccCMS/</mapping1>
+		<useAlias>false</useAlias>
+		<userControlsItemShown>false</userControlsItemShown>
+		<MapIIS>common/</MapIIS>
+		<MapCF>/kccCMS/</MapCF>
+		<dir_data>D:\HostingSpaces\SLE\epos.co.uk\data\</dir_data>
+		<dir_logs>D:\HostingSpaces\SLE\epos.co.uk\data\logs\</dir_logs>
+		<dir_invoices>D:\HostingSpaces\SLE\shortlanesendstore.co.uk\data\invoices\</dir_invoices>
+		<url_data>http://kweb.epos.co.uk/data/</url_data>
+		<url_invoices>http://tweb.shortlanesendstore.co.uk/data/invoices/</url_invoices>
+	</site>
+	<printer>
+		<ip>192.168.123.189</ip>
+		<port>80</port>
+	</printer>
+	<core>
+		<imgSuffix>jpeg|jpg|gif|png|tiff|psd|pcd|jpc|jp2|ico|bmp|mng|ptif|fax|fits|avs|pict|palm|pdb|mtv|sgi|sun|swf</imgSuffix>
+		<showdebug>No</showdebug>
+		<showdumps>No</showdumps>
+		<borders>border:dotted 1px black; padding:1px;</borders>
+		<bordervisible>false</bordervisible>
+		<basecolour>112</basecolour>
+		<lotto_prize_id>28622</lotto_prize_id>
+	</core>
+	<size>
+		<thumb>100</thumb>
+		<medium>200</medium>
+		<super>690</super>
+		<detail>500</detail>
+		<toenail>150</toenail>
+		<profile>200</profile>
+	</size>
+</appsettings>
+

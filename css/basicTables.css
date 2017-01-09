@@ -1,0 +1,9 @@
+body {font-family:sans-serif;}
+table.table {border-collapse: collapse;border: 1px solid #3579D3;margin: 10px 0;}
+.table caption {font-size: 24px;padding: 13px 0;color: #FFF;font-weight: bold;background-color: #2C69BA;border-bottom: 1px solid #2960A9;}
+.table tr th {padding: 9px 11px;margin: 0;font-size: 16px;border-color: #3579D3;background-color: #3579D3;color: #FFF;}
+.table tr td {border-color: #3579D3;font-size: 16px;padding: 9px 11px;}
+.table tbody {border-color: #3579D3;}
+.table tr {border-color: #3579D3;}
+.table tr:nth-child(even) {background: #DCEAFD;}
+.table tr:nth-child(odd) {background: #FFF}

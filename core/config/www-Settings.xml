@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<appsettings>
+	<company>
+		<Name>Shortlanesend Store</Name>
+		<CompanyName>Shortlanesend Store</CompanyName>
+		<FinancialYear>01-04-2014</FinancialYear>
+		<webmaster>info@shortlanesendstore.co.uk</webmaster>
+	</company>
+	<site>
+		<host>www</host>
+		<domain>shortlanesendstore.co.uk</domain>
+		<datasource0>kcc_cms</datasource0>
+		<datasource1>kcc_sle</datasource1>
+		<mapping1>/kccCMS/</mapping1>
+		<useAlias>false</useAlias>
+		<userControlsItemShown>false</userControlsItemShown>
+		<MapIIS>common/</MapIIS>
+		<MapCF>/kccCMS/</MapCF>
+	</site>
+	<core>
+		<imgSuffix>jpeg|jpg|gif|png|tiff|psd|pcd|jpc|jp2|ico|bmp|mng|ptif|fax|fits|avs|pict|palm|pdb|mtv|sgi|sun|swf</imgSuffix>
+		<showdebug>No</showdebug>
+		<showdumps>No</showdumps>
+		<borders>border:dotted 1px black; padding:1px;</borders>
+		<bordervisible>false</bordervisible>
+		<basecolour>112</basecolour>
+	</core>
+	<size>
+		<thumb>100</thumb>
+		<medium>200</medium>
+		<super>690</super>
+		<detail>500</detail>
+		<toenail>150</toenail>
+		<profile>200</profile>
+	</size>
+</appsettings>
+

@@ -1,0 +1,44 @@
+Shop Till System
+
+1.		Remove redundant code around receipt printing functions.
+2.		Show VAT Summary on printed receipt.
+3.		Check all function use cftry/catch dump to file.
+4.	X	Replace £ code on receipt output only.
+5.		Basket erased befor change given.
+6.		Basket total figure not cleared when basket empty.
+			Total figure should be rrp before discount.
+			Total due should be total to be paid (after discount).
+			Balance due should be total due less payments received.
+7.	X	Negate deal savings on receipt.
+8.		Show balance due after deal discount.
+9.		Check staff discount still works.
+10.		Develop employee discount card (barcoded).
+11.		Scratchcard barcodes not recognised.
+12.		Add Print Receipt button to dashboard shell.
+13.		Add highlight to basket items on deals.
+14.		Add info option to show deal info.
+15.		Clear old deals. Set-up latest deals.
+16.		Disable receipt button when new transaction starts (or warn).
+17.		Encode transaction ID in barcode.
+18.		Reduce barcode height on receipt.
+19.		Tidy layout of receipt total section.
+20.		Check refunds work.
+21.		Check refund mode clears after transaction complete.
+22.		Remove unneccessary cfdumps.
+
+Till Functions
+
+1.		End of day testing.
+		Clear error border on cash values.
+2.		Only write one EPOS_DayHeader record per day.
+3.		Calculate Lottery Balance on summary page.
+4.		Check MOD works on coin checks.
+5.		Show total summary / print day sheet.
+
+
+
+Stock Management
+
+1.		Add archive option to old stock items.
+2.		Find all prodxxx fields and replace with sixxx fields.
+3.		Check discount flag correctly set on products.
