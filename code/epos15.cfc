@@ -1,10 +1,6 @@
 <cfcomponent displayname="EPOS15" hint="version 15. EPOS Till Functions">
 
 	<cfset this.closeTranNow = false>
-	
-	<cffunction name="GetDataSource" access="public" returntype="string">
-		<cfreturn application.site.datasource1>
-	</cffunction>
 
 	<cffunction name="ZTill" access="public" returntype="void" hint="initialise till at start of day.">
 		<cfargument name="loadDate" type="date" required="yes">
