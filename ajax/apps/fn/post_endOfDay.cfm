@@ -1,14 +1,14 @@
-<cftry>
-<cfobject component="code/epos" name="epos">
-<cfset parm = {}>
-<cfset parm.datasource = application.site.datasource1>
-<cfset parm.url = application.site.normal>
-<cfset parm.form = form>
-<cfset saveDayHeader = epos.SaveDayHeader(parm)>
-<cfoutput>#saveDayHeader#</cfoutput>
+<cfscript>
+    try {
+        for (field in form) {
+            if (isValid("string", form[field]) && form[field] == '') {
+                form[field] = 0.00;
+            }
+        }
 
-<cfcatch type="any">
-	<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
-			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
-</cfcatch>
-</cftry>
+        dayHeader = new App.DayHeader().save(form);
+        writeDumpToFile(dayHeader);
+    } catch(any error) {
+        writeDumpToFile(error);
+    }
+</cfscript>
