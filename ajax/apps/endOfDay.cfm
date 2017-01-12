@@ -66,7 +66,11 @@
 				$('.ScratchcardsForm').submit(function(event) {
 					dc.sc_form = $(this).serialize();
 					$(this).fadeOut(function() {
+						var lottoTotal = 0;
+						for (c of ['lotto_draws', 'lotto_sc', 'lotto_prizes', 'lotto_sc_prizes'])
+							lottoTotal += Number($('input[name="' + c + '"]').val());
 						$('input[name="lotto_sc"]').val(nf(dc.sc_total, "str"));
+						$('input[name="lotto_total"]').val(nf(lottoTotal, "str"));
 						$('.LotteryForm').fadeIn();
 					});
 					event.preventDefault();
