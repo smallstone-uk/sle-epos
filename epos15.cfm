@@ -215,7 +215,7 @@
 		<cfset loc.price = 9.00>
 		<cftry>
 			<cfloop list="#loc.prodIDs#" delimiters="," index="loc.pID">
-				<cfquery name="loc.QProduct" datasource="#ecfc.GetDataSource()#">
+				<cfquery name="loc.QProduct" datasource="#GetDataSource()#">
 					SELECT prodID,prodSign,prodTitle,prodCashOnly,prodStaffDiscount,prodVATRate,prodClass, siOurPrice, epcKey
 					FROM tblProducts
 					LEFT JOIN tblStockItem ON prodID = siProduct
@@ -276,11 +276,11 @@
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
 		<cftry>
-			<cfquery name="loc.QDeleteTotals" datasource="#ecfc.GetDataSource()#">
+			<cfquery name="loc.QDeleteTotals" datasource="#GetDataSource()#">
 				DELETE FROM tblEPOS_Totals
 				WHERE totDate = '#session.till.prefs.reportdate#'
 			</cfquery>
-			<cfquery name="loc.QDeleteHeaders" datasource="#ecfc.GetDataSource()#">
+			<cfquery name="loc.QDeleteHeaders" datasource="#GetDataSource()#">
 				DELETE FROM tblEPOS_Header
 				WHERE DATE(ehTimeStamp) = '#session.till.prefs.reportdate#'
 			</cfquery>
@@ -297,7 +297,7 @@
 <cfparam name="mode" default="0">
 <cfif NOT StructKeyExists(session,"till")>
 	<cfset parm = {}>
-	<cfset parm.datasource = ecfc.GetDataSource()>
+	<cfset parm.datasource = GetDataSource()>
 	<cfset parm.form.reportDate = LSDateFormat(Now(),"yyyy-mm-dd")>
 	<cfset ecfc.LoadTillTotals(parm)>
 	<cfset ecfc.LoadDeals(parm)>
@@ -306,7 +306,7 @@
 </cfif>
 <cfif NOT StructKeyExists(session,"products")>	<!--- load test products --->
 	<cfset parm = {}>
-	<cfset parm.datasource = ecfc.GetDataSource()>
+	<cfset parm.datasource = GetDataSource()>
 	<cfset parm.form.reportDate = LSDateFormat(Now(),"yyyy-mm-dd")>
 	<cfset session.products = LoadProducts(parm)>
 	<cfset session.papers = LoadPapers(parm)>
@@ -332,7 +332,7 @@
 		</cfcase>
 		<cfcase value="reload">
 			<cfset parm = {}>
-			<cfset parm.datasource = ecfc.GetDataSource()>
+			<cfset parm.datasource = GetDataSource()>
 			<cfset ecfc.LoadDeals(parm)>
 		</cfcase>
 		<cfcase value="ztill">
