@@ -5,8 +5,8 @@
 
 <cfoutput>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-	<script type='text/javascript' src='#application.site.normal#js/StarWebPrintBuilder.js'></script>
-	<script type='text/javascript' src='#application.site.normal#js/StarWebPrintTrader.js'></script>
+	<script type='text/javascript' src='#getUrl("js/StarWebPrintBuilder.js")#'></script>
+	<script type='text/javascript' src='#getUrl("js/StarWebPrintTrader.js")#'></script>
 	
 	<script type="text/javascript">
 		nf = function(a, b) {
@@ -176,7 +176,6 @@
 </cfoutput>
 
 <cfcatch type="any">
-	<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
-        output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+	<cfset writeDumpToFile(cfcatch)>
 </cfcatch>
 </cftry>
