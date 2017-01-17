@@ -5,7 +5,8 @@
         "financialyear": "01-04-2014",
         "webmaster": "info@shortlanesendstore.co.uk",
         "telephone": "01872 275102",
-        "po_telephone": "01872 223670"
+        "po_telephone": "01872 223670",
+        "vat_number": "152 5803 21"
     },
     "site": {
         "datasource0": "kcc_cms",
