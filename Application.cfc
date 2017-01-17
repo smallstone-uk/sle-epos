@@ -10,7 +10,7 @@ component
     this.jarPaths = ["file://#getDirectoryFromPath(getCurrentTemplatePath())#"];
 
     // Boot Framework
-    new App.Framework.Application.Boot();
+    new App.Framework.Boot();
 
     public boolean function onApplicationStart()
     {

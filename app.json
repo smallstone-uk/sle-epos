@@ -35,13 +35,18 @@
             "Sunday"
         ]
     },
+    "printer": {
+        "ip": "192.168.234.189",
+        "port": "80"
+    },
     "core": {
         "imgSuffix": "jpeg|jpg|gif|png|tiff|psd|pcd|jpc|jp2|ico|bmp|mng|ptif|fax|fits|avs|pict|palm|pdb|mtv|sgi|sun|swf",
         "showdebug": false,
         "showdumps": false,
         "borders": "border:dotted 1px black; padding:1px;",
         "bordervisible": false,
-        "basecolour": 112
+        "basecolour": 112,
+        "lotto_prize_id": 28622
     },
     "size": {
         "thumb": 100,
