@@ -192,30 +192,41 @@
 			});
 		});
 	</script>
+
+	<cfset supplier = lCase(session.basket.info.bod) eq "supplier">
+
 	<ul class="payment_list">
 		<cfset counter = 0>
 		<cfloop array="#payments#" index="item">
 			<cfswitch expression="#LCase(item.eaTitle)#">
 				<cfcase value="cash">
-					<li class="payment_item material-ripple" data-method="partcash" data-id="#item.eaID#">
-						<span>Part Cash</span>
-					</li>
+					<cfif not supplier>
+						<li class="payment_item material-ripple" data-method="partcash" data-id="#item.eaID#">
+							<span>Part Cash</span>
+						</li>
+					</cfif>
+
 					<li class="payment_item material-ripple" data-method="fastcash" data-id="#item.eaID#">
 						<span>Fast Cash</span>
 					</li>
 				</cfcase>
 				<cfcase value="card">
-					<li class="payment_item material-ripple" data-method="partcard" data-id="#item.eaID#">
-						<span>Part Card</span>
-					</li>
-					<li class="payment_item material-ripple" data-method="fastcard" data-id="#item.eaID#">
-						<span>Fast Card</span>
-					</li>
+					<cfif not supplier>
+						<li class="payment_item material-ripple" data-method="partcard" data-id="#item.eaID#">
+							<span>Part Card</span>
+						</li>
+
+						<li class="payment_item material-ripple" data-method="fastcard" data-id="#item.eaID#">
+							<span>Fast Card</span>
+						</li>
+					</cfif>
 				</cfcase>
 				<cfdefaultcase>
-					<li class="payment_item material-ripple" data-method="#LCase(item.eaTitle)#" data-accid="#item.eaID#" data-id="#item.eaID#">
-						<span>#item.eaTitle#</span>
-					</li>
+					<cfif not supplier>
+						<li class="payment_item material-ripple" data-method="#LCase(item.eaTitle)#" data-accid="#item.eaID#" data-id="#item.eaID#">
+							<span>#item.eaTitle#</span>
+						</li>
+					</cfif>
 				</cfdefaultcase>
 			</cfswitch>
 			<cfset counter++>
