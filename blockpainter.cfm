@@ -60,8 +60,8 @@
 		
 		.grid_block {
 			float: left;
-			width: 1px;
-			height: 1px;
+			width: 10px;
+			height: 10px;
 			transition:all 1s;
 			background:##C00;
 		}
