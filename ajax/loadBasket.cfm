@@ -24,10 +24,15 @@
 				});
 				
 				$('.basket_receipt').click(function(event) {
-					ajax.printReceipt({}, function(data) {
-						$('.printable').html(data);
-	                    $('*').blur();
-					});
+					var enabled = $(this).data('enabled');
+
+					if (enabled) {
+						ajax.printReceipt({}, function(data) {
+							$('.printable').html(data);
+		                    $('*').blur();
+						});
+					}
+
 					event.preventDefault();
 				});
 				
@@ -186,7 +191,12 @@
 		<div class="basket_controls">
 			<a href="javascript:void(0)" class="basket_clear material-ripple"><i class="icon-spinner11"></i></a>
 			<a href="javascript:void(0)" class="basket_checkout material-ripple">Checkout</a>
-			<a href="javascript:void(0)" class="basket_receipt material-ripple"><i class="icon-printer"></i></a>
+
+			<a
+				href="javascript:void(0)"
+				class="basket_receipt material-ripple <cfif loc.thisBasket.tranID is 0>disabled</cfif>"
+				data-enabled="<cfif not loc.thisBasket.tranID is 0>true<cfelse>false</cfif>"
+			><i class="icon-printer"></i></a>
 		</div>
 	</div>
 </cfoutput>
