@@ -1,16 +1,20 @@
 <cftry>
 
-<!--- <cfset data = StructCopy(session)>
+<cfset data = structCopy(session)>
+<cfset prefs = {}>
 
-<cfif StructKeyExists(data.user, 'prefs')>
-    <cfset StructDelete(data.user, 'prefs')>
-</cfif> --->
+<cfif structKeyExists(data.user, 'prefs')>
+    <cfset prefs = data.user.prefs>
+    <cfset structDelete(data.user, 'prefs')>
+</cfif>
 
 <cfoutput>
-    #SerializeJSON(session)#
+    #serializeJSON(data)#
 </cfoutput>
 
+<cfset data.user.prefs = prefs>
+
 <cfcatch type="any">
-    <!--- <cfset writeDumpToFile(cfcatch)> --->
+    <cfset writeDumpToFile(cfcatch)>
 </cfcatch>
 </cftry>
