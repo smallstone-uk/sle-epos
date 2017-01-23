@@ -171,7 +171,15 @@
 			</div>
 
 			<div class="bmeta_sub">
-				<span class="bmetasub_itemcount">#loc.thisBasket.info.itemCount# items</span>
+				<span class="bmetasub_itemcount">
+					#loc.thisBasket.info.itemCount# items
+				</span>
+
+				<cfif not loc.thisBasket.tranID is 0>
+					<span class="bmetasub_tranref">
+						###loc.thisBasket.tranID#
+					</span>
+				</cfif>
 			</div>
 		</div>
 

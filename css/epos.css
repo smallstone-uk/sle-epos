@@ -2739,3 +2739,7 @@ select:focus {
 .basket_deal {
     background: #a1dc55;
 }
+
+.bmetasub_tranref {
+    float: right;
+}
