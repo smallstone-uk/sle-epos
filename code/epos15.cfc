@@ -1446,6 +1446,20 @@
 								request += builder.createTextElement(styles.bold(align.lr("BALANCE DUE TO CUSTOMER", "#chr(156)##DecimalFormat(loc.thisBasket.total.balance)#")));
 								request += builder.createTextElement({data: '\n'});
 							</cfif>
+							<cfif arguments.type eq "html">
+								<cfif loc.thisBasket.info.change neq 0>
+									<cfset loc.tran = {}>
+									<cfset loc.tran.prop = 1>
+									<cfset loc.tran.itemClass = 'CASHINDW'>
+									<cfset loc.tran.itemType = 'pay'>
+									<cfset loc.tran.payID = 12>
+									<cfset loc.tran.cashonly = "YES">
+									<cfset loc.tran.gross = loc.thisBasket.info.change>
+									<cfset loc.tran.net = loc.thisBasket.info.change>
+									<cfset loc.tran.vat = 0>
+									<cfset ArrayAppend(session.basket.trans,loc.tran)>
+								</cfif>
+							</cfif>
 						<cfelse>
 							<cfif arguments.type eq "html">
 								<!--- <tr class="ebt_headers baldebit">
