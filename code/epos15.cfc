@@ -964,11 +964,15 @@
 				</cfcase>
 				
 				<cfcase value="Voucher">
-					<cfif loc.basketItems eq 0>
-						<cfset session.basket.info.errMsg = "Please put a news item in the basket before accepting voucher.">
+					<cfif ArrayLen(session.basket.media) eq 0>
+						<cfset session.basket.info.errMsg = "Please put a news item in the basket before accepting a voucher.">
 					<cfelse>
-						<cfif args.data.cash + args.data.credit is 0>
+						<cfset args.data.cash = args.data.cash + args.data.credit>
+						<cfset args.data.credit = 0>
+						<cfif args.data.cash is 0>
 							<cfset session.basket.info.errMsg = "Please enter the voucher value.">
+						<cfelseif args.data.cash gt session.basket.info.totaldue>
+							<cfset session.basket.info.errMsg = "Voucher value cannot exceed basket total.">
 						<cfelse>
 							<cfset args.data.class = "pay">
 							<cfset args.data.itemClass = "VCHN">
@@ -980,11 +984,15 @@
 				</cfcase>
 				
 				<cfcase value="Coupon">
-					<cfif loc.basketItems eq 0>
-						<cfset session.basket.info.errMsg = "Please put a Paypoint item in the basket before accepting coupon.">
+					<cfif ArrayLen(session.basket.paypoint) eq 0>
+						<cfset session.basket.info.errMsg = "Please put a Paypoint item in the basket before accepting a coupon.">
 					<cfelse>
-						<cfif args.data.cash + args.data.credit is 0>
+						<cfset args.data.cash = args.data.cash + args.data.credit>
+						<cfset args.data.credit = 0>
+						<cfif args.data.cash is 0>
 							<cfset session.basket.info.errMsg = "Please enter the coupon value.">
+						<cfelseif args.data.cash gt session.basket.info.totaldue>
+							<cfset session.basket.info.errMsg = "Coupon value cannot exceed basket total.">
 						<cfelse>
 							<cfset args.data.class = "pay">
 							<cfset args.data.itemClass = "CPN">
@@ -996,6 +1004,7 @@
 						</cfif>
 					</cfif>
 				</cfcase>
+
 				<cfdefaultcase>
 					<cfdump var="#args#" label="unknown case #args.form.btnSend#" expand="no">
 				</cfdefaultcase>
