@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>EPOSs</title>
+<title>EPOS</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <script src="js/jquery-1.11.1.min.js"></script>
 
