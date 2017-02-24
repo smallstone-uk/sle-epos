@@ -2,7 +2,7 @@
     "company": {
         "name": "Shortlanesend Store",
         "companyname": "Shortlanesend Store",
-        "financialyear": "01-04-2014",
+        "financialyear": "01-04-2017",
         "webmaster": "info@shortlanesendstore.co.uk",
         "telephone": "01872 275102",
         "po_telephone": "01872 223670",
@@ -19,7 +19,7 @@
         "MapCF": "/kccCMS/",
         "sourceDir": "source",
         "clientID": 143,
-        "disableDrawer": true,
+        "disableDrawer": false,
         "vat": {
             "0": 0,
             "1": 0,
