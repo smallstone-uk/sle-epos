@@ -11,7 +11,7 @@
 		<host>www</host>
 		<domain>shortlanesendstore.co.uk</domain>
 		<datasource0>kcc_cms</datasource0>
-		<datasource1>kcc_sle</datasource1>
+		<datasource1>kcc_sle_production</datasource1>
 		<mapping1>/kccCMS/</mapping1>
 		<useAlias>false</useAlias>
 		<userControlsItemShown>false</userControlsItemShown>

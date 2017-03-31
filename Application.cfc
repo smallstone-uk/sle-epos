@@ -15,7 +15,7 @@ component
     public boolean function onApplicationStart()
     {
         application.mvc = {
-            'datasource' = 'kcc_sle',
+            'datasource' = 'kcc_sle_production',
             'migrationDatasource' = 'mvc_sle',
             'dataDirectory' = (getDirectoryFromPath(getCurrentTemplatePath()) & "..\data\"),
             'baseDirectory' = getDirectoryFromPath(getCurrentTemplatePath()),

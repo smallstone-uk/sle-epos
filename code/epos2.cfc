@@ -17,7 +17,7 @@
 	<cffunction name="ClearBasket" access="public" returntype="void" hint="clear current transaction without affecting till totals.">
 		<cfset StructDelete(session,"basket",false)>
 		<cfset session.basket = {}>
-		<cfset session.basket.datasource = "kcc_sle">
+		<cfset session.basket.datasource = "kcc_sle_production">
 		<cfset session.basket.mode = "reg">
 		<cfset session.basket.type = "SALE">
 		<cfset session.basket.bod = "Customer">
