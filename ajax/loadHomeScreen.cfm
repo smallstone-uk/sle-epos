@@ -195,6 +195,7 @@
 					<cfelse>
 						No one's logged in
 					</cfif>
+					<div class="tiny">#application.site.datasource1#</div>
 				</div>
 				<div class="col3 clearfix">
 					<div class="colheader">Users</div>

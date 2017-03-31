@@ -153,3 +153,4 @@ textarea.appfld {border: 3px solid #AAA;resize: none;font-family: Helvetica, Ari
 .supplier_list li {display: list-item;background: #111;padding: 0 15px;margin: 1px 0;cursor: pointer;}
 iframe {width: 100%;height: 100%;float: left;}
 .payment_item[disabled="true"] {opacity:0.5 !important;cursor:default !important;}
+.tiny {font-size:14px; text-align:right;}
