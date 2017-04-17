@@ -2691,8 +2691,8 @@
 	</cffunction>
 
 	<cffunction name="LoadVAT" access="public" returntype="void">
+		<cfset var loc = {}>
 		<cftry>
-			<cfset var loc = {}>
 			<cfquery name="loc.QVAT" datasource="#GetDataSource()#">
 				SELECT vatCode,vatRate,vatTitle
 				FROM tblVATRates
@@ -2704,7 +2704,7 @@
 			</cfloop>
 			
 		<cfcatch type="any">
-			<cfdump var="#loc.QVAT#" label="LoadVAT" expand="yes" format="html"
+			<cfdump var="#loc#" label="LoadVAT" expand="yes" format="html"
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
