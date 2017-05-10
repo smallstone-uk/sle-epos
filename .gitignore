@@ -1,3 +1,9 @@
 core/config/kweb-Settings.xml
 core/config/tweb-Settings.xml
 core/config/www-Settings.xml
+
+/vendor/
+
+.env
+
+.phpintel/
