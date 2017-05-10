@@ -8,7 +8,9 @@
         "ingenico-epayments/connect-sdk-php": "dev-master",
         "vlucas/phpdotenv": "^2.4@dev"
     },
-    "psr-4": {
-        "ePayments\\": "ePayments/"
+    "autoload": {
+        "psr-4": {
+            "ePayments\\": "ePayments/"
+        }
     }
 }

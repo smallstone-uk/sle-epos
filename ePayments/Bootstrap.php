@@ -2,8 +2,6 @@
 
 namespace ePayments;
 
-require __DIR__.'/../vendor/autoload.php';
-
 use Ingenico\Connect\Sdk\Client;
 use Ingenico\Connect\Sdk\Communicator;
 use Ingenico\Connect\Sdk\CommunicatorConfiguration;
@@ -22,7 +20,7 @@ class Bootstrap
     public function __construct()
     {
         // Load environment config
-        $dotenv = new Dotenv\Dotenv(__DIR__);
+        $dotenv = new \Dotenv\Dotenv(__DIR__);
         $dotenv->load();
 
         // Setup the SDK
@@ -45,7 +43,7 @@ class Bootstrap
 
         $connection = new DefaultConnection();
         $this->communicator = new Communicator($connection, $communicatorConfiguration);
-        $this->client = new Client($communicator);
+        $this->client = new Client($this->communicator);
 
         return $this;
     }
