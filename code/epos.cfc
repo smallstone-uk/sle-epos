@@ -3201,8 +3201,6 @@
 			<cfset loc.result.signal = true>
 			<!---<cfset loc.result.data = QueryToStruct(loc.product)>--->
 			<cfset loc.result.data = LoadProductByID(loc.barcode.barProdID)>
-			 <cfdump var="#loc.result.data#" label="CheckBarcodeExists" expand="yes" format="html" 
-			 	output="#application.site.dir_logs#epos\chk-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		<cfelse>
 			<cfset loc.ibResult = InterrogateBarcode(barcode)>
 			<cfif StructKeyExists(loc.ibResult, "id")>
