@@ -37,12 +37,16 @@
 				
 				$('.ui').virtualNumpad(function(value) {
 					dc.cid_subtotal = 0;
-					$('.ui').each(function(i, e) {dc.cid_subtotal += nf( $(e).val(), "num" );});
+					$('.ui').each(function(i, e) {
+						var denom = nf( $(e).val(), "num" );
+						console.log(denom);
+						dc.cid_subtotal += denom;
+					});
 					$('.subtotal').val( nf(dc.cid_subtotal, "str") );
 					
 					var zcash = nf($('.zcash').val(), "num");
 					var diff = nf(dc.cid_subtotal - zcash, "str");
-					
+					console.log(diff);
 					$('.diff').val(diff);
 					
 					if (diff > 0 || diff < 0)
