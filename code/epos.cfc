@@ -3237,10 +3237,11 @@
 		<cfset loc.result = {}>
 		
 		<cftry>		
+			<cfset loc.result.barcode = NumberFormat(Left(barcode,15),"0000000000000")>
 			<cfquery name="loc.barcode" datasource="#GetDatasource()#">
 				SELECT barCode, barType, barProdID
 				FROM tblBarcodes
-				WHERE barCode = '#barcode#'
+				WHERE barCode = '#loc.result.barcode#'
 				LIMIT 1;
 			</cfquery>
 			<cfset loc.result.Qbarcode = loc.barcode>
