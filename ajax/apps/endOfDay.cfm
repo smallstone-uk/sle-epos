@@ -38,20 +38,19 @@
 				$('.ui').virtualNumpad(function(value) {
 					dc.cid_subtotal = 0;
 					$('.ui').each(function(i, e) {
-						var denom = nf( $(e).val(), "num" );
-						console.log(denom);
+						var denom = parseInt($(e).val() * 100);		// get amount in pence
 						dc.cid_subtotal += denom;
 					});
-					$('.subtotal').val( nf(dc.cid_subtotal, "str") );
+					var zcash = parseInt($('.zcash').val() * 100);	// convert zcash to pence
+					var diff = dc.cid_subtotal - zcash;		// check difference
+					if (Math.abs(diff) < 0.01) diff = 0;	// ignore tiny rounding errors less than 1p
 					
-					var zcash = nf($('.zcash').val(), "num");
-					var diff = nf(dc.cid_subtotal - zcash, "str");
-					console.log(diff);
-					$('.diff').val(diff);
+					$('.subtotal').val( nf(dc.cid_subtotal / 100, "str") );		// show in pounds & pence
+					$('.diff').val(nf(diff / 100, "str"));
 					
-					if (diff > 0 || diff < 0)
+					if (diff != 0)
 						$('.cidFace').attr("class", "cidFace icon-sad2 error");
-					else if (diff == 0)
+					else
 						$('.cidFace').attr("class", "cidFace icon-smile2");
 				}, { forceCallback: true });
 				
