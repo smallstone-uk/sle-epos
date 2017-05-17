@@ -6,7 +6,6 @@
                 form[field] = 0.00;
             }
         }
-
         dayHeader = new App.DayHeader().save(form);
     } catch(any error) {
         writeDumpToFile(error);

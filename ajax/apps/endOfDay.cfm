@@ -11,41 +11,41 @@
 		<script>
 			$(document).ready(function(e) {
 				var dc = {
-					cid_subtotal: 0,
-					cid_total: 0,
-					cid_form: "",
-					sc_form: "",
-					sc_total: 0
+					dhcid_subtotal: 0,
+					dhcid_total: 0,
+					dhcid_form: "",
+					dhsc_form: "",
+					dhsc_total: 0
 				};
 
 				$('.lotto-ui').virtualNumpad();
 				
 				$('.ui2').virtualNumpad(function(value, field) {
 					var game = field.data("game"), value = nf( field.data("value"), "num" );
-					var $start = nf( $('input[name="sc_g' + game + '_start"]').val(), "num" );
-					var $end = nf( $('input[name="sc_g' + game + '_end"]').val(), "num" );
-					var $qty = nf( $('input[name="sc_g' + game + '_qty"]').val(), "num" );
-					var $total = $('.sc_g' + game + '_total');
-					if ($('input[name="sc_g' + game + '_start"]').val().length > 0 && $('input[name="sc_g' + game + '_end"]').val().length > 0)
+					var $start = nf( $('input[name="dhsc_g' + game + '_start"]').val(), "num" );
+					var $end = nf( $('input[name="dhsc_g' + game + '_end"]').val(), "num" );
+					var $qty = nf( $('input[name="dhsc_g' + game + '_qty"]').val(), "num" );
+					var $total = $('.dhsc_g' + game + '_total');
+					if ($('input[name="dhsc_g' + game + '_start"]').val().length > 0 && $('input[name="dhsc_g' + game + '_end"]').val().length > 0)
 						$total.val( nf( ($end - $start) * value, "str" ) );
-						$('input[name="sc_g' + game + '_qty"]').val($end - $start);
-					dc.sc_total = 0;
+						$('input[name="dhsc_g' + game + '_qty"]').val($end - $start);
+					dc.dhsc_total = 0;
 					for (var i = 1; i <= 8; i++) {
-						dc.sc_total += nf($('.sc_g' + i + '_total').val(), "num");
+						dc.dhsc_total += nf($('.dhsc_g' + i + '_total').val(), "num");
 					}
 				}, { forceCallback: true });
 				
 				$('.ui').virtualNumpad(function(value) {
-					dc.cid_subtotal = 0;
+					dc.dhcid_subtotal = 0;
 					$('.ui').each(function(i, e) {
 						var denom = parseInt($(e).val() * 100);		// get amount in pence
-						dc.cid_subtotal += denom;
+						dc.dhcid_subtotal += denom;
 					});
 					var zcash = parseInt($('.zcash').val() * 100);	// convert zcash to pence
-					var diff = dc.cid_subtotal - zcash;		// check difference
+					var diff = dc.dhcid_subtotal - zcash;		// check difference
 					if (Math.abs(diff) < 0.01) diff = 0;	// ignore tiny rounding errors less than 1p
 					
-					$('.subtotal').val( nf(dc.cid_subtotal / 100, "str") );		// show in pounds & pence
+					$('.subtotal').val( nf(dc.dhcid_subtotal / 100, "str") );		// show in pounds & pence
 					$('.diff').val(nf(diff / 100, "str"));
 					
 					if (diff != 0)
@@ -55,7 +55,7 @@
 				}, { forceCallback: true });
 				
 				$('.CashInDrawerForm').submit(function(event) {
-					dc.cid_form = $(this).serialize();
+					dc.dhcid_form = $(this).serialize();
 					$(this).fadeOut(function() {
 						$('.ScratchcardsForm').fadeIn();
 					});
@@ -67,12 +67,12 @@
 				}
 				
 				$('.ScratchcardsForm').submit(function(event) {
-					dc.sc_form = $(this).serialize();
+					dc.dhsc_form = $(this).serialize();
 					$(this).fadeOut(function() {
 						var lottoTotal = 0;
-						for (c of ['lotto_draws', 'lotto_sc', 'lotto_prizes', 'lotto_sc_prizes'])
+						for (c of ['lotto_draws', 'lotto_sc', 'lotto_prizes', 'lotto_dhsc_prizes'])
 							lottoTotal += Number($('input[name="' + c + '"]').val());
-						$('input[name="lotto_sc"]').val(nf(dc.sc_total, "str"));
+						$('input[name="lotto_sc"]').val(nf(dc.dhsc_total, "str"));
 						$('input[name="lotto_total"]').val(nf(lottoTotal, "str"));
 						$('.LotteryForm').fadeIn();
 					});
@@ -83,7 +83,7 @@
 					$.ajax({
 						type: "POST",
 						url: "ajax/apps/fn/post_endOfDay.cfm",
-						data: dc.cid_form + "&" + dc.sc_form,
+						data: dc.dhcid_form + "&" + dc.dhsc_form,
 						success: function(data) {
 							if (data.trim() == "true") {
 								completedRoutine();
@@ -112,13 +112,13 @@
 					<th align="right">&pound;50</th>
 
 					<td>
-						<input type="text" name="cid_5000" class="money ui" data-mod="5000" placeholder="GBP" tabindex="1">
+						<input type="text" name="dhcid_5000" class="money ui" data-mod="5000" placeholder="GBP" tabindex="1">
 					</td>
 
 					<th align="right">50p</th>
 
 					<td>
-						<input type="text" name="cid_50" class="money ui" data-mod="50" placeholder="GBP" tabindex="7">
+						<input type="text" name="dhcid_0050" class="money ui" data-mod="50" placeholder="GBP" tabindex="7">
 					</td>
 				</tr>
 
@@ -126,13 +126,13 @@
 					<th align="right">&pound;20</th>
 
 					<td>
-						<input type="text" name="cid_2000" class="money ui" data-mod="2000" placeholder="GBP" tabindex="2">
+						<input type="text" name="dhcid_2000" class="money ui" data-mod="2000" placeholder="GBP" tabindex="2">
 					</td>
 
 					<th align="right">20p</th>
 
 					<td>
-						<input type="text" name="cid_20" class="money ui" data-mod="20" placeholder="GBP" tabindex="8">
+						<input type="text" name="dhcid_0020" class="money ui" data-mod="20" placeholder="GBP" tabindex="8">
 					</td>
 				</tr>
 
@@ -140,13 +140,13 @@
 					<th align="right">&pound;10</th>
 
 					<td>
-						<input type="text" name="cid_1000" class="money ui" data-mod="1000" placeholder="GBP" tabindex="3">
+						<input type="text" name="dhcid_1000" class="money ui" data-mod="1000" placeholder="GBP" tabindex="3">
 					</td>
 
 					<th align="right">10p</th>
 
 					<td>
-						<input type="text" name="cid_10" class="money ui" data-mod="10" placeholder="GBP" tabindex="9">
+						<input type="text" name="dhcid_0010" class="money ui" data-mod="10" placeholder="GBP" tabindex="9">
 					</td>
 				</tr>
 
@@ -154,13 +154,13 @@
 					<th align="right">&pound;5</th>
 
 					<td>
-						<input type="text" name="cid_500" class="money ui" data-mod="500" placeholder="GBP" tabindex="4">
+						<input type="text" name="dhcid_0500" class="money ui" data-mod="500" placeholder="GBP" tabindex="4">
 					</td>
 
 					<th align="right">5p</th>
 
 					<td>
-						<input type="text" name="cid_5" class="money ui" data-mod="5" placeholder="GBP" tabindex="10">
+						<input type="text" name="dhcid_0005" class="money ui" data-mod="5" placeholder="GBP" tabindex="10">
 					</td>
 				</tr>
 
@@ -168,13 +168,13 @@
 					<th align="right">&pound;2</th>
 
 					<td>
-						<input type="text" name="cid_200" class="money ui" data-mod="200" placeholder="GBP" tabindex="5">
+						<input type="text" name="dhcid_0200" class="money ui" data-mod="200" placeholder="GBP" tabindex="5">
 					</td>
 
 					<th align="right">2p</th>
 
 					<td>
-						<input type="text" name="cid_2" class="money ui" data-mod="2" placeholder="GBP" tabindex="11">
+						<input type="text" name="dhcid_0002" class="money ui" data-mod="2" placeholder="GBP" tabindex="11">
 					</td>
 				</tr>
 
@@ -182,13 +182,13 @@
 					<th align="right">&pound;1</th>
 
 					<td>
-						<input type="text" name="cid_100" class="money ui" data-mod="100" placeholder="GBP" tabindex="6">
+						<input type="text" name="dhcid_0100" class="money ui" data-mod="100" placeholder="GBP" tabindex="6">
 					</td>
 
 					<th align="right">1p</th>
 
 					<td>
-						<input type="text" name="cid_1" class="money ui" data-mod="1" placeholder="GBP" tabindex="12">
+						<input type="text" name="dhcid_0001" class="money ui" data-mod="1" placeholder="GBP" tabindex="12">
 					</td>
 				</tr>
 			</table>
@@ -245,19 +245,19 @@
 					<th>&pound;10</th>
 
 					<td>
-						<input type="text" name="sc_g1_start" data-qty="20" data-value="10" data-game="1" data-maximum="19" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g1_start" data-qty="20" data-value="10" data-game="1" data-maximum="19" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g1_end" data-qty="20" data-value="10" data-game="1" data-maximum="19" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g1_end" data-qty="20" data-value="10" data-game="1" data-maximum="19" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g1_qty" data-qty="20" data-value="10" data-game="1" data-maximum="19" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
+						<input type="text" name="dhsc_g1_qty" data-qty="20" data-value="10" data-game="1" data-maximum="19" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g1_total" class="money sc_g1_total" placeholder="GBP">
+						<input type="text" name="dhsc_g1_total" class="money dhsc_g1_total" placeholder="GBP">
 					</td>
 				</tr>
 
@@ -267,19 +267,19 @@
 					<th>&pound;5</th>
 
 					<td>
-						<input type="text" name="sc_g2_start" data-qty="40" data-value="5" data-game="2" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g2_start" data-qty="40" data-value="5" data-game="2" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g2_end" data-qty="40" data-value="5" data-game="2" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g2_end" data-qty="40" data-value="5" data-game="2" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g2_qty" data-qty="40" data-value="5" data-game="2" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
+						<input type="text" name="dhsc_g2_qty" data-qty="40" data-value="5" data-game="2" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g2_total" class="money sc_g2_total" placeholder="GBP">
+						<input type="text" name="dhsc_g2_total" class="money dhsc_g2_total" placeholder="GBP">
 					</td>
 				</tr>
 
@@ -289,19 +289,19 @@
 					<th>&pound;5</th>
 
 					<td>
-						<input type="text" name="sc_g3_start" data-qty="40" data-value="5" data-game="3" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g3_start" data-qty="40" data-value="5" data-game="3" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g3_end" data-qty="40" data-value="5" data-game="3" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g3_end" data-qty="40" data-value="5" data-game="3" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g3_qty" data-qty="40" data-value="5" data-game="3" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
+						<input type="text" name="dhsc_g3_qty" data-qty="40" data-value="5" data-game="3" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g3_total" class="money sc_g3_total" placeholder="GBP">
+						<input type="text" name="dhsc_g3_total" class="money dhsc_g3_total" placeholder="GBP">
 					</td>
 				</tr>
 
@@ -311,19 +311,19 @@
 					<th>&pound;3</th>
 
 					<td>
-						<input type="text" name="sc_g4_start" data-qty="60" data-value="3" data-game="4" data-maximum="59" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g4_start" data-qty="60" data-value="3" data-game="4" data-maximum="59" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g4_end" data-qty="60" data-value="3" data-game="4" data-maximum="59" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g4_end" data-qty="60" data-value="3" data-game="4" data-maximum="59" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g4_qty" data-qty="60" data-value="3" data-game="4" data-maximum="59" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
+						<input type="text" name="dhsc_g4_qty" data-qty="60" data-value="3" data-game="4" data-maximum="59" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g4_total" class="money sc_g4_total" placeholder="GBP">
+						<input type="text" name="dhsc_g4_total" class="money dhsc_g4_total" placeholder="GBP">
 					</td>
 				</tr>
 
@@ -333,19 +333,19 @@
 					<th>&pound;2</th>
 
 					<td>
-						<input type="text" name="sc_g5_start" data-qty="80" data-value="2" data-game="5" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g5_start" data-qty="80" data-value="2" data-game="5" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g5_end" data-qty="80" data-value="2" data-game="5" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g5_end" data-qty="80" data-value="2" data-game="5" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g5_qty" data-qty="80" data-value="2" data-game="5" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
+						<input type="text" name="dhsc_g5_qty" data-qty="80" data-value="2" data-game="5" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g5_total" class="money sc_g5_total" placeholder="GBP">
+						<input type="text" name="dhsc_g5_total" class="money dhsc_g5_total" placeholder="GBP">
 					</td>
 				</tr>
 
@@ -355,19 +355,19 @@
 					<th>&pound;2</th>
 
 					<td>
-						<input type="text" name="sc_g6_start" data-qty="80" data-value="2" data-game="6" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g6_start" data-qty="80" data-value="2" data-game="6" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g6_end" data-qty="80" data-value="2" data-game="6" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g6_end" data-qty="80" data-value="2" data-game="6" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g6_qty" data-qty="80" data-value="2" data-game="6" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
+						<input type="text" name="dhsc_g6_qty" data-qty="80" data-value="2" data-game="6" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g6_total" class="money sc_g6_total" placeholder="GBP">
+						<input type="text" name="dhsc_g6_total" class="money dhsc_g6_total" placeholder="GBP">
 					</td>
 				</tr>
 
@@ -377,19 +377,19 @@
 					<th>&pound;1</th>
 
 					<td>
-						<input type="text" name="sc_g7_start" data-qty="160" data-value="1" data-game="7" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g7_start" data-qty="160" data-value="1" data-game="7" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g7_end" data-qty="160" data-value="1" data-game="7" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g7_end" data-qty="160" data-value="1" data-game="7" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g7_qty" data-qty="160" data-value="1" data-game="7" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
+						<input type="text" name="dhsc_g7_qty" data-qty="160" data-value="1" data-game="7" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g7_total" class="money sc_g7_total" placeholder="GBP">
+						<input type="text" name="dhsc_g7_total" class="money dhsc_g7_total" placeholder="GBP">
 					</td>
 				</tr>
 
@@ -399,19 +399,19 @@
 					<th>&pound;1</th>
 
 					<td>
-						<input type="text" name="sc_g8_start" data-qty="160" data-value="1" data-game="8" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g8_start" data-qty="160" data-value="1" data-game="8" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g8_end" data-qty="160" data-value="1" data-game="8" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g8_end" data-qty="160" data-value="1" data-game="8" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g8_qty" data-qty="160" data-value="1" data-game="8" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
+						<input type="text" name="dhsc_g8_qty" data-qty="160" data-value="1" data-game="8" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
 					</td>
 
 					<td>
-						<input type="text" name="sc_g8_total" class="money sc_g8_total" placeholder="GBP">
+						<input type="text" name="dhsc_g8_total" class="money dhsc_g8_total" placeholder="GBP">
 					</td>
 				</tr>
 			</table>
