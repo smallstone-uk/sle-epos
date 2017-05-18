@@ -4,6 +4,6 @@ core/config/www-Settings.xml
 
 /vendor/
 
-.env
+ePayments/.env
 
 .phpintel/
