@@ -113,13 +113,13 @@
 					<th align="right">&pound;50</th>
 
 					<td>
-						<input type="text" name="dhcid_5000" class="money ui" data-mod="5000" placeholder="GBP" tabindex="1" value="#today.dhcid_5000#">
+						<input type="text" name="dhcid_5000" class="money ui" data-mod="5000" placeholder="GBP" tabindex="1" value="#structFindDefault(today, 'dhcid_5000', 0.00)#">
 					</td>
 
 					<th align="right">50p</th>
 
 					<td>
-						<input type="text" name="dhcid_0050" class="money ui" data-mod="50" placeholder="GBP" tabindex="7" value="#today.dhcid_0050#">
+						<input type="text" name="dhcid_0050" class="money ui" data-mod="50" placeholder="GBP" tabindex="7" value="#structFindDefault(today, 'dhcid_0050', 0.00)#">
 					</td>
 				</tr>
 
@@ -127,13 +127,13 @@
 					<th align="right">&pound;20</th>
 
 					<td>
-						<input type="text" name="dhcid_2000" class="money ui" data-mod="2000" placeholder="GBP" tabindex="2" value="#today.dhcid_2000#">
+						<input type="text" name="dhcid_2000" class="money ui" data-mod="2000" placeholder="GBP" tabindex="2" value="#structFindDefault(today, 'dhcid_2000', 0.00)#">
 					</td>
 
 					<th align="right">20p</th>
 
 					<td>
-						<input type="text" name="dhcid_0020" class="money ui" data-mod="20" placeholder="GBP" tabindex="8" value="#today.dhcid_0020#">
+						<input type="text" name="dhcid_0020" class="money ui" data-mod="20" placeholder="GBP" tabindex="8" value="#structFindDefault(today, 'dhcid_0020', 0.00)#">
 					</td>
 				</tr>
 
@@ -141,13 +141,13 @@
 					<th align="right">&pound;10</th>
 
 					<td>
-						<input type="text" name="dhcid_1000" class="money ui" data-mod="1000" placeholder="GBP" tabindex="3" value="#today.dhcid_1000#">
+						<input type="text" name="dhcid_1000" class="money ui" data-mod="1000" placeholder="GBP" tabindex="3" value="#structFindDefault(today, 'dhcid_1000', 0.00)#">
 					</td>
 
 					<th align="right">10p</th>
 
 					<td>
-						<input type="text" name="dhcid_0010" class="money ui" data-mod="10" placeholder="GBP" tabindex="9" value="#today.dhcid_0010#">
+						<input type="text" name="dhcid_0010" class="money ui" data-mod="10" placeholder="GBP" tabindex="9" value="#structFindDefault(today, 'dhcid_0010', 0.00)#">
 					</td>
 				</tr>
 
@@ -155,13 +155,13 @@
 					<th align="right">&pound;5</th>
 
 					<td>
-						<input type="text" name="dhcid_0500" class="money ui" data-mod="500" placeholder="GBP" tabindex="4" value="#today.dhcid_0500#">
+						<input type="text" name="dhcid_0500" class="money ui" data-mod="500" placeholder="GBP" tabindex="4" value="#structFindDefault(today, 'dhcid_0500', 0.00)#">
 					</td>
 
 					<th align="right">5p</th>
 
 					<td>
-						<input type="text" name="dhcid_0005" class="money ui" data-mod="5" placeholder="GBP" tabindex="10" value="#today.dhcid_0005#">
+						<input type="text" name="dhcid_0005" class="money ui" data-mod="5" placeholder="GBP" tabindex="10" value="#structFindDefault(today, 'dhcid_0005', 0.00)#">
 					</td>
 				</tr>
 
@@ -169,13 +169,13 @@
 					<th align="right">&pound;2</th>
 
 					<td>
-						<input type="text" name="dhcid_0200" class="money ui" data-mod="200" placeholder="GBP" tabindex="5" value="#today.dhcid_0200#">
+						<input type="text" name="dhcid_0200" class="money ui" data-mod="200" placeholder="GBP" tabindex="5" value="#structFindDefault(today, 'dhcid_0200', 0.00)#">
 					</td>
 
 					<th align="right">2p</th>
 
 					<td>
-						<input type="text" name="dhcid_0002" class="money ui" data-mod="2" placeholder="GBP" tabindex="11" value="#today.dhcid_0002#">
+						<input type="text" name="dhcid_0002" class="money ui" data-mod="2" placeholder="GBP" tabindex="11" value="#structFindDefault(today, 'dhcid_0002', 0.00)#">
 					</td>
 				</tr>
 
@@ -183,13 +183,13 @@
 					<th align="right">&pound;1</th>
 
 					<td>
-						<input type="text" name="dhcid_0100" class="money ui" data-mod="100" placeholder="GBP" tabindex="6" value="#today.dhcid_0100#">
+						<input type="text" name="dhcid_0100" class="money ui" data-mod="100" placeholder="GBP" tabindex="6" value="#structFindDefault(today, 'dhcid_0100', 0.00)#">
 					</td>
 
 					<th align="right">1p</th>
 
 					<td>
-						<input type="text" name="dhcid_0001" class="money ui" data-mod="1" placeholder="GBP" tabindex="12" value="#today.dhcid_0001#">
+						<input type="text" name="dhcid_0001" class="money ui" data-mod="1" placeholder="GBP" tabindex="12" value="#structFindDefault(today, 'dhcid_0001', 0.00)#">
 					</td>
 				</tr>
 			</table>
@@ -246,11 +246,11 @@
 					<th>&pound;10</th>
 
 					<td>
-						<input type="text" name="dhsc_g1_start" data-qty="20" data-value="10" data-game="1" data-maximum="19" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g1_start#">
+						<input type="text" name="dhsc_g1_start" data-qty="20" data-value="10" data-game="1" data-maximum="19" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#structFindDefault(today, 'dhsc_g1_start', 0.00)#">
 					</td>
 
 					<td>
-						<input type="text" name="dhsc_g1_end" data-qty="20" data-value="10" data-game="1" data-maximum="19" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g1_end#">
+						<input type="text" name="dhsc_g1_end" data-qty="20" data-value="10" data-game="1" data-maximum="19" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#structFindDefault(today, 'dhsc_g1_end', 0.00)#">
 					</td>
 
 					<td>
@@ -268,11 +268,11 @@
 					<th>&pound;5</th>
 
 					<td>
-						<input type="text" name="dhsc_g2_start" data-qty="40" data-value="5" data-game="2" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g2_start#">
+						<input type="text" name="dhsc_g2_start" data-qty="40" data-value="5" data-game="2" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#structFindDefault(today, 'dhsc_g2_start', 0.00)#">
 					</td>
 
 					<td>
-						<input type="text" name="dhsc_g2_end" data-qty="40" data-value="5" data-game="2" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g2_end#">
+						<input type="text" name="dhsc_g2_end" data-qty="40" data-value="5" data-game="2" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#structFindDefault(today, 'dhsc_g2_end', 0.00)#">
 					</td>
 
 					<td>
@@ -290,11 +290,11 @@
 					<th>&pound;5</th>
 
 					<td>
-						<input type="text" name="dhsc_g3_start" data-qty="40" data-value="5" data-game="3" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g3_start#">
+						<input type="text" name="dhsc_g3_start" data-qty="40" data-value="5" data-game="3" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#structFindDefault(today, 'dhsc_g3_start', 0.00)#">
 					</td>
 
 					<td>
-						<input type="text" name="dhsc_g3_end" data-qty="40" data-value="5" data-game="3" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g3_end#">
+						<input type="text" name="dhsc_g3_end" data-qty="40" data-value="5" data-game="3" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#structFindDefault(today, 'dhsc_g3_end', 0.00)#">
 					</td>
 
 					<td>
@@ -312,11 +312,11 @@
 					<th>&pound;3</th>
 
 					<td>
-						<input type="text" name="dhsc_g4_start" data-qty="60" data-value="3" data-game="4" data-maximum="59" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g4_start#">
+						<input type="text" name="dhsc_g4_start" data-qty="60" data-value="3" data-game="4" data-maximum="59" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#structFindDefault(today, 'dhsc_g4_start', 0.00)#">
 					</td>
 
 					<td>
-						<input type="text" name="dhsc_g4_end" data-qty="60" data-value="3" data-game="4" data-maximum="59" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g4_end#">
+						<input type="text" name="dhsc_g4_end" data-qty="60" data-value="3" data-game="4" data-maximum="59" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#structFindDefault(today, 'dhsc_g4_end', 0.00)#">
 					</td>
 
 					<td>
@@ -334,11 +334,11 @@
 					<th>&pound;2</th>
 
 					<td>
-						<input type="text" name="dhsc_g5_start" data-qty="80" data-value="2" data-game="5" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g5_start#">
+						<input type="text" name="dhsc_g5_start" data-qty="80" data-value="2" data-game="5" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#structFindDefault(today, 'dhsc_g5_start', 0.00)#">
 					</td>
 
 					<td>
-						<input type="text" name="dhsc_g5_end" data-qty="80" data-value="2" data-game="5" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g5_end#">
+						<input type="text" name="dhsc_g5_end" data-qty="80" data-value="2" data-game="5" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#structFindDefault(today, 'dhsc_g5_end', 0.00)#">
 					</td>
 
 					<td>
@@ -356,11 +356,11 @@
 					<th>&pound;2</th>
 
 					<td>
-						<input type="text" name="dhsc_g6_start" data-qty="80" data-value="2" data-game="6" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g6_start#">
+						<input type="text" name="dhsc_g6_start" data-qty="80" data-value="2" data-game="6" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#structFindDefault(today, 'dhsc_g6_start', 0.00)#">
 					</td>
 
 					<td>
-						<input type="text" name="dhsc_g6_end" data-qty="80" data-value="2" data-game="6" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g6_end#">
+						<input type="text" name="dhsc_g6_end" data-qty="80" data-value="2" data-game="6" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#structFindDefault(today, 'dhsc_g6_end', 0.00)#">
 					</td>
 
 					<td>
@@ -378,11 +378,11 @@
 					<th>&pound;1</th>
 
 					<td>
-						<input type="text" name="dhsc_g7_start" data-qty="160" data-value="1" data-game="7" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g7_start#">
+						<input type="text" name="dhsc_g7_start" data-qty="160" data-value="1" data-game="7" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#structFindDefault(today, 'dhsc_g7_start', 0.00)#">
 					</td>
 
 					<td>
-						<input type="text" name="dhsc_g7_end" data-qty="160" data-value="1" data-game="7" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g7_end#">
+						<input type="text" name="dhsc_g7_end" data-qty="160" data-value="1" data-game="7" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#structFindDefault(today, 'dhsc_g7_end', 0.00)#">
 					</td>
 
 					<td>
@@ -400,11 +400,11 @@
 					<th>&pound;1</th>
 
 					<td>
-						<input type="text" name="dhsc_g8_start" data-qty="160" data-value="1" data-game="8" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g8_start#">
+						<input type="text" name="dhsc_g8_start" data-qty="160" data-value="1" data-game="8" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#structFindDefault(today, 'dhsc_g8_start', 0.00)#">
 					</td>
 
 					<td>
-						<input type="text" name="dhsc_g8_end" data-qty="160" data-value="1" data-game="8" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g8_end#">
+						<input type="text" name="dhsc_g8_end" data-qty="160" data-value="1" data-game="8" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#structFindDefault(today, 'dhsc_g8_end', 0.00)#">
 					</td>
 
 					<td>
