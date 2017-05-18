@@ -5,6 +5,8 @@
 		lottoDraws = dayHeader.lottoDraws();
 		lottoPrizes = dayHeader.lottoPrizes();
 		scratchPrizes = dayHeader.scratchPrizes();
+
+		today = dayHeader.today();
 	</cfscript>
 
 	<cfoutput>
@@ -62,8 +64,9 @@
 					event.preventDefault();
 				});
 				
-				completedRoutine = function() {
+				completedRoutine = function(data) {
 					// Show shop takings
+					$.sidepanel(data);
 				}
 				
 				$('.ScratchcardsForm').submit(function(event) {
@@ -85,9 +88,7 @@
 						url: "ajax/apps/fn/post_endOfDay.cfm",
 						data: dc.dhcid_form + "&" + dc.dhsc_form,
 						success: function(data) {
-							if (data.trim() == "true") {
-								completedRoutine();
-							}
+							completedRoutine(data);
 						}
 					});
 					event.preventDefault();
@@ -112,13 +113,13 @@
 					<th align="right">&pound;50</th>
 
 					<td>
-						<input type="text" name="dhcid_5000" class="money ui" data-mod="5000" placeholder="GBP" tabindex="1">
+						<input type="text" name="dhcid_5000" class="money ui" data-mod="5000" placeholder="GBP" tabindex="1" value="#today.dhcid_5000#">
 					</td>
 
 					<th align="right">50p</th>
 
 					<td>
-						<input type="text" name="dhcid_0050" class="money ui" data-mod="50" placeholder="GBP" tabindex="7">
+						<input type="text" name="dhcid_0050" class="money ui" data-mod="50" placeholder="GBP" tabindex="7" value="#today.dhcid_0050#">
 					</td>
 				</tr>
 
@@ -126,13 +127,13 @@
 					<th align="right">&pound;20</th>
 
 					<td>
-						<input type="text" name="dhcid_2000" class="money ui" data-mod="2000" placeholder="GBP" tabindex="2">
+						<input type="text" name="dhcid_2000" class="money ui" data-mod="2000" placeholder="GBP" tabindex="2" value="#today.dhcid_2000#">
 					</td>
 
 					<th align="right">20p</th>
 
 					<td>
-						<input type="text" name="dhcid_0020" class="money ui" data-mod="20" placeholder="GBP" tabindex="8">
+						<input type="text" name="dhcid_0020" class="money ui" data-mod="20" placeholder="GBP" tabindex="8" value="#today.dhcid_0020#">
 					</td>
 				</tr>
 
@@ -140,13 +141,13 @@
 					<th align="right">&pound;10</th>
 
 					<td>
-						<input type="text" name="dhcid_1000" class="money ui" data-mod="1000" placeholder="GBP" tabindex="3">
+						<input type="text" name="dhcid_1000" class="money ui" data-mod="1000" placeholder="GBP" tabindex="3" value="#today.dhcid_1000#">
 					</td>
 
 					<th align="right">10p</th>
 
 					<td>
-						<input type="text" name="dhcid_0010" class="money ui" data-mod="10" placeholder="GBP" tabindex="9">
+						<input type="text" name="dhcid_0010" class="money ui" data-mod="10" placeholder="GBP" tabindex="9" value="#today.dhcid_0010#">
 					</td>
 				</tr>
 
@@ -154,13 +155,13 @@
 					<th align="right">&pound;5</th>
 
 					<td>
-						<input type="text" name="dhcid_0500" class="money ui" data-mod="500" placeholder="GBP" tabindex="4">
+						<input type="text" name="dhcid_0500" class="money ui" data-mod="500" placeholder="GBP" tabindex="4" value="#today.dhcid_0500#">
 					</td>
 
 					<th align="right">5p</th>
 
 					<td>
-						<input type="text" name="dhcid_0005" class="money ui" data-mod="5" placeholder="GBP" tabindex="10">
+						<input type="text" name="dhcid_0005" class="money ui" data-mod="5" placeholder="GBP" tabindex="10" value="#today.dhcid_0005#">
 					</td>
 				</tr>
 
@@ -168,13 +169,13 @@
 					<th align="right">&pound;2</th>
 
 					<td>
-						<input type="text" name="dhcid_0200" class="money ui" data-mod="200" placeholder="GBP" tabindex="5">
+						<input type="text" name="dhcid_0200" class="money ui" data-mod="200" placeholder="GBP" tabindex="5" value="#today.dhcid_0200#">
 					</td>
 
 					<th align="right">2p</th>
 
 					<td>
-						<input type="text" name="dhcid_0002" class="money ui" data-mod="2" placeholder="GBP" tabindex="11">
+						<input type="text" name="dhcid_0002" class="money ui" data-mod="2" placeholder="GBP" tabindex="11" value="#today.dhcid_0002#">
 					</td>
 				</tr>
 
@@ -182,13 +183,13 @@
 					<th align="right">&pound;1</th>
 
 					<td>
-						<input type="text" name="dhcid_0100" class="money ui" data-mod="100" placeholder="GBP" tabindex="6">
+						<input type="text" name="dhcid_0100" class="money ui" data-mod="100" placeholder="GBP" tabindex="6" value="#today.dhcid_0100#">
 					</td>
 
 					<th align="right">1p</th>
 
 					<td>
-						<input type="text" name="dhcid_0001" class="money ui" data-mod="1" placeholder="GBP" tabindex="12">
+						<input type="text" name="dhcid_0001" class="money ui" data-mod="1" placeholder="GBP" tabindex="12" value="#today.dhcid_0001#">
 					</td>
 				</tr>
 			</table>
@@ -245,11 +246,11 @@
 					<th>&pound;10</th>
 
 					<td>
-						<input type="text" name="dhsc_g1_start" data-qty="20" data-value="10" data-game="1" data-maximum="19" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g1_start" data-qty="20" data-value="10" data-game="1" data-maximum="19" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g1_start#">
 					</td>
 
 					<td>
-						<input type="text" name="dhsc_g1_end" data-qty="20" data-value="10" data-game="1" data-maximum="19" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g1_end" data-qty="20" data-value="10" data-game="1" data-maximum="19" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g1_end#">
 					</td>
 
 					<td>
@@ -267,11 +268,11 @@
 					<th>&pound;5</th>
 
 					<td>
-						<input type="text" name="dhsc_g2_start" data-qty="40" data-value="5" data-game="2" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g2_start" data-qty="40" data-value="5" data-game="2" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g2_start#">
 					</td>
 
 					<td>
-						<input type="text" name="dhsc_g2_end" data-qty="40" data-value="5" data-game="2" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g2_end" data-qty="40" data-value="5" data-game="2" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g2_end#">
 					</td>
 
 					<td>
@@ -289,11 +290,11 @@
 					<th>&pound;5</th>
 
 					<td>
-						<input type="text" name="dhsc_g3_start" data-qty="40" data-value="5" data-game="3" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g3_start" data-qty="40" data-value="5" data-game="3" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g3_start#">
 					</td>
 
 					<td>
-						<input type="text" name="dhsc_g3_end" data-qty="40" data-value="5" data-game="3" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g3_end" data-qty="40" data-value="5" data-game="3" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g3_end#">
 					</td>
 
 					<td>
@@ -311,11 +312,11 @@
 					<th>&pound;3</th>
 
 					<td>
-						<input type="text" name="dhsc_g4_start" data-qty="60" data-value="3" data-game="4" data-maximum="59" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g4_start" data-qty="60" data-value="3" data-game="4" data-maximum="59" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g4_start#">
 					</td>
 
 					<td>
-						<input type="text" name="dhsc_g4_end" data-qty="60" data-value="3" data-game="4" data-maximum="59" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g4_end" data-qty="60" data-value="3" data-game="4" data-maximum="59" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g4_end#">
 					</td>
 
 					<td>
@@ -333,11 +334,11 @@
 					<th>&pound;2</th>
 
 					<td>
-						<input type="text" name="dhsc_g5_start" data-qty="80" data-value="2" data-game="5" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g5_start" data-qty="80" data-value="2" data-game="5" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g5_start#">
 					</td>
 
 					<td>
-						<input type="text" name="dhsc_g5_end" data-qty="80" data-value="2" data-game="5" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g5_end" data-qty="80" data-value="2" data-game="5" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g5_end#">
 					</td>
 
 					<td>
@@ -355,11 +356,11 @@
 					<th>&pound;2</th>
 
 					<td>
-						<input type="text" name="dhsc_g6_start" data-qty="80" data-value="2" data-game="6" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g6_start" data-qty="80" data-value="2" data-game="6" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g6_start#">
 					</td>
 
 					<td>
-						<input type="text" name="dhsc_g6_end" data-qty="80" data-value="2" data-game="6" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g6_end" data-qty="80" data-value="2" data-game="6" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g6_end#">
 					</td>
 
 					<td>
@@ -377,11 +378,11 @@
 					<th>&pound;1</th>
 
 					<td>
-						<input type="text" name="dhsc_g7_start" data-qty="160" data-value="1" data-game="7" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g7_start" data-qty="160" data-value="1" data-game="7" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g7_start#">
 					</td>
 
 					<td>
-						<input type="text" name="dhsc_g7_end" data-qty="160" data-value="1" data-game="7" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g7_end" data-qty="160" data-value="1" data-game="7" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g7_end#">
 					</td>
 
 					<td>
@@ -399,11 +400,11 @@
 					<th>&pound;1</th>
 
 					<td>
-						<input type="text" name="dhsc_g8_start" data-qty="160" data-value="1" data-game="8" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g8_start" data-qty="160" data-value="1" data-game="8" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g8_start#">
 					</td>
 
 					<td>
-						<input type="text" name="dhsc_g8_end" data-qty="160" data-value="1" data-game="8" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##">
+						<input type="text" name="dhsc_g8_end" data-qty="160" data-value="1" data-game="8" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g8_end#">
 					</td>
 
 					<td>
