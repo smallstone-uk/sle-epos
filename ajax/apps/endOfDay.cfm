@@ -1,16 +1,14 @@
 <cftry>
-	<cfif NOT StructKeyExists(session,"till")>
-		Your session has timed out, please log-in again.
-		<cfexit>
-	</cfif>
 	<cfscript>
 		dayHeader = new App.DayHeader();
 		zCash = dayHeader.zCash();
 		lottoDraws = dayHeader.lottoDraws();
 		lottoPrizes = dayHeader.lottoPrizes();
 		scratchPrizes = dayHeader.scratchPrizes();
+
 		today = dayHeader.today();
 	</cfscript>
+
 	<cfoutput>
 		<script>
 			$(document).ready(function(e) {
@@ -75,9 +73,9 @@
 					dc.dhsc_form = $(this).serialize();
 					$(this).fadeOut(function() {
 						var lottoTotal = 0;
-						for (c of ['lotto_draws', 'lotto_prizes', 'lotto_dhsc_prizes'])
+						for (c of ['lotto_draws', 'lotto_sc', 'lotto_prizes', 'lotto_dhsc_prizes'])
 							lottoTotal += Number($('input[name="' + c + '"]').val());
-					//	$('input[name="lotto_sc"]').val(nf(dc.dhsc_total, "str"));
+						$('input[name="lotto_sc"]').val(nf(dc.dhsc_total, "str"));
 						$('input[name="lotto_total"]').val(nf(lottoTotal, "str"));
 						$('.LotteryForm').fadeIn();
 					});
@@ -106,50 +104,122 @@
 				});
 			});
 		</script>
-		<cfset poundArray = [50,20,10,5,2,1]>
+
 		<form method="post" enctype="multipart/form-data" class="CashInDrawerForm">
 			<span class="title">Cash In Drawer</span>
 
 			<table border="0">
-				<cfset tabIndex = 0>
-				<cfset subTotal = 0>
-				<cfloop array="#poundArray#" index="denom">
-					<cfset tabIndex++>
-					<cfset dataMOD = denom * 100>
-					<cfset poundFld = "dhcid_#NumberFormat(dataMOD,'0000')#">
-					<cfset penceFld = "dhcid_#NumberFormat(denom,'0000')#">
-					<cfif StructIsEmpty(today)>
-						<cfset poundValue = 0>
-						<cfset penceValue = 0>
-					<cfelse>
-						<cfset poundValue = StructFind(today,poundFld)>
-						<cfset penceValue = StructFind(today,penceFld)>
-					</cfif>
-					<cfset subTotal += (poundValue + penceValue)>
-					<tr>
-						<th>&pound;#denom#</th>
-						<td><input type="text" name="#poundFld#" class="money ui" data-mod="#dataMOD#" placeholder="GBP" tabindex="#tabIndex#" value="#poundValue#" /></td>
-						<th>#denom#p</th>
-						<td><input type="text" name="#penceFld#" class="money ui" data-mod="#denom#" placeholder="GBP" tabindex="#tabIndex+6#" value="#penceValue#" /></td>					
-					</tr>
-				</cfloop>
+				<tr>
+					<th align="right">&pound;50</th>
+
+					<td>
+						<input type="text" name="dhcid_5000" class="money ui" data-mod="5000" placeholder="GBP" tabindex="1" value="#today.dhcid_5000#">
+					</td>
+
+					<th align="right">50p</th>
+
+					<td>
+						<input type="text" name="dhcid_0050" class="money ui" data-mod="50" placeholder="GBP" tabindex="7" value="#today.dhcid_0050#">
+					</td>
+				</tr>
+
+				<tr>
+					<th align="right">&pound;20</th>
+
+					<td>
+						<input type="text" name="dhcid_2000" class="money ui" data-mod="2000" placeholder="GBP" tabindex="2" value="#today.dhcid_2000#">
+					</td>
+
+					<th align="right">20p</th>
+
+					<td>
+						<input type="text" name="dhcid_0020" class="money ui" data-mod="20" placeholder="GBP" tabindex="8" value="#today.dhcid_0020#">
+					</td>
+				</tr>
+
+				<tr>
+					<th align="right">&pound;10</th>
+
+					<td>
+						<input type="text" name="dhcid_1000" class="money ui" data-mod="1000" placeholder="GBP" tabindex="3" value="#today.dhcid_1000#">
+					</td>
+
+					<th align="right">10p</th>
+
+					<td>
+						<input type="text" name="dhcid_0010" class="money ui" data-mod="10" placeholder="GBP" tabindex="9" value="#today.dhcid_0010#">
+					</td>
+				</tr>
+
+				<tr>
+					<th align="right">&pound;5</th>
+
+					<td>
+						<input type="text" name="dhcid_0500" class="money ui" data-mod="500" placeholder="GBP" tabindex="4" value="#today.dhcid_0500#">
+					</td>
+
+					<th align="right">5p</th>
+
+					<td>
+						<input type="text" name="dhcid_0005" class="money ui" data-mod="5" placeholder="GBP" tabindex="10" value="#today.dhcid_0005#">
+					</td>
+				</tr>
+
+				<tr>
+					<th align="right">&pound;2</th>
+
+					<td>
+						<input type="text" name="dhcid_0200" class="money ui" data-mod="200" placeholder="GBP" tabindex="5" value="#today.dhcid_0200#">
+					</td>
+
+					<th align="right">2p</th>
+
+					<td>
+						<input type="text" name="dhcid_0002" class="money ui" data-mod="2" placeholder="GBP" tabindex="11" value="#today.dhcid_0002#">
+					</td>
+				</tr>
+
+				<tr>
+					<th align="right">&pound;1</th>
+
+					<td>
+						<input type="text" name="dhcid_0100" class="money ui" data-mod="100" placeholder="GBP" tabindex="6" value="#today.dhcid_0100#">
+					</td>
+
+					<th align="right">1p</th>
+
+					<td>
+						<input type="text" name="dhcid_0001" class="money ui" data-mod="1" placeholder="GBP" tabindex="12" value="#today.dhcid_0001#">
+					</td>
+				</tr>
 			</table>
 
 			<table border="0">
 				<tr>
 					<th align="right">Sub Total</th>
-					<td><input type="text" placeholder="GBP" class="money subtotal" value="#subTotal#" disabled></td>
+
+					<td>
+						<input type="text" placeholder="GBP" class="money subtotal" disabled>
+					</td>
 				</tr>
+
 				<tr>
 					<th align="right">Z Cash</th>
-					<td><input type="text" placeholder="GBP" class="money zcash" disabled value="#DecimalFormat(session.till.total.cashINDW)#"></td>
+
+					<td>
+						<input type="text" placeholder="GBP" class="money zcash" disabled value="#DecimalFormat(zCash + (session.till.total.float * -1))#">
+					</td>
 				</tr>
-				<cfset diff = subTotal - session.till.total.cashINDW>
+
 				<tr>
 					<th align="right">Difference</th>
-					<td><input type="text" placeholder="GBP" class="money diff" value="#diff#" disabled></td><td align="right" colspan="2"><span class="cidFace"></span></td>
+
+					<td>
+						<input type="text" placeholder="GBP" class="money diff" disabled></td><td align="right" colspan="2"><span class="cidFace"></span>
+					</td>
 				</tr>
 			</table>
+
 			<input type="submit" class="appbtn" value="Continue">
 		</form>
 
@@ -169,34 +239,182 @@
 					<th>Qty</th>
 					<th>Total</th>
 				</tr>
-				<cfset totalSC = 0>
-				<cfset gameValues = [10,5,5,3,2,2,1,1]>
-				<cfset packQtys = [20,40,40,60,80,80,160,160]>
-				<cfloop from="1" to="8" index="game">
-					<cfset gStart = "dhsc_g#game#_start">
-					<cfset gEnd = "dhsc_g#game#_end">
-					<cfif StructIsEmpty(today)>
-						<cfset start = 0>
-						<cfset end = 0>
-					<cfelse>
-						<cfset start = StructFind(today,gStart)>
-						<cfset end = StructFind(today,gEnd)>
-					</cfif>
-					<cfset sold = end - start>
-					<cfset value = sold * gameValues[game]>
-					<cfset totalSC += value>
-					<tr>
-						<th>#game#</th>
-						<th>#packQtys[game]#</th>
-						<th>&pound;#gameValues[game]#</th>
-						<td><input type="text" name="#gStart#" data-qty="#packQtys[game]#" data-value="#gameValues[game]#" data-maximum="#packQtys[game]-1#"
-								 data-wholenumber="true" data-game="#game#" data-minimum="0" class="money ui2" placeholder="##" value="#start#" /></td>
-						<td><input type="text" name="#gEnd#" data-qty="#packQtys[game]#" data-value="#gameValues[game]#" data-maximum="#packQtys[game]-1#"
-								 data-wholenumber="true" data-game="#game#" data-minimum="0" class="money ui2" placeholder="##" value="#end#" /></td>
-						<td><input type="text" name="dhsc_g#game#_qty" value="#sold#" class="money ui2" disabled="disabled" /></td>
-						<td><input type="text" name="dhsc_g#game#_total" value="#DecimalFormat(value)#" class="money dhsc_g#game#_total" disabled="disabled"></td>
-					</tr>
-				</cfloop>
+
+				<tr>
+					<th>1</th>
+					<th>20</th>
+					<th>&pound;10</th>
+
+					<td>
+						<input type="text" name="dhsc_g1_start" data-qty="20" data-value="10" data-game="1" data-maximum="19" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g1_start#">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g1_end" data-qty="20" data-value="10" data-game="1" data-maximum="19" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g1_end#">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g1_qty" data-qty="20" data-value="10" data-game="1" data-maximum="19" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g1_total" class="money dhsc_g1_total" placeholder="GBP">
+					</td>
+				</tr>
+
+				<tr>
+					<th>2</th>
+					<th>40</th>
+					<th>&pound;5</th>
+
+					<td>
+						<input type="text" name="dhsc_g2_start" data-qty="40" data-value="5" data-game="2" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g2_start#">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g2_end" data-qty="40" data-value="5" data-game="2" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g2_end#">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g2_qty" data-qty="40" data-value="5" data-game="2" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g2_total" class="money dhsc_g2_total" placeholder="GBP">
+					</td>
+				</tr>
+
+				<tr>
+					<th>3</th>
+					<th>40</th>
+					<th>&pound;5</th>
+
+					<td>
+						<input type="text" name="dhsc_g3_start" data-qty="40" data-value="5" data-game="3" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g3_start#">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g3_end" data-qty="40" data-value="5" data-game="3" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g3_end#">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g3_qty" data-qty="40" data-value="5" data-game="3" data-maximum="39" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g3_total" class="money dhsc_g3_total" placeholder="GBP">
+					</td>
+				</tr>
+
+				<tr>
+					<th>4</th>
+					<th>60</th>
+					<th>&pound;3</th>
+
+					<td>
+						<input type="text" name="dhsc_g4_start" data-qty="60" data-value="3" data-game="4" data-maximum="59" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g4_start#">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g4_end" data-qty="60" data-value="3" data-game="4" data-maximum="59" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g4_end#">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g4_qty" data-qty="60" data-value="3" data-game="4" data-maximum="59" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g4_total" class="money dhsc_g4_total" placeholder="GBP">
+					</td>
+				</tr>
+
+				<tr>
+					<th>5</th>
+					<th>80</th>
+					<th>&pound;2</th>
+
+					<td>
+						<input type="text" name="dhsc_g5_start" data-qty="80" data-value="2" data-game="5" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g5_start#">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g5_end" data-qty="80" data-value="2" data-game="5" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g5_end#">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g5_qty" data-qty="80" data-value="2" data-game="5" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g5_total" class="money dhsc_g5_total" placeholder="GBP">
+					</td>
+				</tr>
+
+				<tr>
+					<th>6</th>
+					<th>80</th>
+					<th>&pound;2</th>
+
+					<td>
+						<input type="text" name="dhsc_g6_start" data-qty="80" data-value="2" data-game="6" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g6_start#">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g6_end" data-qty="80" data-value="2" data-game="6" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g6_end#">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g6_qty" data-qty="80" data-value="2" data-game="6" data-maximum="79" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g6_total" class="money dhsc_g6_total" placeholder="GBP">
+					</td>
+				</tr>
+
+				<tr>
+					<th>7</th>
+					<th>160</th>
+					<th>&pound;1</th>
+
+					<td>
+						<input type="text" name="dhsc_g7_start" data-qty="160" data-value="1" data-game="7" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g7_start#">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g7_end" data-qty="160" data-value="1" data-game="7" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g7_end#">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g7_qty" data-qty="160" data-value="1" data-game="7" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g7_total" class="money dhsc_g7_total" placeholder="GBP">
+					</td>
+				</tr>
+
+				<tr>
+					<th>8</th>
+					<th>160</th>
+					<th>&pound;1</th>
+
+					<td>
+						<input type="text" name="dhsc_g8_start" data-qty="160" data-value="1" data-game="8" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g8_start#">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g8_end" data-qty="160" data-value="1" data-game="8" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="##" value="#today.dhsc_g8_end#">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g8_qty" data-qty="160" data-value="1" data-game="8" data-maximum="159" data-minimum="0" data-wholenumber="true" class="money ui2" placeholder="Qty">
+					</td>
+
+					<td>
+						<input type="text" name="dhsc_g8_total" class="money dhsc_g8_total" placeholder="GBP">
+					</td>
+				</tr>
 			</table>
 
 			<input type="submit" class="appbtn" value="Continue">
@@ -207,6 +425,7 @@
 				<span class="back icon-circle-left"></span>
 				Lottery
 			</span>
+
 			<table border="0">
 				<tr>
 					<th align="right">Lottery Draws</th>
@@ -218,7 +437,7 @@
 				<tr>
 					<th align="right">Scratchcards</th>
 					<td>
-						<input type="text" name="lotto_sc" class="money lotto-ui" placeholder="GBP" value="#DecimalFormat(totalSC)#">
+						<input type="text" name="lotto_sc" class="money lotto-ui" placeholder="GBP">
 					</td>
 				</tr>
 

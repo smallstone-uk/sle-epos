@@ -50,7 +50,7 @@
 			
 			loadJSONAlerts();--->
 			
-			<cfif StructKeyExists(session,"user") AND StructKeyExists(session.user.prefs, "empEPOSLaunchTill")>
+			<cfif StructKeyExists(session.user.prefs, "empEPOSLaunchTill")>
 				if ("#freshLogin#".toString() == "true") {
 					setTimeout(function() {
 						var loggedin = "#session.user.loggedin#";
