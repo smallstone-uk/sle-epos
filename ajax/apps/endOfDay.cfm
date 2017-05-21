@@ -77,7 +77,7 @@
 						var lottoTotal = 0;
 						for (c of ['lotto_draws', 'lotto_prizes', 'lotto_dhsc_prizes'])
 							lottoTotal += Number($('input[name="' + c + '"]').val());
-					//	$('input[name="lotto_sc"]').val(nf(dc.dhsc_total, "str"));
+						$('input[name="lotto_sc"]').val(nf(dc.dhsc_total, "str"));
 						$('input[name="lotto_total"]').val(nf(lottoTotal, "str"));
 						$('.LotteryForm').fadeIn();
 					});
