@@ -8,7 +8,7 @@
 <cfset alerts = epos.LoadAlerts()>
 <!---<cfset epos.LoadDealsIntoSession()>--->
 <cfset freshLogin = ( IsDefined("freshLogin") ) ? freshLogin : false>
-
+<cfset session.basket.info.errMsg = "">
 <cfoutput>
 	<!---<script src="js/jquery-1.11.1.min.js"></script>
 	<script src="js/tiles.js"></script>--->

@@ -142,27 +142,42 @@
 
 		<cfset loc = {}>
 		<cfset loc.thisBasket = (session.till.isTranOpen) ? session.basket : session.till.prevtran>
-		<cfset loc.metaTitle = "Balance Due from Customer">
+<cfdump var="#loc.thisBasket#" label="thisBasket" expand="yes" format="html" 
+	output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+
+		<cfset loc.metaTitle = "Balance Due from Customer1">
 		<cfset loc.metaValue = decimalFormat(0.00)>
-		<cfset loc.metaClass = "bmeta_duefrom">
+		<cfset loc.metaClass = "bmeta_dueto">
 		<cfif loc.thisBasket.info.itemcount gt 0>
 			<cfif loc.thisBasket.info.mode eq "reg">
-				<cfif loc.thisBasket.total.balance lte 0.001>
-					<cfset loc.metaTitle = "Change">
-					<cfset loc.metaValue = decimalFormat(-loc.thisBasket.info.change)>
-					<cfset loc.metaClass = (loc.metaValue eq 0) ? "bmeta_dueto" : "bmeta_changeto">
-				<cfelseif loc.thisBasket.total.balance gt 0>
-					<cfset loc.metaTitle = "Balance Due from Customer">
-					<cfset loc.metaValue = decimalFormat(loc.thisBasket.total.balance)>
-					<cfset loc.metaClass = "bmeta_duefrom">
+				<cfif loc.thisBasket.info.canClose>
+					<cfif loc.thisBasket.total.balance lte 0.001>
+						<cfset loc.metaTitle = "Change">
+						<cfset loc.metaValue = decimalFormat(-loc.thisBasket.info.change)>
+						<cfset loc.metaClass = (loc.metaValue eq 0) ? "bmeta_dueto" : "bmeta_changeto">
+					<cfelse>
+						<cfset loc.metaTitle = "Balance Due from Customer2">
+						<cfset loc.metaValue = decimalFormat(loc.thisBasket.total.balance)>
+						<cfset loc.metaClass = "bmeta_duefrom">
+					</cfif>
+				<cfelse>
+					<cfif loc.thisBasket.total.balance gt 0.001>
+						<cfset loc.metaTitle = "Balance Due from Customer3">
+						<cfset loc.metaValue = decimalFormat(loc.thisBasket.total.balance)>
+						<cfset loc.metaClass = "bmeta_duefrom">
+					<cfelse>
+						<cfset loc.metaTitle = "Balance Due to Customer4">
+						<cfset loc.metaValue = decimalFormat(loc.thisBasket.total.balance)>
+						<cfset loc.metaClass = "bmeta_dueto">
+					</cfif>
 				</cfif>
 			<cfelse>
 				<cfif loc.thisBasket.total.balance lte 0>
-					<cfset loc.metaTitle = "Balance Due to Customer">
+					<cfset loc.metaTitle = "Balance Due to Customer5">
 					<cfset loc.metaValue = decimalFormat(loc.thisBasket.total.balance)>
 					<cfset loc.metaClass = "bmeta_dueto">
 				<cfelse>
-					<cfset loc.metaTitle = "Balance Due from Customer">
+					<cfset loc.metaTitle = "Balance Due from Customer6">
 					<cfset loc.metaValue = decimalFormat(loc.thisBasket.total.balance)>
 					<cfset loc.metaClass = "bmeta_duefrom">
 				</cfif>
@@ -177,7 +192,7 @@
 
 			<div class="bmeta_sub">
 				<span class="bmetasub_itemcount">
-					#loc.thisBasket.info.itemCount# items
+					#loc.thisBasket.info.itemCount# items #session.basket.info.canClose#
 				</span>
 
 				<cfif not loc.thisBasket.tranID is 0>

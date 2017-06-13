@@ -2,10 +2,10 @@
     <cfobject component="#application.site.codePath#" name="e">
     
     <cfset parm.form = form>
-    <!---<cfset parm.form.credit = -parm.form.unitprice>--->
+    <cfset parm.form.prodsign = 1>
+    <cfset parm.form.class = 'item'>
     <cfset parm.form.qty = parm.form.incqty>
     <cfset parm.form.account = 1>
-    <cfset parm.form.prodsign = 1>
     <cfset parm.form.prodID = form.itemID>
     <cfset parm.form.prodtitle = title>
 	<cfset parm.form.addToBasket = true>	<!--- used by non-shopItems categories --->

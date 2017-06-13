@@ -54,10 +54,16 @@
 		<cfset session.basket.info.errMsg = "">
 		<cfset session.basket.info.itemcount = 0>
 		<cfset session.basket.info.totaldue = 0>
+		<cfset session.basket.info.canClose = false>
 		<cfset session.till.info.staff = false>
 
 		<cfset session.basket.payments = []>
 		<cfset session.basket.news = []>
+		<cfset session.basket.lottery = []>
+		<cfset session.basket.scratchcard = []>
+		<cfset session.basket.lprize = []>
+		<cfset session.basket.sprize = []>
+		<cfset session.basket.voucher = []>
 		<cfset session.basket.vatAnalysis = {}>
 
 		<cfset session.basket.header.bCash = 0>
@@ -593,6 +599,8 @@
 	<cffunction name="AddItem" access="public" returntype="struct">
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
+<cfdump var="#args#" label="AddItem" expand="yes" format="html" 
+	output="#application.site.dir_logs#epos\add-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 		<!--- Trim whitespace on class --->
 		<cfset args.form.itemClass = trim(args.form.itemClass)>
@@ -675,10 +683,6 @@
 							<cfelse>
 								<cfset loc.ppcount = 0>
 								<cfloop array="#session.basket.paypoint#" index="loc.pp">
-								<!---<cfdump var="#loc.pp#" label="loc.pp" expand="yes" format="html" 
-									output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
-								<cfdump var="#args.data#" label="args.data" expand="yes" format="html" 
-									output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">--->
 									<cfset loc.ppcount++>
 									<cfif loc.pp.itemID eq args.data.itemID AND loc.pp.unitPrice eq args.data.cash>
 										<cfset ArrayDeleteAt(session.basket.paypoint,loc.ppcount)>
@@ -714,54 +718,98 @@
 					</cfcase>
 					<cfcase value="LOTTERY">
 						<cfset args.data.cash = args.data.cash + args.data.credit>
-						<cfif args.data.cash neq 0>
-							<cfset args.data.class = "lot">
-							<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
-							<cfset args.data.gross = args.data.cash>	<!--- calc gross transaction value --->
-							<cfset CalcValues(args.data)>
-							<cfif args.form.addToBasket><cfset ArrayAppend(session.basket.lottery,args.data)></cfif>
-							<cfset CheckDeals()>
+						<cfif args.form.addToBasket>
+							<cfif args.data.cash neq 0>
+								<cfset args.data.class = "lot">
+								<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
+								<cfset args.data.gross = args.data.cash>	<!--- calc gross transaction value --->
+								<cfset CalcValues(args.data)>
+								<cfif args.form.addToBasket><cfset ArrayAppend(session.basket.lottery,args.data)></cfif>
+								<cfset CheckDeals()>
+							<cfelse>
+								<cfset session.basket.info.errMsg = "Invalid #args.form.itemClass# amount entered.">			
+							</cfif>
 						<cfelse>
-							<cfset session.basket.info.errMsg = "Invalid #args.form.itemClass# amount entered.">			
+							<cfset loc.itemCount = 0>
+							<cfloop array="#session.basket.lottery#" index="loc.lot">
+								<cfset loc.itemCount++>
+								<cfif loc.lot.itemID eq args.data.itemID AND loc.lot.unitPrice eq args.data.cash>
+									<cfset ArrayDeleteAt(session.basket.lottery,loc.itemCount)>
+									<cfbreak>
+								</cfif>
+							</cfloop>
 						</cfif>
 					</cfcase>
 					<cfcase value="SCRATCHCARD">
 						<cfset args.data.cash = args.data.cash + args.data.credit>
-						<cfif args.data.cash neq 0>
-							<cfset args.data.class = "lot">
-							<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
-							<cfset args.data.gross = args.data.cash>	<!--- calc gross transaction value --->
-							<cfset CalcValues(args.data)>
-							<cfif args.form.addToBasket><cfset ArrayAppend(session.basket.scratchcard,args.data)></cfif>
-							<cfset CheckDeals()>
+						<cfif args.form.addToBasket>
+							<cfif args.data.cash neq 0>
+								<cfset args.data.class = "lot">
+								<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
+								<cfset args.data.gross = args.data.cash>	<!--- calc gross transaction value --->
+								<cfset CalcValues(args.data)>
+								<cfif args.form.addToBasket><cfset ArrayAppend(session.basket.scratchcard,args.data)></cfif>
+								<cfset CheckDeals()>
+							<cfelse>
+								<cfset session.basket.info.errMsg = "Invalid #args.form.itemClass# amount entered.">			
+							</cfif>
 						<cfelse>
-							<cfset session.basket.info.errMsg = "Invalid #args.form.itemClass# amount entered.">			
+							<cfset loc.itemCount = 0>
+							<cfloop array="#session.basket.scratchcard#" index="loc.lot">
+								<cfset loc.itemCount++>
+								<cfif loc.lot.itemID eq args.data.itemID AND loc.lot.unitPrice eq args.data.cash>
+									<cfset ArrayDeleteAt(session.basket.scratchcard,loc.itemCount)>
+									<cfbreak>
+								</cfif>
+							</cfloop>
 						</cfif>
 					</cfcase>
 					<cfcase value="LPRIZE">
 						<cfset args.data.cash = args.data.cash + args.data.credit>
-						<cfif args.data.cash neq 0>
-							<cfset args.data.class = "lot">
-							<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
-							<cfset args.data.gross = args.data.cash>	<!--- calc gross transaction value --->
-							<cfset CalcValues(args.data)>
-							<cfif args.form.addToBasket><cfset ArrayAppend(session.basket.lprize,args.data)></cfif>
-							<cfset CheckDeals()>
+						<cfif args.form.addToBasket>
+							<cfif args.data.cash neq 0>
+								<cfset args.data.class = "lot">
+								<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
+								<cfset args.data.gross = args.data.cash>	<!--- calc gross transaction value --->
+								<cfset CalcValues(args.data)>
+								<cfif args.form.addToBasket><cfset ArrayAppend(session.basket.lprize,args.data)></cfif>
+								<cfset CheckDeals()>
+							<cfelse>
+								<cfset session.basket.info.errMsg = "Invalid #args.form.itemClass# amount entered.">			
+							</cfif>
 						<cfelse>
-							<cfset session.basket.info.errMsg = "Invalid #args.form.itemClass# amount entered.">			
+							<cfset loc.itemCount = 0>
+							<cfloop array="#session.basket.lprize#" index="loc.lot">
+								<cfset loc.itemCount++>
+								<cfif loc.lot.itemID eq args.data.itemID AND loc.lot.unitPrice eq (args.data.cash * args.data.qty)>
+									<cfset ArrayDeleteAt(session.basket.lprize,loc.itemCount)>
+									<cfbreak>
+								</cfif>
+							</cfloop>
 						</cfif>
 					</cfcase>
 					<cfcase value="SPRIZE">
 						<cfset args.data.cash = args.data.cash + args.data.credit>
-						<cfif args.data.cash neq 0>
-							<cfset args.data.class = "lot">
-							<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
-							<cfset args.data.gross = args.data.cash>	<!--- calc gross transaction value --->
-							<cfset CalcValues(args.data)>
-							<cfif args.form.addToBasket><cfset ArrayAppend(session.basket.sprize,args.data)></cfif>
-							<cfset CheckDeals()>
+						<cfif args.form.addToBasket>
+							<cfif args.data.cash neq 0>
+								<cfset args.data.class = "lot">
+								<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
+								<cfset args.data.gross = args.data.cash>	<!--- calc gross transaction value --->
+								<cfset CalcValues(args.data)>
+								<cfif args.form.addToBasket><cfset ArrayAppend(session.basket.sprize,args.data)></cfif>
+								<cfset CheckDeals()>
+							<cfelse>
+								<cfset session.basket.info.errMsg = "Invalid #args.form.itemClass# amount entered.">			
+							</cfif>
 						<cfelse>
-							<cfset session.basket.info.errMsg = "Invalid #args.form.itemClass# amount entered.">			
+							<cfset loc.itemCount = 0>
+							<cfloop array="#session.basket.sprize#" index="loc.lot">
+								<cfset loc.itemCount++>
+								<cfif loc.lot.itemID eq args.data.itemID AND loc.lot.unitPrice eq (args.data.cash * args.data.qty)>
+									<cfset ArrayDeleteAt(session.basket.sprize,loc.itemCount)>
+									<cfbreak>
+								</cfif>
+							</cfloop>
 						</cfif>
 					</cfcase>
 					<cfcase value="NEWS">
@@ -790,7 +838,20 @@
 							</cfif>
 						</cfif>
 					</cfcase>
-					<cfcase value="VCHN|CPN" delimiters="|">
+					<cfcase value="VOUCHER|CPN" delimiters="|">
+						<cfset args.data.cash = args.data.cash + args.data.credit>
+						<cfif args.data.cash neq 0>
+							<cfset args.data.class = "vchn">
+							<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
+							<cfset args.data.gross = args.data.cash>	<!--- calc gross transaction value --->
+							<cfset CalcValues(args.data)>
+							<cfif args.form.addToBasket><cfset ArrayAppend(session.basket.voucher,args.data)></cfif>
+							<cfset CheckDeals()>
+						<cfelse>
+							<cfset session.basket.info.errMsg = "Invalid #args.form.itemClass# amount entered.">			
+						</cfif>
+					
+<!---
 						<cfset args.data.cash = args.data.cash + args.data.credit>
 						<cfif args.data.cash neq 0>
 							<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
@@ -801,6 +862,7 @@
 						<cfelse>
 							<cfset session.basket.info.errMsg = "Please enter the voucher value.">			
 						</cfif>
+--->
 					</cfcase>
 					<cfcase value="SUPPLIER">
 						<cfif ArrayLen(session.basket.supplier) GT 0>
@@ -927,7 +989,7 @@
 					<cfelseif ArrayLen(session.basket.supplier) gt 0>
 						<cfset session.basket.info.errMsg = "Cannot accept a card payment during a supplier transaction.">
 					<cfelseif session.basket.info.mode eq "reg" AND loc.cashBalance lt 0>
-						<cfset session.basket.info.errMsg = "Some items in the basket must be paid by cash or cashback. (#loc.cashBalance#)">
+						<cfset session.basket.info.errMsg = "Some items in the basket must be paid by cash or cashback. (&pound;#DecimalFormat(-loc.cashBalance)#)">
 					<cfelseif session.basket.info.mode eq "rfd" AND loc.cashBalance gt 0>
 						<cfset session.basket.info.errMsg = "Some items in the basket must be refunded by cash.">
 					<cfelseif session.basket.info.mode eq "reg" AND loc.test.diff gt 0>
@@ -1001,7 +1063,7 @@
 					</cfif>
 				</cfcase>
 				
-				<cfcase value="Voucher">
+<!---				<cfcase value="Voucher">
 					<cfif ArrayLen(session.basket.media) eq 0>
 						<cfset session.basket.info.errMsg = "Please put a news item in the basket before accepting a voucher.">
 					<cfelse>
@@ -1009,8 +1071,8 @@
 						<cfset args.data.credit = 0>
 						<cfif args.data.cash is 0>
 							<cfset session.basket.info.errMsg = "Please enter the voucher value.">
-						<cfelseif args.data.cash gt session.basket.info.totaldue>
-							<cfset session.basket.info.errMsg = "Voucher value cannot exceed basket total.">
+						<cfelseif args.data.cash gt abs(session.basket.total.media)>
+							<cfset session.basket.info.errMsg = "Voucher value cannot exceed newspaper total.">
 						<cfelse>
 							<cfset args.data.class = "pay">
 							<cfset args.data.itemClass = "VCHN">
@@ -1020,7 +1082,7 @@
 						</cfif>
 					</cfif>
 				</cfcase>
-				
+--->				
 				<cfcase value="Coupon">
 					<cfif ArrayLen(session.basket.paypoint) eq 0>
 						<cfset session.basket.info.errMsg = "Please put a Paypoint item in the basket before accepting a coupon.">
@@ -1585,6 +1647,7 @@
 				<cfset session.basket.total.discstaff = 0>
 				<cfset session.basket.info.totaldue = 0>
 				<cfset session.basket.info.change = 0>
+				<cfset session.basket.info.canClose = false>
 				<cfloop array="#session.till.catKeys#" index="loc.key">
 					<cfset loc.section = StructFind(session.basket,loc.key)>
 					<cfset StructUpdate(session.basket.total,loc.key,0)>
@@ -1638,22 +1701,26 @@
 							<cfset session.basket.total.cashINDW += (loc.item.cash + loc.item.credit)>
 							<cfset session.basket.header.cashtaken += loc.item.cash + loc.item.credit>
 							<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
+							<cfset session.basket.info.canClose = true>
 						</cfcase>
 						<cfcase value="CARDINDW">
 							<cfset session.basket.total.cardINDW += (loc.item.cash + loc.item.credit)>
 							<cfset session.basket.header.cardsales += loc.item.credit>
 							<cfset session.basket.header.cashback += loc.item.cash>
 							<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
+							<cfset session.basket.info.canClose = true>
 						</cfcase>
 						<cfcase value="CHQINDW">
 							<cfset session.basket.total.chqINDW += (loc.item.cash + loc.item.credit)>
 							<cfset session.basket.header.chqsales += (loc.item.cash + loc.item.credit)>
 							<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
+							<cfset session.basket.info.canClose = true>
 						</cfcase>
 						<cfcase value="ACCINDW">
 							<cfset session.basket.total.accINDW += (loc.item.cash + loc.item.credit)>
 							<cfset session.basket.header.accsales += (loc.item.cash + loc.item.credit)>
 							<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
+							<cfset session.basket.info.canClose = true>
 						</cfcase>
 						<cfdefaultcase>
 							<cfset loc.payValue = StructFind(session.basket.total,loc.item.itemClass)>
@@ -1664,6 +1731,7 @@
 						</cfdefaultcase>
 					</cfswitch>
 					<cfset session.basket.total.balance -= (loc.item.cash + loc.item.credit)>
+					<!---<cfset session.basket.info.canClose = ArrayLen(session.basket.payments) gt 0>--->
 				</cfloop>
 
 				<cfif session.basket.info.itemcount gt 0 AND ArrayLen(session.basket.payments) GT 0>
@@ -1907,7 +1975,7 @@
 							<td align="right">#DecimalFormat(loc.disc)#</td>
 						</tr>
 					</cfcase>
-					<cfcase value="CASHINDW|CARDINDW|CHQINDW|VCHN|CPN|ACCINDW" delimiters="|">
+					<cfcase value="CASHINDW|CARDINDW|CHQINDW|CPN|ACCINDW" delimiters="|">
 						<cfset loc.tran.itemType = "pay">
 						<cfset loc.payID = loc.tran.payID>
 						<cfset loc.retail = loc.tran.gross>
@@ -2102,7 +2170,7 @@
 								</tr>
 								</cfif>
 							</cfcase>
-							<cfcase value="CASHINDW|CARDINDW|CHQINDW|VCHN|CPN|ACCINDW" delimiters="|">
+							<cfcase value="CASHINDW|CARDINDW|CHQINDW|CPN|ACCINDW" delimiters="|">
 								<cfset loc.tran.itemType = "pay">
 								<cfset loc.payID = loc.tran.payID>
 								<cfset loc.retail = loc.tran.gross>

@@ -131,26 +131,6 @@
 							}
 						});
 						break;
-					case "voucher":
-						$.virtualNumpad({
-							hint: "Enter the voucher amount",
-							callback: function(value) {
-								$.addPayment({
-									account: "",
-									addtobasket: true,
-									btnsend: "Voucher",
-									cash: value,
-									cashonly: 1,
-									credit: "",
-									prodtitle: "Voucher",
-									qty: 1,
-									type: "VCHN",
-									vrate: "",
-									payID: id
-								}, function() { $.loadBasket(); });
-							}
-						});
-						break;
 					case "coupon":
 						$.virtualNumpad({
 							hint: "Enter the coupon amount",

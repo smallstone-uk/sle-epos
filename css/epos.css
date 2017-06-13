@@ -2518,7 +2518,7 @@ div[role="page"] {
     margin-bottom: 2px;
     border-radius: 4px;
     height: 45px;
-    line-height: 45px;
+    /*line-height: 45px;*/
 }
 
 .emp_ref {
