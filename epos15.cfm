@@ -108,7 +108,7 @@
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
-		<cfset loc.LastBought = DateFormat(DateAdd("m",-2,Now()),'yyyy-mm-dd')><cfoutput>#loc.LastBought#</cfoutput>
+		<cfset loc.LastBought = DateFormat(DateAdd("m",-3,Now()),'yyyy-mm-dd')><cfoutput>#loc.LastBought#</cfoutput>
 		<cftry> 
 			<cfquery name="loc.QProducts" datasource="#args.datasource#">
 				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siOurPrice, epcKey
@@ -121,7 +121,7 @@
 				INNER JOIN tblEPOS_Cats ON prodEposCatID=epcID
 				INNER JOIN tblEPOS_DealItems ON ediProduct=prodID
 				WHERE prodLastBought > '#loc.LastBought#'
-				)
+				LIMIT 100)
 				UNION
 				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siOurPrice, epcKey
 				FROM tblProducts
