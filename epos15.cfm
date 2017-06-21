@@ -104,12 +104,13 @@
 	</script>
 </head>
 
-	<cffunction name="LoadProducts" access="public" returntype="query">
+	<cffunction name="LoadProducts" access="public" returntype="query" output="yes">
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
+		<cfset loc.LastBought = DateFormat(DateAdd("m",-2,Now()),'yyyy-mm-dd')><cfoutput>#loc.LastBought#</cfoutput>
 		<cftry> 
-			<cfquery name="loc.QProducts" datasource="#args.datasource#" result="loc.QProductsResult">
+			<cfquery name="loc.QProducts" datasource="#args.datasource#">
 				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siOurPrice, epcKey
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct
@@ -119,7 +120,7 @@
 					WHERE prodID = siProduct )
 				INNER JOIN tblEPOS_Cats ON prodEposCatID=epcID
 				INNER JOIN tblEPOS_DealItems ON ediProduct=prodID
-				WHERE prodLastBought > '2016-07-01'
+				WHERE prodLastBought > '#loc.LastBought#'
 				)
 				UNION
 				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siOurPrice, epcKey
@@ -130,7 +131,7 @@
 					FROM tblStockItem
 					WHERE prodID = siProduct )
 				INNER JOIN tblEPOS_Cats ON prodEposCatID=epcID
-				WHERE prodLastBought > '2016-07-01'
+				WHERE prodLastBought > '#loc.LastBought#'
 				LIMIT 15)
 				UNION
 				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siOurPrice, epcKey
@@ -141,7 +142,7 @@
 					FROM tblStockItem
 					WHERE prodID = siProduct )
 				INNER JOIN tblEPOS_Cats ON prodEposCatID=epcID
-				WHERE prodLastBought > '2016-07-01'
+				WHERE prodLastBought > '#loc.LastBought#'
 				AND prodVatRate <> 0
 				LIMIT 15)
 				UNION
@@ -153,7 +154,7 @@
 					FROM tblStockItem
 					WHERE prodID = siProduct )
 				INNER JOIN tblEPOS_Cats ON prodEposCatID=epcID
-				WHERE prodLastBought > '2016-07-01'
+				WHERE prodLastBought > '#loc.LastBought#'
 				AND prodVatRate = 5
 				LIMIT 5)
 				UNION
@@ -356,10 +357,10 @@
 		<cflocation url="#cgi.SCRIPT_NAME#" addtoken="no">
 	<cfelse>
 		<cfswitch expression="#parm.form.btnSend#">
-			<cfcase value="Add" delimiters="|">
+			<cfcase value="Add|Voucher" delimiters="|">
 				<cfset ecfc.AddItem(parm)>
 			</cfcase>
-			<cfcase value="Cash|Card|Cheque|Account|Voucher|Coupon" delimiters="|">
+			<cfcase value="Cash|Card|Cheque|Account|Coupon" delimiters="|">
 				<cfset ecfc.AddPayment(parm)>
 			</cfcase>
 		</cfswitch>

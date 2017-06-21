@@ -54,7 +54,8 @@
 						break;
 					case "partcard":
 						var cashTotal = Number("#-session.basket.header.bcash#");
-						var creditTotal = Number("#-session.basket.header.bcredit - session.basket.header.discdeal#");
+					//	var creditTotal = Number("#-session.basket.header.bcredit - session.basket.header.discdeal#");
+						var creditTotal = Number("#session.basket.header.balance#");
 						$.virtualNumpad({
 							fields: [
 								{
@@ -128,6 +129,26 @@
 								}, function() {
 									$.loadBasket();
 								});
+							}
+						});
+						break;
+					case "voucher":
+						$.virtualNumpad({
+							hint: "Enter the voucher amount",
+							callback: function(value) {
+								$.addPayment({
+									account: "",
+									addtobasket: true,
+									btnsend: "Voucher",
+									cash: value,
+									cashonly: 1,
+									credit: "",
+									prodtitle: "Voucher",
+									qty: 1,
+									type: "VOUCHER",
+									vrate: "",
+									payID: id
+								}, function() { $.loadBasket(); });
 							}
 						});
 						break;

@@ -43,6 +43,7 @@
       	<cfset session.basket.shopItems = {}>
       	<cfset session.basket.mediaItems = {}>
       	<cfset session.basket.magsItems = {}>
+      	<cfset session.basket.voucherItems = {}>
 		<cfset session.basket.trans = []>
 		<cfset session.basket.tranID = 0>
 		<cfset LoadCatKeys()>
@@ -70,7 +71,7 @@
 		<cfset session.basket.header.bCredit = 0>
 		<cfset session.basket.header.LPrize = 0>
 		<cfset session.basket.header.SPrize = 0>
-		<cfset session.basket.header.vchn = 0>
+		<cfset session.basket.header.voucher = 0>
 		<cfset session.basket.header.cpn = 0>
 
 		<cfset session.basket.header.cashtaken = 0>
@@ -475,6 +476,22 @@
 				<cfset ArrayAppend(session.basket.trans,loc.tran)>
 			</cfloop>
 			
+			<cfloop collection="#session.basket.voucherItems#" item="loc.key">
+				<cfset loc.vch = StructFind(session.basket.voucherItems,loc.key)>
+				<cfset loc.tran = {}>
+				<cfset loc.tran.cashonly = 1>
+				<cfset loc.tran.price = loc.vch.unitPrice>
+				<cfset loc.tran.prodID = loc.vch.itemID>
+				<cfset loc.tran.prop = 1>
+				<cfset loc.tran.gross = loc.vch.totalGross>
+				<cfset loc.tran.vrate = loc.vch.vrate>
+				<cfset loc.tran.vcode = loc.vch.vcode>
+				<cfset loc.tran.itemClass = loc.vch.itemClass>
+				<cfset loc.tran.net = loc.tran.gross / (1 + (loc.tran.vrate / 100))>
+				<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+				<cfset ArrayAppend(session.basket.trans,loc.tran)>
+			</cfloop>
+			
 			<cfloop array="#session.till.catKeys#" index="loc.key">
 				<cfset loc.section = StructFind(session.basket,loc.key)>
 				<cfloop array="#loc.section#" index="loc.item">
@@ -507,6 +524,9 @@
 	<cffunction name="UpdateBasket" access="public" returntype="void">
 		<cfargument name="args" type="struct" required="yes">
 		<cftry>
+<cfdump var="#args#" label="UpdateBasket" expand="yes" format="html" 
+	output="#application.site.dir_logs#epos\upd-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+
 			<cfset var loc = {}>
 			<cfif args.data.prodClass eq "single">
 				<cfset loc.itemKey = "#args.data.itemID#-#args.data.unitPrice#">
@@ -528,13 +548,14 @@
 				<cfset loc.rec.title = args.data.title>
 				<cfset loc.rec.vrate = args.form.vrate>
 				<cfset loc.rec.prodClass = args.data.prodClass>
+				<cfset loc.rec.prodSign = args.data.prodSign>
 				<cfset loc.rec.vcode = args.data.vcode>
 				<cfset loc.rec.itemClass = args.form.itemClass>
 				<cfset loc.rec.qty = 0>
 			</cfif>
 			<cfset loc.rec.regMode = (2 * int(session.basket.info.mode eq "reg")) - 1>	<!--- modes: reg = 1 refund = -1 --->
 			<cfset loc.vatRate = 1 + (val(loc.rec.vrate) / 100)>
-			<cfset loc.rec.discountable = StructKeyExists(args.form,"discountable")>
+			<cfset loc.rec.discountable = StructKeyExists(args.form,"discountable") AND args.form.discountable>
 			<cfset loc.rec.cashonly = args.form.cashonly>
 			<cfset loc.rec.cash = args.data.cash>
 			<cfset loc.rec.credit = args.data.credit>
@@ -599,8 +620,6 @@
 	<cffunction name="AddItem" access="public" returntype="struct">
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
-<cfdump var="#args#" label="AddItem" expand="yes" format="html" 
-	output="#application.site.dir_logs#epos\add-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 		<!--- Trim whitespace on class --->
 		<cfset args.form.itemClass = trim(args.form.itemClass)>
@@ -621,6 +640,8 @@
 			args.form.addToBasket
 			args.form.payID	
 		--->
+<cfdump var="#args#" label="AddItem" expand="yes" format="html" 
+	output="#application.site.dir_logs#epos\add-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 		<cfset loc.result = {}>
 		<cfset loc.result.err = "">
@@ -657,6 +678,7 @@
 			<cfset args.data.prodClass = args.form.prodClass>	<!--- single or multiple (see notes) --->
 			<cfset args.data.discount = 0>
 			<cfset args.data.account = val(args.form.account)>
+			<cfset args.data.prodSign = args.form.prodSign>
 			<cfset args.data.qty = val(args.form.qty)>
 			<cfset args.data.cash = abs(val(args.form.cash)) * args.form.prodSign>
 			<cfset args.data.credit = abs(val(args.form.credit)) * args.form.prodSign>
@@ -664,14 +686,14 @@
 			<cfset args.data.vcode = StructFind(session.vat,DecimalFormat(args.form.vrate))>
 			
 			<cfif args.data.itemClass neq "SUPPLIER" AND ArrayLen(session.basket.supplier) gt 0>
-				<cfset loc.result.err = "">
 				<cfset session.basket.info.errMsg = "Cannot start a sales transaction during a supplier transaction.">
+				<cfset loc.result.err = session.basket.info.errMsg>
 			<cfelseif args.data.itemClass eq "SUPPLIER" AND ArrayLen(session.basket.shop) gt 0>
-				<cfset loc.result.err = "">
 				<cfset session.basket.info.errMsg = "Cannot pay a supplier during a sales transaction.">
+				<cfset loc.result.err = session.basket.info.errMsg>
 			<cfelse>	
 			
-				<cfswitch expression="#args.form.itemClass#">
+				<cfswitch expression="#UCASE(args.form.itemClass)#">
 					<cfcase value="PAYPOINT">
 						<cfset args.data.cash = args.data.cash + args.data.credit>
 						<cfif args.data.cash neq 0>
@@ -838,10 +860,12 @@
 							</cfif>
 						</cfif>
 					</cfcase>
+					
+<!---
 					<cfcase value="VOUCHER|CPN" delimiters="|">
 						<cfset args.data.cash = args.data.cash + args.data.credit>
 						<cfif args.data.cash neq 0>
-							<cfset args.data.class = "vchn">
+							<cfset args.data.class = "VOUCHER">
 							<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
 							<cfset args.data.gross = args.data.cash>	<!--- calc gross transaction value --->
 							<cfset CalcValues(args.data)>
@@ -850,8 +874,7 @@
 						<cfelse>
 							<cfset session.basket.info.errMsg = "Invalid #args.form.itemClass# amount entered.">			
 						</cfif>
-					
-<!---
+
 						<cfset args.data.cash = args.data.cash + args.data.credit>
 						<cfif args.data.cash neq 0>
 							<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
@@ -862,8 +885,8 @@
 						<cfelse>
 							<cfset session.basket.info.errMsg = "Please enter the voucher value.">			
 						</cfif>
---->
 					</cfcase>
+--->
 					<cfcase value="SUPPLIER">
 						<cfif ArrayLen(session.basket.supplier) GT 0>
 							<cfset session.basket.info.errMsg = "You can only pay one supplier at a time.">			
@@ -904,6 +927,7 @@
 			</cfif>
 			
 		<cfcatch type="any">
+			<cfset loc.result.err = cfcatch.Message>
 			<cfdump var="#cfcatch#" label="" expand="yes" format="html" 
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
@@ -925,6 +949,7 @@
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
 		<cfset loc.addTran = false>
+
 		<cftry>
 			<cfset session.till.isTranOpen = true>
 			<cfset loc.regMode = (2 * int(session.basket.info.mode eq "reg")) - 1>	<!--- modes: reg = 1 refund = -1 --->
@@ -1062,8 +1087,8 @@
 						<cfset loc.addTran = true>
 					</cfif>
 				</cfcase>
-				
-<!---				<cfcase value="Voucher">
+<!---				
+				<cfcase value="Voucher">
 					<cfif ArrayLen(session.basket.media) eq 0>
 						<cfset session.basket.info.errMsg = "Please put a news item in the basket before accepting a voucher.">
 					<cfelse>
@@ -1071,18 +1096,18 @@
 						<cfset args.data.credit = 0>
 						<cfif args.data.cash is 0>
 							<cfset session.basket.info.errMsg = "Please enter the voucher value.">
-						<cfelseif args.data.cash gt abs(session.basket.total.media)>
-							<cfset session.basket.info.errMsg = "Voucher value cannot exceed newspaper total.">
+						<cfelseif (args.data.cash + session.basket.total.voucher) gt abs(session.basket.total.media)>
+							<cfset session.basket.info.errMsg = "Voucher total cannot exceed newspaper total.">
 						<cfelse>
 							<cfset args.data.class = "pay">
-							<cfset args.data.itemClass = "VCHN">
+							<cfset args.data.itemClass = "VOUCHER">
 							<cfset args.data.title = "News Voucher">
 							<cfset ArrayAppend(session.basket.payments,args.data)>
 							<cfset loc.addTran = true>
 						</cfif>
 					</cfif>
-				</cfcase>
---->				
+				</cfcase>		
+--->
 				<cfcase value="Coupon">
 					<cfif ArrayLen(session.basket.paypoint) eq 0>
 						<cfset session.basket.info.errMsg = "Please put a Paypoint item in the basket before accepting a coupon.">
@@ -1106,7 +1131,8 @@
 				</cfcase>
 
 				<cfdefaultcase>
-					<cfdump var="#args#" label="unknown case #args.form.btnSend#" expand="no">
+					<cfdump var="#args#" label="unknown case #args.form.btnSend#" expand="yes" format="html"
+						output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 				</cfdefaultcase>
 			</cfswitch>
 			<cfif loc.addTran>
@@ -1132,6 +1158,7 @@
 
 	<cffunction name="StructToDataAttributes" access="public" returntype="string">
 		<cfargument name="args" type="struct" required="yes">
+		<cfset var loc = {}>
 		<cfset loc.result = "">
 
 		<cfloop collection="#args#" item="loc.key">
@@ -1818,7 +1845,6 @@
 	</cffunction>
 
 	<cffunction name="CalcTotals" access="public" returntype="void" hint="calculate till totals.">
-		<cfdump var="#session.basket.header#" label="header" expand="no">
 		<cfset session.basket.total.cashINDW = session.basket.header.cashtaken + session.basket.info.change>
 		<cfset session.basket.header.cashtaken += session.basket.header.balance>
 		<cfset session.basket.header.balance = 0>
@@ -2109,7 +2135,7 @@
 								</tr>
 								</cfif>
 							</cfcase>
-							<cfcase value="PAYPOINT|NEWS|LOTTERY|SCRATCHCARD|SRV|SPRIZE|LPRIZE" delimiters="|">
+							<cfcase value="PAYPOINT|NEWS|LOTTERY|SCRATCHCARD|SRV|SPRIZE|LPRIZE|VOUCHER" delimiters="|">
 								<cfset loc.total.retail -= loc.tran.gross>
 								<cfset loc.tran.itemType = "item">
 								<cfset loc.prodID = loc.tran.prodID>
@@ -2836,7 +2862,6 @@
 					<cfset StructInsert(session.basket.total,epcKey,0)>
 				</cfif>
 			</cfloop>
-			
 		<cfcatch type="any">
 			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">

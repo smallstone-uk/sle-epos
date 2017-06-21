@@ -1033,7 +1033,7 @@
 							prodtitle: result.PRODTITLE,
 							prodsign: result.PRODSIGN,
 							qty: 1,
-							type: "VCHN",
+							type: "VOUCHER",
 							vrate: ""
 						}, function() { $.loadBasket(); });
 					} else {

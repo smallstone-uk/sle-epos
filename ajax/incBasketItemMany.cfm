@@ -2,7 +2,7 @@
     <cfobject component="#application.site.codePath#" name="e">
     
     <cfset parm.form = form>
-    <cfset parm.form.prodsign = 1>
+   <!--- <cfset parm.form.prodsign = 1>--->
     <cfset parm.form.class = 'item'>
     <cfset parm.form.qty = parm.form.incqty>
     <cfset parm.form.account = 1>
