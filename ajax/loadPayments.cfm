@@ -53,9 +53,10 @@
 						});
 						break;
 					case "partcard":
+						// sometimes shows values from previous transactions 	01/08/2017
 						var cashTotal = Number("#-session.basket.header.bcash#");
-					//	var creditTotal = Number("#-session.basket.header.bcredit - session.basket.header.discdeal#");
-						var creditTotal = Number("#session.basket.header.balance#");
+						var creditTotal = Number("#-session.basket.header.bcredit - session.basket.header.discdeal#");
+					//	var creditTotal = Number("#session.basket.header.balance#");
 						$.virtualNumpad({
 							fields: [
 								{
@@ -197,6 +198,9 @@
 	<cfset supplier = lCase(session.basket.info.bod) eq "supplier">
 
 	<ul class="payment_list">
+		<li class="payment_item material-ripple">
+			<span>#session.basket.header.balance#</span>
+		</li>
 		<cfset counter = 0>
 		<cfloop array="#payments#" index="item">
 			<cfswitch expression="#LCase(item.eaTitle)#">
