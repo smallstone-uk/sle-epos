@@ -2660,7 +2660,7 @@
 			SELECT *
 			FROM tblEPOS_Deals
 			WHERE edStarts <= '#LSDateFormat(Now(), "yyyy-mm-dd")#'
-			AND edEnds > '#LSDateFormat(Now(), "yyyy-mm-dd")#'
+			AND edEnds >= '#LSDateFormat(Now(), "yyyy-mm-dd")#'
 			AND edStatus = 'Active'
 			AND edType != 'Selection'<!---TEMP--->
 		</cfquery>
