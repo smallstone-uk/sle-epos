@@ -79,7 +79,7 @@
 		<cfset session.basket.payments = []>
 		<cfset session.basket.prizes = []>
 		<cfset session.basket.vouchers = []>
-		<cfset session.basket.paypoint = []>
+		<cfset session.basket.paystation = []>
 		<cfset session.basket.news = []>
 		<cfset session.basket.items = 0>
 		<cfset session.basket.received = 0>
@@ -101,7 +101,7 @@
 		<cfset session.basket.header.supplies = 0>
 		<cfset session.basket.header.prize = 0>
 		<cfset session.basket.header.voucher = 0>
-		<cfset session.basket.header.paypoint = 0>
+		<cfset session.basket.header.paystation = 0>
 		
 		<cfset session.basket.total = {}>
 		<cfset session.basket.total.cashINDW = 0>
@@ -112,7 +112,7 @@
 		<cfset session.basket.total.supplies = 0>
 		<cfset session.basket.total.prize = 0>
 		<cfset session.basket.total.voucher = 0>
-		<cfset session.basket.total.paypoint = 0>
+		<cfset session.basket.total.paystation = 0>
 		<cfset session.basket.total.news = 0>
 		<cfset session.basket.total.vat = 0>
 		<cfset session.basket.total.discount = 0>
@@ -420,12 +420,12 @@
 			
             <cfcase value="PP">
                 <cfif ArrayLen(session.basket.suppliers) gt 0> <!--- already have supplier transaction in basket --->
-                    <cfset session.basket.errMsg = "Cannot add a paypoint item during a supplier transaction.">
+                    <cfset session.basket.errMsg = "Cannot add a paystation item during a supplier transaction.">
                 <cfelse>
                     <cfif args.form.cash neq 0>
                         <cfset args.form.class = "item">
                         <cfset args.form.account = 5>
-                        <cfset args.form.title = "PayPoint">
+                        <cfset args.form.title = "PayStation">
                         <cfset args.form.credit = 0>	<!--- force empty - only use cash figure --->
                         <cfset args.form.gross = args.form.cash>	<!--- calc gross transaction value --->
                         <cfset args.form.vat = 0>
@@ -433,10 +433,10 @@
                         <cfset args.form.cash = args.form.cash * loc.tranType * loc.regMode> 		<!--- all form values are +ve numbers --->
                         <cfset args.form.credit = args.form.credit * loc.tranType * loc.regMode>	<!--- apply mode & type to set sign correctly --->
 
-                        <cfset session.basket.total.paypoint += args.form.cash>	<!--- accumulate paypoint total --->
-                        <cfset session.basket.header.paypoint += args.form.cash>
+                        <cfset session.basket.total.paystation += args.form.cash>	<!--- accumulate paystation total --->
+                        <cfset session.basket.header.paystation += args.form.cash>
                         <cfset session.basket.header.balance -= args.form.cash>
-                        <cfif args.form.addToBasket><cfset ArrayAppend(session.basket.paypoint,args.form)></cfif> <!--- add item to payment array --->
+                        <cfif args.form.addToBasket><cfset ArrayAppend(session.basket.paystation,args.form)></cfif> <!--- add item to payment array --->
                         <cfset CalcTotals()>
                     </cfif>
 				</cfif>
@@ -633,7 +633,7 @@
 					<cfelseif args.form.credit gt session.basket.header.balance + session.basket.header.acctcash>
 						<cfset session.basket.errMsg = "Card sale amount is too high.">
 					<cfelseif args.form.cash neq 0 AND args.form.credit eq 0>
-						<cfset session.basket.errMsg = "Please enter the sale amount from the Paypoint receipt.">
+						<cfset session.basket.errMsg = "Please enter the sale amount from the PayStation receipt.">
 					<cfelseif session.basket.service eq 0 AND abs(args.form.credit) lt session.till.prefs.mincard AND abs(args.form.credit) neq session.till.prefs.service>
 						<cfset session.basket.errMsg = "Minimum sale amount allowed on card is &pound;#session.till.prefs.mincard#.">
 					<cfelse>
@@ -1560,7 +1560,7 @@
 					<option value="NEWS" data-price="" data-cashonly="0" data-title="News Account">0 - News Account</option>
 					<option value="SUPP" data-price="" data-cashonly="1" data-title="Supplier Payment">1 - Supplier Payment</option>
 					<option value="SRV" data-price="0.50" data-cashonly="0" data-title="Service Charge">0 - Service Charge</option>
-					<option value="PP" data-price="" data-cashonly="1" data-title="PayPoint">1 - PayPoint</option>
+					<option value="PS" data-price="" data-cashonly="1" data-title="PayStation">1 - PayStation</option>
 				</select>
 				<br>
 				<input name="addToBasket" type="hidden" value="true" />

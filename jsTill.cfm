@@ -14,7 +14,7 @@
 			var basket = {
 				product: {},
 				publication: {},
-				paypoint: {},
+				paystation: {},
 				deal: {},
 				payment: {},
 				discount: {},

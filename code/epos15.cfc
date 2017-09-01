@@ -670,7 +670,7 @@
 			</cfif>
 			<!--- sanitise input fields --->
 			<cfset args.data.class = "item">	<!--- item = sale, pay = payment --->
-			<cfset args.data.itemClass = args.form.itemClass>	<!--- sales centre, e.g. shop,lottery,paypoint --->
+			<cfset args.data.itemClass = args.form.itemClass>	<!--- sales centre, e.g. shop,lottery,paystation --->
 			<cfset args.data.prodClass = args.form.prodClass>	<!--- single or multiple (see notes) --->
 			<cfset args.data.discount = 0>
 			<cfset args.data.account = val(args.form.account)>
@@ -690,20 +690,20 @@
 			<cfelse>	
 			
 				<cfswitch expression="#UCASE(args.form.itemClass)#">
-					<cfcase value="PAYPOINT">
+					<cfcase value="paystation">
 						<cfset args.data.cash = args.data.cash + args.data.credit>
 						<cfif args.data.cash neq 0>
 							<cfif args.form.addToBasket>
 								<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
 								<cfset args.data.gross = args.data.cash>
 								<cfset CalcValues(args.data)>
-								<cfset ArrayAppend(session.basket.paypoint,args.data)>
+								<cfset ArrayAppend(session.basket.paystation,args.data)>
 							<cfelse>
 								<cfset loc.ppcount = 0>
-								<cfloop array="#session.basket.paypoint#" index="loc.pp">
+								<cfloop array="#session.basket.paystation#" index="loc.pp">
 									<cfset loc.ppcount++>
 									<cfif loc.pp.itemID eq args.data.itemID AND loc.pp.unitPrice eq args.data.cash>
-										<cfset ArrayDeleteAt(session.basket.paypoint,loc.ppcount)>
+										<cfset ArrayDeleteAt(session.basket.paystation,loc.ppcount)>
 										<cfbreak>
 									</cfif>
 								</cfloop>
@@ -1037,7 +1037,7 @@
 					<cfelseif session.basket.info.mode eq "rfd" AND loc.test.diff lt 0>
 						<cfset session.basket.info.errMsg = "Card refund amount is too high. #args.data.credit# : #session.basket.total.balance#">
 					<cfelseif args.data.cash neq 0 AND args.data.credit eq 0>
-						<cfset session.basket.info.errMsg = "Please enter the sale amount from the Paypoint receipt.">
+						<cfset session.basket.info.errMsg = "Please enter the sale amount from the PayStation receipt.">
 					<cfelseif session.basket.info.service eq 0 AND abs(args.data.credit) lt session.till.prefs.mincard AND abs(args.data.credit) neq session.till.prefs.service>
 						<cfset session.basket.info.errMsg = "Minimum sale amount allowed on card is &pound;#session.till.prefs.mincard#.">
 					<cfelse>
@@ -1124,8 +1124,8 @@
 				</cfcase>		
 --->
 				<cfcase value="Coupon">
-					<cfif ArrayLen(session.basket.paypoint) eq 0>
-						<cfset session.basket.info.errMsg = "Please put a Paypoint item in the basket before accepting a coupon.">
+					<cfif ArrayLen(session.basket.paystation) eq 0>
+						<cfset session.basket.info.errMsg = "Please put a PayStation item in the basket before accepting a coupon.">
 					<cfelse>
 						<cfset args.data.cash = args.data.cash + args.data.credit>
 						<cfset args.data.credit = 0>
@@ -1958,7 +1958,7 @@
 							<td align="right">#loc.disc#</td>
 						</tr>
 					</cfcase>
-					<cfcase value="PAYPOINT|NEWS|LOTTERY|SRV|SCRATCHCARD|LPRIZE|SPRIZE" delimiters="|">
+					<cfcase value="paystation|NEWS|LOTTERY|SRV|SCRATCHCARD|LPRIZE|SPRIZE" delimiters="|">
 						<cfset loc.total.retail -= loc.tran.gross>
 						<cfset loc.tran.itemType = "item">
 						<cfset loc.prodID = loc.tran.prodID>
@@ -2150,7 +2150,7 @@
 								</tr>
 								</cfif>
 							</cfcase>
-							<cfcase value="PAYPOINT|NEWS|LOTTERY|SCRATCHCARD|SRV|SPRIZE|LPRIZE|VOUCHER" delimiters="|">
+							<cfcase value="paystation|NEWS|LOTTERY|SCRATCHCARD|SRV|SPRIZE|LPRIZE|VOUCHER" delimiters="|">
 								<cfset loc.total.retail -= loc.tran.gross>
 								<cfset loc.tran.itemType = "item">
 								<cfset loc.prodID = loc.tran.prodID>

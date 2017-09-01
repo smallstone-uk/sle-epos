@@ -1,6 +1,6 @@
 <cfcomponent displayname="core">
-	<cfset this.salesSections = ["product", "publication", "paypoint", "deal", "supplier"]>
-	<cfset this.requiredKeys  = ["product", "publication", "paypoint", "deal", "supplier", "payment", "discount", "account"]>
+	<cfset this.salesSections = ["product", "publication", "paystation", "deal", "supplier"]>
+	<cfset this.requiredKeys  = ["product", "publication", "paystation", "deal", "supplier", "payment", "discount", "account"]>
 	
 	<cffunction name="addToBasket" access="public" returntype="struct">
 		<cfargument name="args" type="struct" required="yes">
@@ -32,7 +32,7 @@
 		<cfset loc.sign = (2 * int(session.basket.info.mode eq "reg")) - 1>		<!--- mode: reg = 1 refund = -1 --->
 		
 		<cfswitch expression="#args.type#">
-			<cfcase value="product|publication|paypoint|deal" delimiters="|">
+			<cfcase value="product|publication|paystation|deal" delimiters="|">
 				<cfset args.price = (-val(args.price)) * loc.sign>
 			</cfcase>
 		</cfswitch>

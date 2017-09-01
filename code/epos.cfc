@@ -560,8 +560,8 @@
 		</cfoutput>
 	</cffunction>
 
-	<cfset this.salesSections = ["product", "publication", "paypoint", "deal", "supplier"]>
-	<cfset this.requiredKeys  = ["product", "publication", "paypoint", "deal", "supplier", "payment", "discount", "account"]>
+	<cfset this.salesSections = ["product", "publication", "paystation", "deal", "supplier"]>
+	<cfset this.requiredKeys  = ["product", "publication", "paystation", "deal", "supplier", "payment", "discount", "account"]>
 
 	<cffunction name="GetSalesSections" access="public" returntype="array">
 		<cfreturn this.salesSections>
@@ -592,7 +592,7 @@
 	<cffunction name="CalculateAccountTotals" access="public" returntype="void">
 		<cfset var loc = {}>
 		<cfset loc.basket = session.epos_frame.basket>
-		<cfset loc.requiredKeys = ["product", "publication", "paypoint"]>
+		<cfset loc.requiredKeys = ["product", "publication", "paystation"]>
 		
 		<cftry>
 			<cflock scope="session" timeout="10">
@@ -2298,11 +2298,11 @@
 		<cfset loc.productCount = StructCount(session.epos_frame.basket.product)>
 		<cfset loc.publicationCount = StructCount(session.epos_frame.basket.publication)>
 		<cfset loc.dealCount = StructCount(session.epos_frame.basket.deal)>
-		<cfset loc.paypointCount = StructCount(session.epos_frame.basket.paypoint)>
+		<cfset loc.paystationCount = StructCount(session.epos_frame.basket.paystation)>
 		<cfset loc.paymentCount = StructCount(session.epos_frame.basket.payment)>
 		<cfset loc.supplierCount = StructCount(session.epos_frame.basket.supplier)>
 		
-		<cfif loc.productCount is 0 AND loc.publicationCount is 0 AND loc.dealCount is 0 AND loc.paypointCount is 0>
+		<cfif loc.productCount is 0 AND loc.publicationCount is 0 AND loc.dealCount is 0 AND loc.paystationCount is 0>
 			<cfif loc.supplierCount gt 0>
 				<cfset loc.result = true>
 			</cfif>
@@ -2489,7 +2489,7 @@
 		<cfset session.epos_frame.result.totalGiven = 0>
 		<cfset session.epos_frame.result.changeDue = 0>
 		<cfset session.epos_frame.result.discount = 0>
-		<cfset loc.requiredKeys = ["product", "publication", "paypoint", "deal", "payment", "discount", "supplier"]>
+		<cfset loc.requiredKeys = ["product", "publication", "paystation", "deal", "payment", "discount", "supplier"]>
 		<cfset session.epos_frame.basket = {}>
 		<cfloop array="#loc.requiredKeys#" index="loc.key">
 			<cfset StructInsert(session.epos_frame.basket, loc.key, {})>
@@ -3071,11 +3071,11 @@
 		<cfset loc.productCount = StructCount(session.epos_frame.basket.product)>
 		<cfset loc.publicationCount = StructCount(session.epos_frame.basket.publication)>
 		<cfset loc.dealCount = StructCount(session.epos_frame.basket.deal)>
-		<cfset loc.paypointCount = StructCount(session.epos_frame.basket.paypoint)>
+		<cfset loc.paystationCount = StructCount(session.epos_frame.basket.paystation)>
 		<cfset loc.paymentCount = StructCount(session.epos_frame.basket.payment)>
 		<cfset loc.supplierCount = StructCount(session.epos_frame.basket.supplier)>
 		
-		<cfset loc.totalCount = loc.productCount + loc.publicationCount + loc.dealCount + loc.paypointCount + loc.paymentCount + loc.supplierCount>
+		<cfset loc.totalCount = loc.productCount + loc.publicationCount + loc.dealCount + loc.paystationCount + loc.paymentCount + loc.supplierCount>
 
 		<cfcatch type="any">
 			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
@@ -3558,7 +3558,7 @@
 				<cfset loc.result.newBasket = true>
 			</cfif>
 <!---
-				<cfset session.epos_frame.basket = {product = {}, publication = {}, paypoint = {}, deal = {}, payment = {}, discount = {}, supplier = {}}>
+				<cfset session.epos_frame.basket = {product = {}, publication = {}, paystation = {}, deal = {}, payment = {}, discount = {}, supplier = {}}>
 				<cfset session.epos_frame.basket.account = {credit = 0, cash = 0}>
 				<!---<cfset session.epos_frame.header = {}>--->
 				<cfset loc.result.newBasket = true>
@@ -3588,7 +3588,7 @@
 		<cfset var loc = {}>
 		<cfset loc.result = ValidateBasket(true)>
 		
-		<!---<cfset loc.requiredKeys = ["product", "publication", "paypoint", "deal", "payment", "discount", "supplier"]>
+		<!---<cfset loc.requiredKeys = ["product", "publication", "paystation", "deal", "payment", "discount", "supplier"]>
 		
 		<cfset StructDelete(session.epos_frame, "header")>
 		<cfif NOT StructKeyExists(session.epos_frame, "header")>

@@ -6,15 +6,15 @@
 <cfset sign = (2 * int(session.basket.info.mode eq "reg")) - 1>
 <cfset parm.form.value = (-val(parm.form.value)) * sign>
 
-<cfif StructKeyExists(session.epos_frame.basket.paypoint, "charge")>
-	<cfset StructUpdate(session.epos_frame.basket.paypoint, "charge", {
+<cfif StructKeyExists(session.epos_frame.basket.paystation, "charge")>
+	<cfset StructUpdate(session.epos_frame.basket.paystation, "charge", {
 		index = "charge",
 		title = parm.form.title,
 		price = parm.form.value,
 		qty = 1
 	})>
 <cfelse>
-	<cfset StructInsert(session.epos_frame.basket.paypoint, "charge", {
+	<cfset StructInsert(session.epos_frame.basket.paystation, "charge", {
 		index = "charge",
 		title = parm.form.title,
 		price = parm.form.value,
