@@ -861,6 +861,25 @@
 						</cfif>
 					</cfcase>
 					
+					<cfcase value="VOUCHER">
+						<cfif ArrayLen(session.basket.media) eq 0>
+							<cfset session.basket.info.errMsg = "Please put a news item in the basket before accepting a voucher.">
+						<cfelse>
+							<cfset args.data.cash = args.data.cash + args.data.credit>
+							<cfset args.data.credit = 0>
+								<cfset args.data.title = "NV #args.data.cash# #session.basket.total.voucher# #session.basket.total.media#">
+							<cfif args.data.cash is 0>
+								<cfset session.basket.info.errMsg = "Please enter the voucher value.">
+							<cfelseif abs(args.data.cash + session.basket.total.voucher) gt abs(session.basket.total.media)>
+								<cfset session.basket.info.errMsg = "Voucher total cannot exceed newspaper total.">
+							<cfelse>
+								<cfset args.data.class = "pay">
+								<cfset args.data.itemClass = "VOUCHER">
+								<cfset CalcValues(args.data)>
+								<cfset UpdateBasket(args)>
+							</cfif>
+						</cfif>
+					</cfcase>
 <!---
 					<cfcase value="VOUCHER|CPN" delimiters="|">
 						<cfset args.data.cash = args.data.cash + args.data.credit>
@@ -1838,9 +1857,9 @@
 		<cfset var loc = {}>
 		<cfset loc.keys = ListSort(StructKeyList(session.till.total,","),"text","ASC",",")>
 		<cfloop list="#loc.keys#" index="loc.fld">
-			<cfif session.till.total[loc.fld] neq 0>
-				<cfset WriteTotal(loc.fld,session.till.total[loc.fld])>
-			</cfif>
+			<!---<cfif session.till.total[loc.fld] neq 0>--->
+			<cfset WriteTotal(loc.fld,session.till.total[loc.fld])>
+			<!---</cfif>--->
 		</cfloop>
 	</cffunction>
 

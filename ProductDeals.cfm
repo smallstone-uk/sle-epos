@@ -20,7 +20,7 @@
 	AND `edStatus` = 'Active'
 	ORDER BY edID,prodTitle
 </cfquery>
-<cfdump var="#QProductDeals#" label="QProductDeals" expand="no">
+
 <table>
 <cfoutput query="QProductDeals">
 	<tr>

@@ -7,8 +7,6 @@
     <cfset parm.form.account = 0>
     <cfset parm.form.prodID = form.itemID>
     <cfset parm.form.prodtitle = title>
-    <cfdump var="#form#" label="form" expand="yes" format="html" 
-        output="#application.site.dir_logs#epos\inc-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 	<cfset parm.form.addToBasket = true>	<!--- used by non-shopItems categories --->
     <cfset e.AddItem(parm)>
 

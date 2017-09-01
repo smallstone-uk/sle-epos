@@ -4,7 +4,6 @@
 <cfset parm.datasource = application.site.datasource1>
 <cfset parm.url = application.site.normal>
 <cfset data = epos.LoadDayReport( LSDateFormat(Now(),"yyyy-mm-dd") )>
-<cfdump var="#data#" label="data" expand="no" abort="false">
 
 <link href="css/basicTables.css" rel="stylesheet" type="text/css">
 

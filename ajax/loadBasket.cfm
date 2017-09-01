@@ -142,8 +142,6 @@
 
 		<cfset loc = {}>
 		<cfset loc.thisBasket = (session.till.isTranOpen) ? session.basket : session.till.prevtran>
-<cfdump var="#loc.thisBasket#" label="thisBasket" expand="yes" format="html" 
-	output="#application.site.dir_logs#epos\bskt-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 		<cfset loc.metaTitle = "Balance Due from Customer1">
 		<cfset loc.metaValue = decimalFormat(0.00)>

@@ -5,7 +5,6 @@
 <cfset parm.url = application.site.normal>
 <cfset parm.form = form>
 <cfset newalert = epos.AddAlert(parm.form)>
-<cfdump var="#parm#" label="parm" expand="yes">
 
 <cfcatch type="any">
 	<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 

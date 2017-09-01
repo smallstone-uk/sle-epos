@@ -69,5 +69,3 @@
 
 </body>
 </html>
-<cfdump var="#session.epos_frame#" label="session.epos_frame" expand="yes">
-<cfdump var="#session#" label="session" expand="no">
