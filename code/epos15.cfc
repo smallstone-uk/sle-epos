@@ -524,8 +524,6 @@
 	<cffunction name="UpdateBasket" access="public" returntype="void">
 		<cfargument name="args" type="struct" required="yes">
 		<cftry>
-<cfdump var="#args#" label="UpdateBasket" expand="yes" format="html" 
-	output="#application.site.dir_logs#epos\upd-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 			<cfset var loc = {}>
 			<cfif args.data.prodClass eq "single">
@@ -640,8 +638,6 @@
 			args.form.addToBasket
 			args.form.payID	
 		--->
-<cfdump var="#args#" label="AddItem" expand="yes" format="html" 
-	output="#application.site.dir_logs#epos\add-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 		<cfset loc.result = {}>
 		<cfset loc.result.err = "">
