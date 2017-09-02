@@ -3356,6 +3356,7 @@
 					WHERE prodID = siProduct )
 				INNER JOIN tblEPOS_Cats ON prodEposCatID=epcID
 				WHERE epcParent = #val(catID)#
+				AND prodStatus = 'active'
 				ORDER BY epcOrder
 			</cfquery>
 			<cfcatch type="any">
