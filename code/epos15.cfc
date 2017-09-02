@@ -333,6 +333,9 @@
 										<cfset loc.tran.itemClass = loc.data.itemClass>
 										<cfset loc.tran.prop = 1>
 										<cfset loc.tran.gross = Round((loc.data.unitPrice / 2) * 100) / 100 * loc.tranType * loc.rec.regMode>
+										<cfif loc.i MOD 2 IS 0>
+											<cfset loc.tran.gross = (loc.data.unitPrice + loc.tran.gross) * loc.tranType * loc.rec.regMode>
+										</cfif>
 										<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
 										<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
 										<cfset ArrayAppend(session.basket.trans,loc.tran)>
