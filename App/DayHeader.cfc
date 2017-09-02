@@ -42,6 +42,18 @@ component extends = "Framework.Model"
         ").lottoDraws);
     }
 
+    public numeric function scratchCards()
+    {
+        return val(this.sql("
+            SELECT SUM(eiNet) AS scratchCards
+            FROM tblEPOS_Items
+            WHERE eiType = 'SCRATCHCARD'
+            AND eiNomID = 2
+            AND eiTimestamp >= '#this.todayStart#'
+            AND eiTimestamp <= '#this.todayEnd#'
+        ").scratchCards);
+    }
+
     public numeric function lottoPrizes()
     {
         return val(this.sql("
@@ -73,15 +85,8 @@ component extends = "Framework.Model"
      */
     public any function today()
     {
-        var from = now()
-            .setHour(0)
-            .setMinute(0)
-            .setSecond(0);
-
-        var to = now()
-            .setHour(23)
-            .setMinute(59)
-            .setSecond(59);
+		var from = createDateTime(year(now()), month(now()), day(now()), 0, 0, 0);
+		var to = createDateTime(year(now()), month(now()), day(now()), 23, 59, 59);
 
         var records = this.timeframe('dhTimestamp', from, to);
 
