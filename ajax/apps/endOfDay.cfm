@@ -7,6 +7,7 @@
 		dayHeader = new App.DayHeader();
 		zCash = dayHeader.zCash();
 		lottoDraws = dayHeader.lottoDraws();
+		scratchCards = dayHeader.scratchCards();
 		lottoPrizes = dayHeader.lottoPrizes();
 		scratchPrizes = dayHeader.scratchPrizes();
 		today = dayHeader.today();
@@ -75,9 +76,9 @@
 					dc.dhsc_form = $(this).serialize();
 					$(this).fadeOut(function() {
 						var lottoTotal = 0;
-						for (c of ['lotto_draws', 'lotto_prizes', 'lotto_dhsc_prizes'])
+						for (c of ['lotto_draws', 'lotto_sc', 'lotto_prizes', 'lotto_sc_prizes'])
 							lottoTotal += Number($('input[name="' + c + '"]').val());
-						$('input[name="lotto_sc"]').val(nf(dc.dhsc_total, "str"));
+					//	$('input[name="lotto_sc"]').val(nf(dc.dhsc_total, "str"));
 						$('input[name="lotto_total"]').val(nf(lottoTotal, "str"));
 						$('.LotteryForm').fadeIn();
 					});
@@ -218,7 +219,7 @@
 				<tr>
 					<th align="right">Scratchcards</th>
 					<td>
-						<input type="text" name="lotto_sc" class="money lotto-ui" placeholder="GBP" value="#DecimalFormat(totalSC)#">
+						<input type="text" name="lotto_sc" class="money lotto-ui" placeholder="GBP" value="#DecimalFormat(-scratchCards)#">
 					</td>
 				</tr>
 
@@ -239,7 +240,7 @@
 				<tr>
 					<th align="right">Lottery Total</th>
 					<td>
-						<input type="text" name="lotto_total" class="money lotto-ui" placeholder="GBP">
+						<input type="text" name="lotto_total" class="money lotto-ui" placeholder="GBP" value="0">
 					</td>
 				</tr>
 			</table>
