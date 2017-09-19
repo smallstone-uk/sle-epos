@@ -823,12 +823,12 @@
 						</cfif>
 					</cfcase>
 					<cfcase value="SCRATCHCARD">
-						<cfset args.data.cash = args.data.cash + args.data.credit>
+						<cfset args.data.credit = args.data.cash + args.data.credit>
 						<cfif args.form.addToBasket>
-							<cfif args.data.cash neq 0>
+							<cfif args.data.credit neq 0>
 								<cfset args.data.class = "lot">
-								<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
-								<cfset args.data.gross = args.data.cash>	<!--- calc gross transaction value --->
+								<!--- <cfset args.data.credit = 0>	force empty - only use cash figure
+								<cfset args.data.gross = args.data.cash>	calc gross transaction value --->
 								<cfset CalcValues(args.data)>
 								<cfif args.form.addToBasket><cfset ArrayAppend(session.basket.scratchcard,args.data)></cfif>
 								<cfset CheckDeals()>
@@ -1113,6 +1113,8 @@
 						<cfset args.data.prodID = 1>
 						<cfset ArrayAppend(session.basket.payments,args.data)>
 						<cfset loc.addTran = true>
+						<cfdump var="#session#" label="card dump" expand="yes" format="html" 
+							output="#application.site.dir_logs#epos\card-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 					</cfif>
 				</cfcase>
 				

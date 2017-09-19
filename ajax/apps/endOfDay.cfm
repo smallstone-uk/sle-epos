@@ -45,9 +45,11 @@
 					$('.ui').each(function(i, e) {
 						var denom = parseInt($(e).val() * 100);		// get amount in pence
 						dc.dhcid_subtotal += denom;
+						console.log(denom + " total " + dc.dhcid_subtotal);
 					});
 					var zcash = parseInt($('.zcash').val() * 100);	// convert zcash to pence
 					var diff = dc.dhcid_subtotal - zcash;		// check difference
+					console.log(dc.dhcid_subtotal + " zcash " + zcash);
 					if (Math.abs(diff) < 0.01) diff = 0;	// ignore tiny rounding errors less than 1p
 					
 					$('.subtotal').val( nf(dc.dhcid_subtotal / 100, "str") );		// show in pounds & pence
@@ -76,7 +78,7 @@
 					dc.dhsc_form = $(this).serialize();
 					$(this).fadeOut(function() {
 						var lottoTotal = 0;
-						for (c of ['lotto_draws', 'lotto_sc', 'lotto_prizes', 'lotto_sc_prizes'])
+						for (c of ['lotto_draws','lotto_sc','lotto_prizes','lotto_sc_prizes'])
 							lottoTotal += Number($('input[name="' + c + '"]').val());
 					//	$('input[name="lotto_sc"]').val(nf(dc.dhsc_total, "str"));
 						$('input[name="lotto_total"]').val(nf(lottoTotal, "str"));
@@ -146,9 +148,11 @@
 					<td><input type="text" placeholder="GBP" class="money zcash" disabled value="#DecimalFormat(session.till.total.cashINDW)#"></td>
 				</tr>
 				<cfset diff = subTotal - session.till.total.cashINDW>
+				<cfif abs(diff) lt 0.01><cfset diff = 0></cfif>
 				<tr>
 					<th align="right">Difference</th>
-					<td><input type="text" placeholder="GBP" class="money diff" value="#diff#" disabled></td><td align="right" colspan="2"><span class="cidFace"></span></td>
+					<td><input type="text" placeholder="GBP" class="money diff" value="#DecimalFormat(diff)#" disabled></td>
+					<td align="right" colspan="2"><span class="cidFace"></span></td>
 				</tr>
 			</table>
 			<input type="submit" class="appbtn" value="Continue">
@@ -172,7 +176,7 @@
 				</tr>
 				<cfset totalSC = 0>
 				<cfset gameValues = [10,5,5,3,2,2,1,1]>
-				<cfset packQtys = [20,40,40,60,80,80,160,160]>
+				<cfset packQtys = [25,50,50,60,90,90,180,180]>
 				<cfloop from="1" to="8" index="game">
 					<cfset gStart = "dhsc_g#game#_start">
 					<cfset gEnd = "dhsc_g#game#_end">

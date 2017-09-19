@@ -33,7 +33,14 @@
 	<cfset parm.reportDate = Now()>
 </cfif>
 <cfset epos = ecfc.LoadEPOSTotals(parm)>
-<cfdump var="#epos#" label="epos" expand="false">
+<!---<cfdump var="#epos#" label="epos" expand="false">--->
+<cfset lottoTotal = epos.accounts.lottery + epos.accounts.scratchcard + epos.accounts.lprize + epos.accounts.sprize>
+<cfif lottoTotal lt 0>
+	<cfset lottoCoins = (((lottoTotal * 100) MOD 500) / 100) * -1>
+<cfelse>
+	<cfset lottoCoins = 0>
+</cfif>
+<cfset psCoins = (((epos.accounts.paystation * 100) MOD 500) / 100) * -1>
 <cfoutput>
 	<cfset noteTotal = 0>
 	<cfset coinTotal = 0>
@@ -63,16 +70,16 @@
 			</tr>
 		</cfloop>
 		<tr>
-			<td>Cash Total</td>
-			<td align="right">#DecimalFormat(noteTotal + coinTotal)#</td>
-		</tr>
-		<tr>
 			<td>News Vouchers</td>
 			<td align="right">#epos.accounts.voucher#</td>
 		</tr>
 		<tr>
 			<td>Coupons</td>
 			<td align="right">#epos.accounts.cpn#</td>
+		</tr>
+		<tr>
+			<td>Cash Total</td>
+			<td align="right">#DecimalFormat(noteTotal + coinTotal)#</td>
 		</tr>
 		<tr>
 			<td>Cash INDW</td>
@@ -90,23 +97,25 @@
 		</tr>
 		<tr>
 			<td>Lottery Coins</td>
-			<td align="right">TBA</td>
+			<td align="right">#DecimalFormat(lottoCoins)#</td>
 		</tr>
 		<tr>
 			<td>PayStation Coins</td>
-			<td align="right">TBA</td>
+			<td align="right">#DecimalFormat(psCoins)#</td>
 		</tr>
+		<cfset remCoins = coinTotal - lottoCoins - psCoins>
+		<cfset bankCoins = ((remCoins * 100) MOD 500) / 100>
 		<tr>
 			<td>Sub Total</td>
-			<td align="right">TBA</td>
+			<td align="right">#DecimalFormat(remCoins)#</td>
 		</tr>
 		<tr>
 			<td>Bank Coins</td>
-			<td align="right">TBA</td>
+			<td align="right">#bankCoins#</td>
 		</tr>
 		<tr>
 			<td>Float Coins</td>
-			<td align="right">TBA</td>
+			<td align="right">#DecimalFormat(remCoins - bankCoins)#</td>
 		</tr>
 	</table>
 	<table>
