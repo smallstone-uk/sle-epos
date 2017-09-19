@@ -34,6 +34,7 @@
 </cfif>
 <cfset epos = ecfc.LoadEPOSTotals(parm)>
 <!---<cfdump var="#epos#" label="epos" expand="false">--->
+
 <cfset lottoTotal = epos.accounts.lottery + epos.accounts.scratchcard + epos.accounts.lprize + epos.accounts.sprize>
 <cfif lottoTotal lt 0>
 	<cfset lottoCoins = (((lottoTotal * 100) MOD 500) / 100) * -1>
