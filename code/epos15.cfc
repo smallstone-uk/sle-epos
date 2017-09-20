@@ -1113,7 +1113,7 @@
 						<cfset args.data.prodID = 1>
 						<cfset ArrayAppend(session.basket.payments,args.data)>
 						<cfset loc.addTran = true>
-						<cfdump var="#session#" label="card dump" expand="yes" format="html" 
+						<cfdump var="#session.basket#" label="card dump" expand="yes" format="html" 
 							output="#application.site.dir_logs#epos\card-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 					</cfif>
 				</cfcase>
