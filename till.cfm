@@ -17,8 +17,11 @@
 				postInit: function() {
 					console.log("Initialized barcode event handler");
 				},
+				
 				callback: function(barcode) {
-					$.searchBarcode(barcode);
+					$.searchBarcode(barcode, function() {
+						$.msgBox("Product added", "success");
+					});
 				}
 			});
 		});

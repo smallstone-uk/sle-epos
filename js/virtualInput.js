@@ -881,6 +881,7 @@
 							$('.virtual_numpad').remove();
 							$field.removeAttr("data-spawned").removeClass("VIC_ErrorFld").blur();
 						});
+						settings.cancel();
 					}
 				}
 			});
@@ -1248,6 +1249,7 @@
 			fields: [],
 			field: "vninput_0000",
 			callback: function() { return true; },
+			cancel: function() {},
 			minimum: -1,
 			maximum: -1,
 			overide: false,

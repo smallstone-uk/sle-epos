@@ -1009,15 +1009,23 @@
 		});
 		return result;
 	}
-	$.searchBarcode = function(barcode) {
+	
+	window.eposScanningBarcode = false;
+	$.searchBarcode = function(barcode, callback) {
+		if (window.eposScanningBarcode) return;
+		window.eposScanningBarcode = true;
+		
+		$.msgBox("Processing..", "success");
+		
+		callback = callback || function () {};
+	
 		$.ajax({
 			type: "POST",
 			url: "ajax/searchBarcode.cfm",
 			data: {"barcode": barcode},
 			success: function(data) {
-				console.log(data);
+				window.eposScanningBarcode = false;
 				var result = JSON.parse(data);
-				console.log(result);
 				if (typeof result.PRODID != "undefined") {
 					var price = (typeof result.ENCODEDVALUE != "undefined" && Math.abs(result.ENCODEDVALUE) > 0) ? result.ENCODEDVALUE : result.SIOURPRICE;
 					if (result.ENCODEDVALUE < 0) {
@@ -1035,7 +1043,7 @@
 							qty: 1,
 							type: "VOUCHER",
 							vrate: ""
-						}, function() { $.loadBasket(); });
+						}, function() { $.loadBasket(); callback(); });
 					} else {
 						$.addToBasket({
 							account: "",
@@ -1056,7 +1064,7 @@
 							cashonly: result.PRODCASHONLY,
 							cash: (result.PRODCASHONLY == 1) ? price : 0,
 							credit: (result.PRODCASHONLY == 1) ? 0 : price
-						});
+						}, callback);
 					}
 				} else {
 					$.msgBox("Product not found", "error");
@@ -1100,6 +1108,7 @@
 			console.log(error);
 		}
 	}
+	
 	$.scanBarcode = function(params) {
 		if (typeof params.preinit == "function") params.preinit();
 		$(document).bind("keypress.scanBarcodeEvent", function(event) {
@@ -1129,7 +1138,9 @@
 		});
 	}
 
-	$.addToBasket = function(params) {
+	$.addToBasket = function(params, callback) {
+		callback = callback || function() {};
+
 		$.ajax({
 			type: "POST",
 			url: "ajax/addToBasket.cfm",
@@ -1137,6 +1148,7 @@
 			success: function(data) {
 				raiseEvent('onAdded', data);
 				$.loadBasket();
+				callback();
 			}
 		});
 	}

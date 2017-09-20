@@ -7,15 +7,32 @@
 <cfoutput>
 	<script>
 		$(document).ready(function(e) {
+			window.eposPaymentsDisabled = false;
+			
+			var callback = function() {
+				$.loadBasket(function() {
+					window.eposPaymentsDisabled = false;
+				});
+			}
+			
+			var cancel = function() {
+				window.eposPaymentsDisabled = false;
+			}
+			
 			$('.payment_item').click(function(event) {
+				if (window.eposPaymentsDisabled) return;
+				window.eposPaymentsDisabled = true;
+				
 				var obj = $(this);
 				var type = $(this).data("method");
 				var id = $(this).data("id");
 				var balance = Number("#session.basket.total.balance#");
+				
 				switch (type) {
 					case "partcash":
 						$.virtualNumpad({
 							hint: "Enter a value for part cash",
+							cancel: cancel,
 							callback: function(value) {
 								$.addPayment({
 									account: "",
@@ -30,7 +47,7 @@
 									type: "",
 									vrate: "",
 									payID: id
-								}, function() { $.loadBasket(); });
+								}, callback);
 							}
 						});
 						break;
@@ -48,9 +65,7 @@
 							type: "",
 							vrate: "",
 							payID: id
-						}, function() {
-							$.loadBasket();
-						});
+						}, callback);
 						break;
 					case "partcard":
 						// sometimes shows values from previous transactions 	01/08/2017
@@ -84,8 +99,9 @@
 									type: "",
 									vrate: "",
 									payID: id
-								}, function() { $.loadBasket(); });
-							}
+								}, callback);
+							},
+							cancel: cancel
 						});
 						break;
 					case "fastcard":
@@ -103,9 +119,7 @@
 								type: "",
 								vrate: "",
 								payID: id
-							}, function() {
-								$.loadBasket();
-							});
+							}, callback);
 						} else {
 							$.msgBox("You cannot fast card when you have cash only items in the basket. Use part card instead.", "error");
 						}
@@ -113,6 +127,7 @@
 					case "cheque":
 						$.virtualNumpad({
 							hint: "Enter the cheque's value",
+							cancel: cancel,
 							callback: function(value) {
 								$.addPayment({
 									account: "",
@@ -127,15 +142,14 @@
 									type: "",
 									vrate: "",
 									payID: id
-								}, function() {
-									$.loadBasket();
-								});
+								}, callback);
 							}
 						});
 						break;
 					case "voucher":
 						$.virtualNumpad({
 							hint: "Enter the voucher amount",
+							cancel: cancel,
 							callback: function(value) {
 								$.addPayment({
 									account: "",
@@ -149,13 +163,14 @@
 									type: "VOUCHER",
 									vrate: "",
 									payID: id
-								}, function() { $.loadBasket(); });
+								}, callback);
 							}
 						});
 						break;
 					case "coupon":
 						$.virtualNumpad({
 							hint: "Enter the coupon amount",
+							cancel: cancel,
 							callback: function(value) {
 								$.addPayment({
 									account: "",
@@ -169,7 +184,7 @@
 									type: "CPN",
 									vrate: "",
 									payID: id
-								}, function() { $.loadBasket(); });
+								}, callback);
 							}
 						});
 						break;
@@ -187,9 +202,10 @@
 							type: "",
 							vrate: "",
 							payID: id
-						}, function() { $.loadBasket(); });
+						}, callback);
 						break;
 				}
+				
 				event.preventDefault();
 			});
 		});
