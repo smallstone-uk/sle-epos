@@ -1269,9 +1269,11 @@
 
 					request += builder.createTextElement({data: '\n'});
 
+					request += builder.createAlignmentElement({position: 'center'});
 					<cfif loc.thisBasket.info.mode eq "rfd">
-						request += builder.createAlignmentElement({position: 'center'});
 						request += builder.createTextElement(styles.bold("Refund\n"));
+					<cfelse>
+						request += builder.createTextElement(styles.bold("Sale\n"));
 					</cfif>
 
 					request += builder.createAlignmentElement({position: 'left'});
