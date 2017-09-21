@@ -1,5 +1,7 @@
 <cftry>
 <cfobject component="#application.site.codePath#" name="e">
+<cfset loc = {}>
+<cfset loc.thisBasket = (session.till.isTranOpen) ? session.basket : session.till.prevtran>
 
 <cfoutput>
 	<div class="basket_relative">
@@ -56,7 +58,7 @@
 				</div>
 			</cfif>
 
-			<cfif session.till.isTranOpen>
+			<cfif not loc.thisBasket.tranID>
 				<script>
 					$(document).ready(function(e) {
 						$('.basket_payment, .basket_discount').touchHold([
@@ -139,9 +141,14 @@
 			</cfif>
 			#e.ShowBasket("html")#
 		</div>
-
-		<cfset loc = {}>
-		<cfset loc.thisBasket = (session.till.isTranOpen) ? session.basket : session.till.prevtran>
+		
+		<cfif loc.thisBasket.tranID>
+			<script>
+				$(document).ready(function(e) {
+					$('##hti_home').click();
+				});
+			</script>
+		</cfif>
 
 		<cfset loc.metaTitle = "Balance Due from Customer1">
 		<cfset loc.metaValue = decimalFormat(0.00)>

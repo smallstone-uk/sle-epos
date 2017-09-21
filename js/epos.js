@@ -15,25 +15,24 @@
 	    }
 	    return output;
 	};
-
-    cf = {
-    	// Usage Example: cf.__compile().basket.info.mode;
-    	__compile: function(a) {
-    		$.ajax({
-				type: "GET",
+	
+	// Usage: cf('some.key.in.session').then(function(data) { ... });
+	cf = function(key) {
+		return new Promise(function(resolve, reject) {
+			$.ajax({
+				type: "POST",
 				url: "ajax/cfcompiler.cfm",
+				data: {key: key},
 				success: function(data) {
-					var session = convertKeysToLowerCase(JSON.parse(data));
-					var compileMethod = cf.__compile;
-					cf = session;
-					cf["__compile"] = compileMethod;
-					if (typeof a == "function") a(cf);
+					data = convertKeysToLowerCase(JSON.parse(data)).data;
+					resolve(data);
+				},
+				error: function() {
+					reject();
 				}
 			});
-
-			return cf;
-    	}
-    }; cf.__compile();
+		});
+	}
     
     ajax = {
     	// Usage Example: ajax.loadBasket({}, function(data) {alert(data)});
@@ -73,8 +72,7 @@
     }
     
     updateTillModeDisplay = function() {
-    	cf.__compile(function(cf) {
-    		var mode = cf.basket.info.mode;
+    	cf('basket.info.mode').then(function(mode) {
     		$('.header_tabs li').removeClass('active');
 			$('.header_tabs li[data-mode="' + mode + '"]').addClass('active');
     	});

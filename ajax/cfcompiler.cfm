@@ -1,20 +1,42 @@
 <cftry>
 
-<cfset data = structCopy(session)>
-<cfset prefs = {}>
+<cfscript>
+	key = form.key;
+	parent = session;
+	data = -1;
 
-<cfif structKeyExists(data.user, 'prefs')>
-    <cfset prefs = data.user.prefs>
-    <cfset structDelete(data.user, 'prefs')>
-</cfif>
+	if (find('.', key) != 0) {
+		keys = listToArray(key, '.');
+		last = keys[arrayLen(keys)];
+		arrayDeleteAt(keys, arrayLen(keys));
+
+		for (k in keys) {
+			if (structKeyExists(parent, k)) {
+				if (isValid('struct', parent[k])) {
+					parent = parent[k];
+					continue;
+				} else {
+					throw("Key '#k#' is not a struct.");
+				}
+			} else {
+				throw("Key '#k#' does not exist in 'session'.");
+				break;
+			}
+		}
+		
+		writeDumpToFile([parent, last, key]);
+
+		data = structFindDefault(parent, last, -1);
+	} else {
+		data = structFindDefault(parent, key, -1);
+	}
+</cfscript>
 
 <cfoutput>
-    #serializeJSON(data)#
+    #serializeJSON({ "data" = data })#
 </cfoutput>
 
-<cfset data.user.prefs = prefs>
-
 <cfcatch type="any">
-    <cfset writeDumpToFile(cfcatch)>
+	<cfset writeDumpToFile(cfcatch)>
 </cfcatch>
 </cftry>
