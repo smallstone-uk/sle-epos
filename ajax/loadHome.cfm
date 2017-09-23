@@ -44,24 +44,28 @@
 						});
 						break;
 					case "opentill":
-						$.virtualNumpad({
-							autolength: 4,
-							wholenumber: true,
-							callback: function(pin) {
-								$.ajax({
-									type: "POST",
-									url: "ajax/checkPin.cfm",
-									data: {"pin": pin},
-									success: function(data) {
-										var response = data.trim();
-										if (response == "true") {
-											$.openTill();
-										} else {
-											$.msgBox("Invalid Login", "error");
+						cf('till.isTranOpen').then(function(isOpen) {
+							if (isOpen) return;
+							
+							$.virtualNumpad({
+								autolength: 4,
+								wholenumber: true,
+								callback: function(pin) {
+									$.ajax({
+										type: "POST",
+										url: "ajax/checkPin.cfm",
+										data: {"pin": pin},
+										success: function(data) {
+											var response = data.trim();
+											if (response == "true") {
+												$.openTill();
+											} else {
+												$.msgBox("Invalid Login", "error");
+											}
 										}
-									}
-								});
-							}
+									});
+								}
+							});
 						});
 						break;
 				}

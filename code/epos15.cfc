@@ -2951,6 +2951,7 @@
 				WHERE edStatus = 'active'
 				AND edStarts <= #Now()#
 				AND edEnds >= #Now()#
+				ORDER BY ercTitle,edTitle
 			</cfquery>
 			<cfset session.deals = loc.QActiveDeals>
 			<cfset session.dealdata = {}>

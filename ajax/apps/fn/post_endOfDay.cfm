@@ -33,7 +33,7 @@
 	<cfset parm.reportDate = Now()>
 </cfif>
 <cfset epos = ecfc.LoadEPOSTotals(parm)>
-<!---<cfdump var="#epos#" label="epos" expand="false">--->
+<cfdump var="#epos#" label="epos" expand="false">
 <cfset lottoTotal = epos.accounts.lottery + epos.accounts.scratchcard + epos.accounts.lprize + epos.accounts.sprize>
 <cfif lottoTotal lt 0>
 	<cfset lottoCoins = (((lottoTotal * 100) MOD 500) / 100) * -1>
@@ -42,6 +42,7 @@
 </cfif>
 <cfset psCoins = (((epos.accounts.paystation * 100) MOD 500) / 100) * -1>
 <cfoutput>
+	<cfset floatCoinLimit = 70>
 	<cfset noteTotal = 0>
 	<cfset coinTotal = 0>
 	<cfset poundArray = [50,20,10,5,2,1]>
@@ -105,6 +106,11 @@
 		</tr>
 		<cfset remCoins = coinTotal - lottoCoins - psCoins>
 		<cfset bankCoins = ((remCoins * 100) MOD 500) / 100>
+		<cfset floatcoins = remCoins - bankCoins>
+		<cfif floatcoins gt floatCoinLimit>
+			<cfset floatcoins = floatCoinLimit>
+			<cfset bankCoins = remCoins - floatcoins>
+		</cfif>
 		<tr>
 			<td>Sub Total</td>
 			<td align="right">#DecimalFormat(remCoins)#</td>
@@ -115,7 +121,7 @@
 		</tr>
 		<tr>
 			<td>Float Coins</td>
-			<td align="right">#DecimalFormat(remCoins - bankCoins)#</td>
+			<td align="right">#DecimalFormat(floatcoins)#</td>
 		</tr>
 	</table>
 	<table>
