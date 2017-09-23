@@ -24,7 +24,7 @@
 			}
 		}
 		
-		writeDumpToFile([parent, last, key]);
+	//	writeDumpToFile([parent, last, key]);
 
 		data = structFindDefault(parent, last, -1);
 	} else {
