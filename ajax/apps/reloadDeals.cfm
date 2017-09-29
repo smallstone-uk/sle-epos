@@ -16,11 +16,11 @@
 				<th>Ends</th>
 				<th>Type</th>
 			</tr>
-		<cfloop collection="#session.dealdata#" item="key">
+		<cfloop array="#session.dealOrder#" index="key">
 			<cfset deal = StructFind(session.dealdata,key)>
 			<tr>
 				<td>#deal.ercTitle#</td>
-				<td>#deal.edTitle#</td>
+				<td align="left">#deal.edTitle#</td>
 				<td>#deal.edDealType#</td>
 				<td>#deal.edQty#</td>
 				<td>&pound;#deal.edAmount#</td>
