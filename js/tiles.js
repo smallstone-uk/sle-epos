@@ -68,7 +68,7 @@
 							$('.' + page).addClass('slidePageInFromLeft').removeClass('slidePageBackLeft');
 						},
 						success: function(data) {
-							$('.' + page).find('.page-title').html(title);
+							// $('.' + page).find('.page-title').html(title);
 							$('.app-content').html(data);
 						}
 					});
