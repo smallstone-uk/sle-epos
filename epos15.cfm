@@ -417,7 +417,7 @@
 					Qty: <input type="text" name="qty" id="qty" size="2" value="1" />
 					Credit: <input type="text" name="credit" id="credit" size="5" />
 					Cash: <input type="text" name="cash" id="cash" size="5" />
-					<input type="checkbox" name="discountable" id="discountable" />Discountable
+					<input type="checkbox" name="discountable" id="discountable" value="1" />Discountable
 					<input type="submit" name="btnSend" id="btnSend" class="addBtn" value="Add" />
 				</div>
 				<input name="prodSign" id="prodSign" type="text" value="1" size="3" />
