@@ -11,7 +11,7 @@
 		<cfset StructDelete(session,"till",false)>
 		<cfset session.till = {}>
 
-		<cfset session.till.isTranOpen = true>	<!---Transaction in progress flag--->
+		<cfset session.till.isTranOpen = false>	<!---Transaction in progress flag--->
 
 		<cfset session.till.total = {}>
 		<cfset session.till.header = {}>
@@ -2955,6 +2955,7 @@
 			</cfquery>
 			<cfset session.deals = loc.QActiveDeals>
 			<cfset session.dealdata = {}>
+			<cfset session.dealOrder = []>
 			<cfloop query="loc.QActiveDeals">
 				<cfset StructInsert(session.dealdata,edID,{
 					"ercTitle" = ercTitle,
@@ -2966,6 +2967,7 @@
 					"edStarts" = LSDateFormat(edStarts,'yyyy-mm-dd'),
 					"edEnds" = LSDateFormat(edEnds,'yyyy-mm-dd')
 				})>
+				<cfset ArrayAppend(session.dealOrder,edID)>
 			</cfloop>
 			<cfquery name="loc.QualifyingProducts" datasource="#GetDataSource()#">
 				SELECT ediProduct,ediParent
