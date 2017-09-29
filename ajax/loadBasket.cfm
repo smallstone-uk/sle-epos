@@ -1,7 +1,16 @@
 <cftry>
 <cfobject component="#application.site.codePath#" name="e">
+
+<cfif StructKeyExists(session,"user") AND session.user.ID eq 0>
+	<div class="basket_error">Your session timed out. Please login again.</div>
+	<cfexit>
+</cfif>
 <cfset loc = {}>
 <cfset loc.thisBasket = (session.till.isTranOpen) ? session.basket : session.till.prevtran>
+<cfif StructIsEmpty(loc.thisBasket)>
+	<!--- nothing to show --->
+	<cfexit>
+</cfif>
 
 <cfoutput>
 	<div class="basket_relative">
