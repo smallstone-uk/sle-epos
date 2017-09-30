@@ -1198,7 +1198,11 @@
 						AND abs(args.data.credit) neq session.till.prefs.service>
 							<cfset session.basket.info.errMsg = "Minimum sale amount allowed on card is &pound;#session.till.prefs.mincard#.">
 					<cfelse>
-						<cfset this.closeTranNow = args.data.credit + args.data.cash eq session.basket.total.balance>
+						<cfif loc.regMode eq 1>	<!--- open draw in reg mode --->
+							<cfset this.closeTranNow = args.data.credit + args.data.cash gte session.basket.total.balance>
+						<cfelse>	<!--- open drawer in refund mode --->
+							<cfset this.closeTranNow = args.data.credit + args.data.cash lte session.basket.total.balance>
+						</cfif>
 						<cfset args.data.class = "pay">
 						<cfset args.data.itemClass = "CARDINDW">
 						<cfset args.data.title = "Card Payment">
@@ -1206,8 +1210,6 @@
 						<cfset args.data.prodID = 1>
 						<cfset ArrayAppend(session.basket.payments,args.data)>
 						<cfset loc.addTran = true>
-						<!---<cfdump var="#session.basket#" label="card dump" expand="yes" format="html" 
-							output="#application.site.dir_logs#epos\card-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">--->
 					</cfif>
 				</cfcase>
 				
@@ -1627,7 +1629,11 @@
 									request += builder.createTextElement(styles.normal(align.lr("CASHBACK", "#chr(156)##DecimalFormat(loc.item.cash)#")));
 									request += builder.createTextElement({data: '\n'});
 								</cfif>
+							<cfdump var="#loc#" label="cashback" expand="yes" format="html" 
+	output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 							</cfif>
+							
+
 						</cfcase>
 						<cfcase value="CHQINDW">
 							<cfif arguments.type eq "html">
@@ -2653,7 +2659,7 @@
 		};
 	</cfscript>
 
-	<cffunction name="PrintASCIIReceipt" access="public" returntype="any">
+<!---	<cffunction name="PrintASCIIReceipt" access="public" returntype="any">
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
 		<cftry>
@@ -2762,7 +2768,7 @@
 
 		<cfreturn loc.contentResult>
 	</cffunction>
-
+--->
 	<cffunction name="VATSummary" access="public" returntype="void">
 		<cfargument name="args" type="array" required="yes">
 		<cfset var loc = {}>
