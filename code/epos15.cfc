@@ -1630,10 +1630,7 @@
 									request += builder.createTextElement(styles.normal(align.lr("CASHBACK", "#chr(156)##DecimalFormat(loc.item.cash)#")));
 									request += builder.createTextElement({data: '\n'});
 								</cfif>
-							<cfdump var="#loc#" label="cashback" expand="yes" format="html" 
-	output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
-							</cfif>
-							
+							</cfif>						
 
 						</cfcase>
 						<cfcase value="CHQINDW">
