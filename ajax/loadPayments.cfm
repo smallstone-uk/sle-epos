@@ -214,9 +214,9 @@
 	<cfset supplier = lCase(session.basket.info.bod) eq "supplier">
 
 	<ul class="payment_list">
-		<li class="payment_item material-ripple">
+		<!---<li class="payment_item material-ripple">
 			<span>#session.basket.header.balance#</span>
-		</li>
+		</li>--->
 		<cfset counter = 0>
 		<cfloop array="#payments#" index="item">
 			<cfswitch expression="#LCase(item.eaTitle)#">
