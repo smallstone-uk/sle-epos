@@ -79,9 +79,9 @@
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
 
-		<cfdump var="#args#" label="" expand="yes" format="html" 
+<!---		<cfdump var="#args#" label="" expand="yes" format="html" 
 			output="#application.site.dir_logs#item-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
-
+--->
 		<cfset loc.result = {}>
 		<cfset loc.result.err = "">
 		<cfset loc.regMode = (2 * int(session.basket.mode eq "reg")) - 1>	<!--- modes: reg = 1 refund = -1 --->
