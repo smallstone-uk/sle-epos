@@ -1192,8 +1192,11 @@
 						<cfset session.basket.info.errMsg = "Card refund amount is too high. #args.data.credit# : #session.basket.total.balance#">
 					<cfelseif args.data.cash neq 0 AND args.data.credit eq 0>
 						<cfset session.basket.info.errMsg = "Please enter the sale amount from the PayStation receipt.">
-					<cfelseif session.basket.info.service eq 0 AND abs(args.data.credit) lt session.till.prefs.mincard AND abs(args.data.credit) neq session.till.prefs.service>
-						<cfset session.basket.info.errMsg = "Minimum sale amount allowed on card is &pound;#session.till.prefs.mincard#.">
+					<cfelseif session.basket.info.mode eq "reg" 
+						AND session.basket.info.service eq 0 
+						AND abs(args.data.credit) lt session.till.prefs.mincard 
+						AND abs(args.data.credit) neq session.till.prefs.service>
+							<cfset session.basket.info.errMsg = "Minimum sale amount allowed on card is &pound;#session.till.prefs.mincard#.">
 					<cfelse>
 						<cfset this.closeTranNow = args.data.credit + args.data.cash eq session.basket.total.balance>
 						<cfset args.data.class = "pay">
