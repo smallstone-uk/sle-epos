@@ -5,3 +5,6 @@ core/config/www-Settings.xml
 ePayments/.env
 .phpintel/
 _notes/
+Archive/
+data/logs/
+Database/Logs/
