@@ -1353,6 +1353,7 @@
 			<cfset loc = BuildBasket()>
 			<cfset loc.thisBasket = (arguments.type eq "html") ? session.basket : session.till.prevtran>
 			<cfset loc.totalRetail = 0>
+			<cfset loc.totalCount = 0>
 			<cfoutput>
 				<cfif arguments.type eq "js">
 					request += builder.createAlignmentElement({position: 'center'});
@@ -1407,7 +1408,7 @@
 						</cfif>
 
 						<cfset loc.totalRetail += -loc.data.retail>
-
+						<cfset loc.totalCount += loc.data.qty>
 						<cfif arguments.type eq "html">
 							<div class="btr_item material-ripple basket_item" #StructToDataAttributes(loc.data)#>
 								<span style="width: 50%;">#loc.data.title#</span>
@@ -1470,7 +1471,7 @@
 					<cfelse>
 						request += builder.createRuledLineElement({thickness: 'medium', width: 832});
 						request += builder.createAlignmentElement({position: 'left'});
-						request += builder.createTextElement(styles.bold(align.lr("TOTAL", "#chr(156)##DecimalFormat(loc.totalRetail)#")));
+						request += builder.createTextElement(styles.bold(align.lr("TOTAL (#loc.totalCount# items)", "#chr(156)##DecimalFormat(loc.totalRetail)#")));
 						request += builder.createTextElement({data: '\n'});
 					</cfif>
 				</cfif>
