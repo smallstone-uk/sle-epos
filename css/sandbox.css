@@ -34,7 +34,7 @@ input[disabled] {opacity: 0.5;cursor: default;}
 .col_big li {width: 480px !important;}
 .app-content {position: relative;top: 2.5em;padding: 0 2em;}
 .money {width: 110px !important;text-align: right !important;font-size: 22px !important;background: none !important;color:#FFF !important;}
-.scratch {width: 80px !important;text-align: right !important;font-size: 22px !important;background: none !important;color:#FFF !important;}
+.scratch {width: 40px !important;text-align: right !important;font-size: 22px !important;background: none !important;color:#FFF !important;}
 .appfld {text-align: left !important;font-size: 22px !important;background: none !important;color:#FFF !important;width: 350px !important;}
 .appbtn {float: right;border: none;height: 60px;font-size: 22px;cursor: pointer;color:#FFF;}
 span.title {font-size: 32px;float: left;width: 100%;text-align: left;font-weight: 300;padding: 0 10px;}
