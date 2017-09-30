@@ -195,10 +195,10 @@
 						<th>#packQtys[game]#</th>
 						<th>&pound;#gameValues[game]#</th>
 						<td><input type="text" name="#gStart#" data-qty="#packQtys[game]#" data-value="#gameValues[game]#" data-maximum="#packQtys[game]-1#"
-								 data-wholenumber="true" data-game="#game#" data-minimum="0" class="money ui2" placeholder="##" value="#start#" /></td>
+								 data-wholenumber="true" data-game="#game#" data-minimum="0" class="scratch ui2" placeholder="##" value="#start#" /></td>
 						<td><input type="text" name="#gEnd#" data-qty="#packQtys[game]#" data-value="#gameValues[game]#" data-maximum="#packQtys[game]-1#"
-								 data-wholenumber="true" data-game="#game#" data-minimum="0" class="money ui2" placeholder="##" value="#end#" /></td>
-						<td><input type="text" name="dhsc_g#game#_qty" value="#sold#" class="money ui2" disabled="disabled" /></td>
+								 data-wholenumber="true" data-game="#game#" data-minimum="0" class="scratch ui2" placeholder="##" value="#end#" /></td>
+						<td><input type="text" name="dhsc_g#game#_qty" value="#sold#" class="scratch ui2" disabled="disabled" /></td>
 						<td><input type="text" name="dhsc_g#game#_total" value="#DecimalFormat(value)#" class="money dhsc_g#game#_total" disabled="disabled"></td>
 					</tr>
 				</cfloop>
