@@ -206,7 +206,7 @@
 
 			<div class="bmeta_sub">
 				<span class="bmetasub_itemcount">
-					#loc.thisBasket.info.itemCount# items #session.basket.info.canClose#
+					#loc.thisBasket.info.itemCount# items
 				</span>
 
 				<cfif not loc.thisBasket.tranID is 0>
