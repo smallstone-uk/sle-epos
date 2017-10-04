@@ -427,7 +427,6 @@ input::-webkit-inner-spin-button {
     display: list-item;
     text-align: center;
     height: 50px;
-    margin: 6px;
     line-height: 50px;
     color: #000;
     cursor: pointer;
@@ -2742,4 +2741,11 @@ select:focus {
 
 .bmetasub_tranref {
     float: right;
+}
+
+.categories_list {
+    display: grid;
+    grid-template-columns: 0.5fr 0.5fr;
+    grid-gap: 5px;
+    padding: 5px;
 }
