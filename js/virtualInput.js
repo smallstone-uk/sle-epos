@@ -37,21 +37,21 @@
 			var txtarea = document.getElementById(areaId);
 			var scrollPos = txtarea.scrollTop;
 			var strPos = 0;
-			var br = ((txtarea.selectionStart || txtarea.selectionStart == '0') ? 
+			var br = ((txtarea.selectionStart || txtarea.selectionStart == '0') ?
 				"ff" : (document.selection ? "ie" : false ) );
-			if (br == "ie") { 
+			if (br == "ie") {
 				txtarea.focus();
 				var range = document.selection.createRange();
 				range.moveStart ('character', -txtarea.value.length);
 				strPos = range.text.length;
 			}
 			else if (br == "ff") strPos = txtarea.selectionStart;
-		
-			var front = (txtarea.value).substring(0,strPos);  
-			var back = (txtarea.value).substring(strPos,txtarea.value.length); 
+
+			var front = (txtarea.value).substring(0,strPos);
+			var back = (txtarea.value).substring(strPos,txtarea.value.length);
 			txtarea.value=front+text+back;
 			strPos = strPos + text.length;
-			if (br == "ie") { 
+			if (br == "ie") {
 				txtarea.focus();
 				var range = document.selection.createRange();
 				range.moveStart ('character', -txtarea.value.length);
@@ -69,7 +69,7 @@
 		center: function(a, b, c) {
 			var caller = $(a);
 			caller.css("position", c || "fixed");
-			
+
 			switch(b || "both")
 			{
 				case "top":
@@ -157,7 +157,7 @@
 			$.each(node.get(0).attributes, function(index, attr) {
 				if (re_dataAttr.test(attr.nodeName)) {
 					var key = attr.nodeName.match(re_dataAttr)[1];
-					
+
 					var isNum = VIC.isNumber(attr.value);
 					var isBool = VIC.isBoolean(attr.value);
 					if (isNum) {
@@ -171,7 +171,7 @@
 					} else {
 						var value = attr.value;
 					}
-					
+
 					d[key] = value;
 				}
 			});
@@ -182,7 +182,7 @@
 			var posSwitch = 0;
 			var input = (input == "keyboard") ? ".virtual_keyboard" : ".virtual_numpad";
 			var startLeft = $(input).offset().left;
-			
+
 			shake = setInterval(function() {
 				posSwitch = (posSwitch == 0) ? 1 : 0;
 				if (posSwitch == 0) {
@@ -195,7 +195,7 @@
 					}, 50, "easeInOutCubic");
 				}
 			}, 50);
-			
+
 			setTimeout(function() {
 				clearInterval(shake);
 				$(input).animate({
@@ -206,7 +206,7 @@
 		buildKeyboard: function(settings) {
 			var row_hint = (settings.hint.length > 0) ? '<div class="vk_hint">' + settings.hint + '</div>' : '';
 			var row_0 = (settings.includeField) ? '<input type="text" disabled="true" name="vkTextField" class="vk_text" id="vkinput_0000" />' : '';
-			
+
 			var row_1 = '<div class="vk_1">'+
 			'<span class="vk_symbol" data-shift="&#172;" data-normal="`">`</span>'+
 			'<span class="vk_number" data-shift="!" data-normal="1">1</span>'+
@@ -223,7 +223,7 @@
 			'<span class="vk_symbol" data-shift="+" data-normal="=">=</span>'+
 			'<span class="vk_backspace" data-special="true" data-function="backspace">Backspace</span>'+
 			'</div>';
-			
+
 			var row_2 = '<div class="vk_2">'+
 			'<span class="vk_tab vk_inactive" data-inactive="true">Tab</span>'+
 			'<span class="vk_letter">q</span>'+
@@ -240,7 +240,7 @@
 			'<span class="vk_symbol" data-shift="}" data-normal="]">]</span>'+
 			'<span class="vk_enter" data-special="true" data-function="enter">Enter</span>'+
 			'</div>'
-			
+
 			var row_3 = '<div class="vk_3">'+
 			'<span class="vk_capslock" data-special="true" data-function="capslock">Caps Lock</span>'+
 			'<span class="vk_letter">a</span>'+
@@ -256,7 +256,7 @@
 			'<span class="vk_symbol" data-shift="@" data-normal="&#39;">&#39;</span>'+
 			'<span class="vk_symbol vk_hash" data-shift="~" data-normal="#">#</span>'+
 			'</div>';
-			
+
 			var row_4 = '<div class="vk_4">'+
 			'<span class="vk_shift_1" data-special="true" data-function="shift">Shift</span>'+
 			'<span class="vk_symbol" data-shift="|" data-normal="\">\</span>'+
@@ -272,7 +272,7 @@
 			'<span class="vk_symbol" data-shift="?" data-normal="/">/</span>'+
 			'<span class="vk_shift_2" data-special="true" data-function="shift">Shift</span>'+
 			'</div>';
-			
+
 			var row_5 = '<div class="vk_5">'+
 			'<span class="vk_inactive" data-inactive="true">Ctrl</span>'+
 			'<span class="vk_inactive" data-inactive="true">&nbsp;</span>'+
@@ -283,14 +283,14 @@
 			'<span class="vk_inactive" data-inactive="true">&nbsp;</span>'+
 			'<span class="vk_inactive" data-inactive="true">Ctrl</span>'+
 			'</div>';
-			
+
 			var html = "<div class='virtual_keyboard'>" + row_hint + row_0 + row_1 + row_2 + row_3 + row_4 + row_5 + "</div>";
-			
+
 			$('body').prepend(html);
 			VIC.keyboardSpawned = true;
 			VIC.center('.virtual_keyboard', 'left');
 			$('.virtual_keyboard').animate({"bottom": "1%"}, VIC.globalDelay, "easeInOutCubic");
-			
+
 			var $field = $("#" + settings.field);
 			if ( $field.parents('.vic_host').length > 0 ) {
 				VIC.original_top = $field.parents('.vic_host').offset().top;
@@ -298,52 +298,52 @@
 				var vic_top = $('.virtual_keyboard').offset().top;
 				var vic_height = $('.virtual_keyboard').outerHeight(true);
 				var area_height = $(window).innerHeight();
-				
+
 				if (vic_top >= input_top) {
 					$field.parents('.vic_host').css( "top", ( area_height - ( (vic_height * 2) - 50 ) ) );
 				}
 			}
-			
+
 			return html;
 		},
 		buildKeyboardEvents: function(settings) {
 			var shiftOn = false;
 			var capsOn = false;
 			var caretPos = 0;
-			
+
 			var vkfield = $('input[data-index="' + settings.index + '"]');
 			var vkfieldid = settings.field;
 			var $field = $("#" + vkfieldid);
-			
+
 			if (settings.value.length > 0) $field.val(settings.value);
-			
+
 			$field.bind("input change", function() {
 				if (typeof settings.onkey == "function") settings.onkey($field.val(), VIC);
 			});
-			
+
 			$('.virtual_keyboard').find('*').addClass("disable-select");
 			$('.virtual_keyboard span').bind("mouseup", function() {
 				var keyPressed = $(this);
 				var key_special = $(this).data("special");
 				var key_inactive = $(this).data("inactive");
 				var key_function = $(this).data("function");
-				
+
 				if (typeof key_special == "undefined" && typeof key_inactive == "undefined") {
 					var origText = $(this).html();
 					var newText = origText.replace(/&amp;/g, "&");
 					newText = newText.replace(/&lt;/g, "<");
 					newText = newText.replace(/&gt;/g, ">");
-					
+
 					// Only insert if settings permit
 					var isSymbol = VIC.isSymbol(newText);
 					var isNumber = VIC.isNumber(newText);
 					var containsSpace = VIC.containsSpace(newText);
-					
+
 					if (!settings.symbols || settings.symbols == "false") if (isSymbol) newText = "";
 					if (!settings.numbers || settings.numbers == "false") if (isNumber) newText = "";
 					if (!settings.spaces || settings.spaces == "false") if (containsSpace) newText = "";
 					VIC.insertAtCaret(vkfieldid, newText);
-					
+
 					shiftOn = false;
 					if (!capsOn) {
 						$('.vk_letter').each(function(i, e) {$(e).html( $(e).html().toLowerCase() );});
@@ -351,10 +351,10 @@
 						$('.vk_symbol').each(function(i, e) {$(e).html($(e).data("normal"));});
 						$('span').removeClass("vk_key_active");
 					}
-					
+
 					caretPos = VIC.getCaretPosition(document.getElementById(vkfieldid));
 					VIC.setCaretPosition(vkfieldid, caretPos);
-					
+
 					if (typeof settings.onkey == "function") settings.onkey($field.val(), VIC);
 				} else {
 					switch(key_function)
@@ -420,7 +420,7 @@
 								$('.vk_number').each(function(i, e) {
 									var key_normal = $(e).data("normal");
 									var key_shift = $(e).data("shift");
-	
+
 									if (shiftOn) {
 										$(e).html(key_normal);
 									} else {
@@ -430,7 +430,7 @@
 								$('.vk_symbol').each(function(i, e) {
 									var key_normal = $(e).data("normal");
 									var key_shift = $(e).data("shift");
-	
+
 									if (shiftOn) {
 										$(e).html(key_normal);
 									} else {
@@ -443,11 +443,11 @@
 					}
 				}
 			});
-			
+
 			var repeatBackspace = null;
 			var touchtime = null;
 			var touchhold = null;
-			
+
 			$('span[data-function="backspace"]').bind("mousedown", function() {
 				var me = $(this);
 				touchtime = setTimeout(function() {
@@ -469,7 +469,7 @@
 				clearTimeout(touchtime);
 				clearInterval(repeatBackspace);
 			});
-			
+
 			$(document).bind("mousedown.eventsGrp", function(event) {
 				var target = $(event.target);
 				if (!target.is($('.virtual_keyboard')) && !target.is($('.virtual_keyboard').find('*'))) {
@@ -481,7 +481,7 @@
 					});
 				}
 			});
-			
+
 			$(document).bind("keypress", function(event) {
 				if (event.which == 13) {
 					event.preventDefault();
@@ -500,7 +500,7 @@
 			var row_maxhint = (settings.maximum >= 0) ? '<span class="vkn_maxhint">Max: ' + settings.maximum + '</span>' : '';
 			var row_0 = '';
 			var inputType = (settings.secret) ? "password" : "text";
-			
+
 			if (settings.fields && settings.fields.length > 0) {
 				for (var i = 0; i < settings.fields.length; i++) {
 					row_0 += '<label class="vkn_label"><span class="vkn_labelspan">' + settings.fields[i].label + '</span>'+
@@ -513,7 +513,7 @@
 					row_0 = '<input type="' + inputType + '" disabled="true" name="vkTextField" id="vninput_0000" class="vkn_text" />';
 				}
 			}
-			
+
 			var rows = '<div class="vkn_1">'+
 			'<span class="vkn_digit">7</span>'+
 			'<span class="vkn_digit">8</span>'+
@@ -537,14 +537,14 @@
 			'<div class="vkn_5">'+
 			'<span class="vkn_enter">Enter</span>'+
 			'</div>';
-			
+
 			var html = '<div class="virtual_numpad">' + row_hint + row_minhint + row_maxhint + row_0 + rows + '</div>';
-			
+
 			$('body').prepend(html);
 			VIC.numpadSpawned = true;
 			VIC.center('.virtual_numpad', 'left');
 			$('.virtual_numpad').animate({"bottom": "1%"}, VIC.globalDelay, "easeInOutCubic");
-			
+
 			return html;
 		},
 		buildDate: function(settings) {
@@ -573,14 +573,14 @@
 			'<div class="vkn_5">'+
 			'<span class="vkn_enter">Enter</span>'+
 			'</div>';
-			
+
 			var html = '<div class="virtual_numpad">' + row_hint + row_0 + rows + '</div>';
-			
+
 			$('body').prepend(html);
 			VIC.dateSpawned = true;
 			VIC.center('.virtual_numpad', 'left');
 			$('.virtual_numpad').animate({"bottom": "1%"}, VIC.globalDelay, "easeInOutCubic");
-			
+
 			return html;
 		},
 		buildTime: function(settings) {
@@ -609,14 +609,14 @@
 			'<div class="vkn_5">'+
 			'<span class="vkn_enter">Enter</span>'+
 			'</div>';
-			
+
 			var html = '<div class="virtual_numpad">' + row_hint + row_0 + rows + '</div>';
-			
+
 			$('body').prepend(html);
 			VIC.dateSpawned = true;
 			VIC.center('.virtual_numpad', 'left');
 			$('.virtual_numpad').animate({"bottom": "1%"}, VIC.globalDelay, "easeInOutCubic");
-			
+
 			return html;
 		},
 		buildDateEvents: function(settings) {
@@ -624,9 +624,9 @@
 			var vnfield = $('input[data-index="' + settings.index + '"]');
 			var vnfieldid = settings.field;
 			var $field = $("#" + vnfieldid);
-			
+
 			$('.virtual_numpad').find('*').addClass("disable-select");
-			
+
 			$('.vkn_digit').bind("click", function(event) {
 				var digit = $(this).html();
 				if (numpadDecimal.length == 2) numpadDecimal += "/";
@@ -634,12 +634,12 @@
 				numpadDecimal += digit;
 				$field.val(numpadDecimal);
 			});
-			
+
 			$('.vkn_clear').bind("click", function(event) {
 				numpadDecimal = numpadDecimal.substring(0, numpadDecimal.length - 1);
 				$field.val(numpadDecimal);
 			});
-			
+
 			$(document).bind("mousedown.eventsGrp", function(event) {
 				var target = $(event.target);
 				if (!target.is($('.virtual_numpad')) && !target.is($('.virtual_numpad').find('*'))) {
@@ -655,23 +655,23 @@
 					}
 				}
 			});
-			
+
 			$(document).bind("keypress", function(event) {
 				if (event.which == 13) {
 					event.preventDefault();
 					$('.vkn_enter').click();
 				}
 			});
-			
+
 			validateEntry = function() {
 				var allowEnter = true;
-				
+
 				// Handle past/future
 				var date_values = $field.val().split("/");
 				var chosen_date = new Date(date_values[2], (date_values[1] - 1), date_values[0]);
 				var current_date_abs = new Date();
 				var current_date = new Date(current_date_abs.getFullYear(), current_date_abs.getMonth(), current_date_abs.getDate());
-				
+
 				if ( $field.val().length > 0 ) {
 					if (!settings.future) {
 						if (chosen_date > current_date) {
@@ -681,7 +681,7 @@
 							numpadDecimal = "";
 						}
 					}
-					
+
 					if (!settings.past) {
 						if (chosen_date < current_date) {
 							VIC.shakeInput("numpad");
@@ -690,7 +690,7 @@
 							numpadDecimal = "";
 						}
 					}
-					
+
 					// Validate month
 					if (date_values[1] <= 0 || date_values[1] > 12) {
 						VIC.shakeInput("numpad");
@@ -698,12 +698,12 @@
 						$field.val("").addClass("VIC_ErrorFld");
 						numpadDecimal = "";
 					}
-					
+
 					// Validate day
 					if (allowEnter) {
 						var days_in_month1 = new Date(date_values[2], date_values[1], 0);
 						var days_in_month = new Date(date_values[2], date_values[1], 0).getDate();
-	
+
 						if (date_values[0] > days_in_month || date_values[0] <= 0) {
 							VIC.shakeInput("numpad");
 							allowEnter = false;
@@ -712,10 +712,10 @@
 						}
 					}
 				}
-				
+
 				return allowEnter;
 			}
-			
+
 			$('.vkn_enter').bind("click", function(event) {
 				if (validateEntry()) {
 					if (typeof settings.callback == "function") settings.callback($field.val(), VIC);
@@ -734,21 +734,21 @@
 			var vnfield = $('input[data-index="' + settings.index + '"]');
 			var vnfieldid = settings.field;
 			var $field = $("#" + vnfieldid);
-			
+
 			$('.virtual_numpad').find('*').addClass("disable-select");
-			
+
 			$('.vkn_digit').bind("click", function(event) {
 				var digit = $(this).html();
 				if (numpadDecimal.length == 2) numpadDecimal += ":";
 				numpadDecimal += digit;
 				$field.val(numpadDecimal);
 			});
-			
+
 			$('.vkn_clear').bind("click", function(event) {
 				numpadDecimal = numpadDecimal.substring(0, numpadDecimal.length - 1);
 				$field.val(numpadDecimal);
 			});
-			
+
 			$(document).bind("mousedown.eventsGrp", function(event) {
 				var target = $(event.target);
 				if (!target.is($('.virtual_numpad')) && !target.is($('.virtual_numpad').find('*'))) {
@@ -764,28 +764,28 @@
 					}
 				}
 			});
-			
+
 			$(document).bind("keypress", function(event) {
 				if (event.which == 13) {
 					event.preventDefault();
 					$('.vkn_enter').click();
 				}
 			});
-			
+
 			validateEntry = function() {
 				var allowEnter = true;
-				
+
 				if ( $field.val().length > 0 ) {
 					var hour = VIC.nf($field.val().split(":")[0], "num");
 					var minute = VIC.nf($field.val().split(":")[1], "num");
-					
+
 					if (hour > 23 || hour < 0) allowEnter = false;
 					if (minute > 59 || minute < 0) allowEnter = false;
 				}
-				
+
 				return allowEnter;
 			}
-			
+
 			$('.vkn_enter').bind("click", function(event) {
 				if (validateEntry()) {
 					if (typeof settings.callback == "function") settings.callback($field.val(), VIC);
@@ -807,18 +807,18 @@
 			var curint = 0;
 			var orSwitch = true;
 			var kpReturnFields = {};
-			
+
 			for (var fld in settings.fields) {
 				kpReturnFields[ settings.fields[fld].name ] = $( 'input[name="' + settings.fields[fld].name + '"]' );
 			}
-			
+
 			if (settings.fields && settings.fields.length > 0) {
 				$field = $( 'input[name="' + settings.fields[0].name + '"]' );
 				$field.addClass("vkn_activefld");
 			}
-			
+
 			$('.virtual_numpad').find('*').addClass("disable-select");
-			
+
 			$('.vkn_digit').bind("click", function(event) {
 				var digit = $(this).html();
 				var maxlength = settings.maxlength;
@@ -828,13 +828,13 @@
 				if (settings.autolength > -1) if (value.length == settings.autolength) $('.vkn_enter').click();
 				settings.keypress(kpReturnFields);
 			});
-			
+
 			$('.vkn_clear').bind("click", function(event) {
 				numpadDecimal = numpadDecimal.substring(0, numpadDecimal.length - 1);
 				var value = (settings.wholenumber || settings.wholenumber == "true") ? numpadDecimal : VIC.tillFormat(numpadDecimal);
 				$field.val(value);
 			});
-			
+
 			$('.vkn_overide').bind("click", function(event) {
 				var me = $(this);
 				if (me.attr("data-switch") == 1 || me.attr("data-switch") == "1") {
@@ -849,7 +849,7 @@
 					me.attr("data-switch", "1");
 				}
 			});
-			
+
 			$('.vkn_text_arr').bind("click", function(event) {
 				numpadDecimal = "";
 				$field = $(this);
@@ -858,7 +858,7 @@
 				$('.vkn_text_arr').removeClass("vkn_activefld");
 				$field.addClass("vkn_activefld");
 			});
-			
+
 			serializeFields = function() {
 				var struct = {};
 				if (settings.fields && settings.fields.length > 0) {
@@ -868,7 +868,7 @@
 				}
 				return struct;
 			}
-			
+
 			$(document).bind("mousedown.eventsGrp", function(event) {
 				var target = $(event.target);
 				if (!target.is($('.virtual_numpad')) && !target.is($('.virtual_numpad').find('*'))) {
@@ -881,21 +881,21 @@
 							$('.virtual_numpad').remove();
 							$field.removeAttr("data-spawned").removeClass("VIC_ErrorFld").blur();
 						});
-						settings.cancel();
+						(settings.cancel || function() {})();
 					}
 				}
 			});
-			
+
 			$(document).bind("keypress", function(event) {
 				if (event.which == 13) {
 					event.preventDefault();
 					$('.vkn_enter').click();
 				}
 			});
-			
+
 			validateEntry = function() {
 				var allowEnter = true;
-				
+
 				// Handle modulas
 				if (settings.mod > -1) {
 					var valueToTest = (settings.wholenumber || settings.wholenumber == "true") ? Math.round($field.val()) : Math.round($field.val() * 100);
@@ -906,7 +906,7 @@
 						numpadDecimal = "";
 					}
 				}
-				
+
 				// Handle min and max
 				if (orSwitch) {
 					if (settings.minimum > -1) {
@@ -918,7 +918,7 @@
 						}
 					}
 				}
-				
+
 				if (orSwitch) {
 					if (settings.maximum > -1) {
 						if ($field.val() > settings.maximum) {
@@ -929,16 +929,16 @@
 						}
 					}
 				}
-				
+
 				if (allowEnter) return true;
 			}
-			
+
 			$('.vkn_enter').bind("click", function(event) {
 				if (validateEntry()) {
 					if (settings.fields && settings.fields.length > 0) {
 						var int = ( curint < (settings.fields.length - 1) ) ? curint + 1 : settings.fields.length - 1;
 						curint = int;
-						
+
 						if ( Number( $field.attr("data-int") ) == (settings.fields.length - 1) ) {
 							if (typeof settings.callback == "function") settings.callback( (settings.fields && settings.fields.length > 0) ? serializeFields() : $field.val(), $field );
 							VIC.numpadSpawned = false;
@@ -949,7 +949,7 @@
 								$field.removeAttr("data-spawned").removeClass("VIC_ErrorFld").blur();
 							});
 						}
-						
+
 						$field = $( 'input[name="' + settings.fields[int].name + '"]' );
 						$field.focus();
 						$('.vkn_text_arr').removeClass("vkn_activefld");
@@ -971,28 +971,28 @@
 	};
 	$.fn.virtualKeyboard = function(callback) {
 		var selector = $(this);
-		
+
 		return selector.each(function(i, e) {
 			var caller = $(e);
-			
+
 			// Set Index
 			var rand = Math.floor(Math.random() * 99999999) + 9999;
 			caller.attr("data-index", i + rand);
-			
+
 			// Setup Events
 			caller.unbind("vkevent");
 			caller.bind("focus.vkevent", function(event) {
 				var field = $(this);
-				
+
 				// Delete old nodes
 				if (!VIC.keyboardSpawned) {
 					$('.virtual_keyboard, .virtual_numpad').clearQueue().stop().finish().remove();
 					field.removeAttr("data-spawned");
 				}
-				
+
 				// Only proceed if keyboard is not already in use
 				if ( typeof field.attr("data-spawned") == "undefined" || field.attr("data-spawned") == "false" ) {
-					
+
 					// Extend Default Settings
 					var extendBy = (typeof callback == "object") ? callback : VIC.getAttributes(field);
 					var settings = $.extend(true, {
@@ -1005,10 +1005,10 @@
 						onkey: function() { return true; },
 						callback: function() { return true; }
 					}, extendBy);
-					
+
 					settings.value = ( field.val().length > 0 ) ? field.val() : "";
 					if (typeof callback == "function") settings.callback = callback;
-					
+
 					// Set ID if not present
 					if (typeof field.attr("id") == "undefined") {
 						field.attr("id", "vkinput_" + i + rand);
@@ -1016,14 +1016,14 @@
 					} else {
 						settings.field = field.attr("id");
 					}
-					
+
 					// Load Keyboard
 					field.attr("data-spawned", "true");
 					VIC.buildKeyboard(settings);
 					VIC.buildKeyboardEvents(settings);
 				}
 			});
-			
+
 		});
 	}
 	$.virtualKeyboard = function(params) {
@@ -1039,40 +1039,40 @@
 			onkey: function() { return true; },
 			callback: function() { return true; }
 		}, params);
-		
+
 		// Delete old nodes
 		if (!VIC.keyboardSpawned) {
 			$('.virtual_keyboard, .virtual_numpad').clearQueue().stop().finish().remove();
 		}
-		
+
 		// Load Keyboard
 		VIC.buildKeyboard(settings);
 		VIC.buildKeyboardEvents(settings);
 	}
 	$.fn.virtualNumpad = function(callback, params) {
 		var selector = $(this);
-		
+
 		return selector.each(function(i, e) {
 			var caller = $(e);
-			
+
 			// Set Index
 			var rand = Math.floor(Math.random() * 99999999) + 9999;
 			caller.attr("data-index", i + rand);
-			
+
 			// Setup Events
 			caller.unbind("vkevent");
 			caller.bind("focus.vkevent", function(event) {
 				var field = $(this);
-				
+
 				// Delete old nodes
 				if (!VIC.numpadSpawned) {
 					$('.virtual_keyboard, .virtual_numpad').clearQueue().stop().finish().remove();
 					field.removeAttr("data-spawned");
 				}
-				
+
 				// Only proceed if keyboard is not already in use
 				if ( typeof field.attr("data-spawned") == "undefined" || field.attr("data-spawned") == "false" ) {
-					
+
 					// Extend Default Settings
 					var settings = $.extend(true, {
 						hint: "",
@@ -1089,18 +1089,18 @@
 						keypress: function() { return true; },
 						forceCallback: false
 					}, VIC.getAttributes(field));
-					
+
 					if (typeof params == "object") {
 						settings = $.extend(true, settings, params);
 					}
-					
+
 					if (settings.mod == "inherit") {
 						settings.mod = field.data("mod");
 					}
-					
+
 					settings.value = ( field.val().length > 0 ) ? field.val() : "";
 					if (typeof callback == "function") settings.callback = callback;
-					
+
 					// Set ID if not present
 					if (typeof field.attr("id") == "undefined") {
 						field.attr("id", "vninput_" + i + rand);
@@ -1108,7 +1108,7 @@
 					} else {
 						settings.field = field.attr("id");
 					}
-					
+
 					// Load Numpad
 					if (field.data("spawned") != "true") {
 						VIC.buildNumpad(settings);
@@ -1117,33 +1117,33 @@
 					}
 				}
 			});
-			
+
 		});
 	}
 	$.fn.virtualDate = function(callback, params) {
 		var selector = $(this);
-		
+
 		return selector.each(function(i, e) {
 			var caller = $(e);
-			
+
 			// Set Index
 			var rand = Math.floor(Math.random() * 99999999) + 9999;
 			caller.attr("data-index", i + rand);
-			
+
 			// Setup Events
 			caller.unbind("vkevent");
 			caller.bind("focus.vkevent", function(event) {
 				var field = $(this);
-				
+
 				// Delete old nodes
 				if (!VIC.dateSpawned) {
 					$('.virtual_keyboard, .virtual_numpad').clearQueue().stop().finish().remove();
 					field.removeAttr("data-spawned");
 				}
-				
+
 				// Only proceed if keyboard is not already in use
 				if ( typeof field.attr("data-spawned") == "undefined" || field.attr("data-spawned") == "false" ) {
-					
+
 					// Extend Default Settings
 					var settings = $.extend(true, {
 						future: true,
@@ -1152,14 +1152,14 @@
 						hint: "",
 						callback: function() { return true; }
 					}, VIC.getAttributes(field));
-					
+
 					if (typeof params == "object") {
 						settings = $.extend(true, settings, params);
 					}
-										
+
 					settings.value = ( field.val().length > 0 ) ? field.val() : "";
 					if (typeof callback == "function") settings.callback = callback;
-					
+
 					// Set ID if not present
 					if (typeof field.attr("id") == "undefined") {
 						field.attr("id", "vninput_" + i + rand);
@@ -1167,7 +1167,7 @@
 					} else {
 						settings.field = field.attr("id");
 					}
-					
+
 					// Load Numpad
 					if (field.data("spawned") != "true") {
 						VIC.buildDate(settings);
@@ -1176,33 +1176,33 @@
 					}
 				}
 			});
-			
+
 		});
 	}
 	$.fn.virtualTime = function(callback, params) {
 		var selector = $(this);
-		
+
 		return selector.each(function(i, e) {
 			var caller = $(e);
-			
+
 			// Set Index
 			var rand = Math.floor(Math.random() * 99999999) + 9999;
 			caller.attr("data-index", i + rand);
-			
+
 			// Setup Events
 			caller.unbind("vkevent");
 			caller.bind("focus.vkevent", function(event) {
 				var field = $(this);
-				
+
 				// Delete old nodes
 				if (!VIC.dateSpawned) {
 					$('.virtual_keyboard, .virtual_numpad').clearQueue().stop().finish().remove();
 					field.removeAttr("data-spawned");
 				}
-				
+
 				// Only proceed if keyboard is not already in use
 				if ( typeof field.attr("data-spawned") == "undefined" || field.attr("data-spawned") == "false" ) {
-					
+
 					// Extend Default Settings
 					var settings = $.extend(true, {
 						includeField: true,
@@ -1210,14 +1210,14 @@
 						field: "vninput_0000",
 						callback: function() { return true; }
 					}, VIC.getAttributes(field));
-					
+
 					if (typeof params == "object") {
 						settings = $.extend(true, settings, params);
 					}
-										
+
 					settings.value = ( field.val().length > 0 ) ? field.val() : "";
 					if (typeof callback == "function") settings.callback = callback;
-					
+
 					// Set ID if not present
 					if (typeof field.attr("id") == "undefined") {
 						field.attr("id", "vninput_" + i + rand);
@@ -1225,7 +1225,7 @@
 					} else {
 						settings.field = field.attr("id");
 					}
-					
+
 					// Load Numpad
 					if (field.data("spawned") != "true") {
 						VIC.buildTime(settings);
@@ -1234,7 +1234,7 @@
 					}
 				}
 			});
-			
+
 		});
 	}
 	$.virtualNumpad = function(params) {
@@ -1257,12 +1257,12 @@
 			keypress: function() { return true; },
 			forceCallback: false
 		}, params);
-		
+
 		// Delete old nodes
 		if (!VIC.numpadSpawned) {
 			$('.virtual_keyboard, .virtual_numpad').clearQueue().stop().finish().remove();
 		}
-		
+
 		// Load Numpad
 		VIC.buildNumpad(settings);
 		VIC.buildNumpadEvents(settings);
@@ -1275,12 +1275,12 @@
 			hint: "",
 			callback: function() { return true; }
 		}, params);
-		
+
 		// Delete old nodes
 		if (!VIC.dateSpawned) {
 			$('.virtual_keyboard, .virtual_numpad').clearQueue().stop().finish().remove();
 		}
-		
+
 		// Load Numpad
 		VIC.buildDate(settings);
 		VIC.buildDateEvents(settings);
@@ -1292,12 +1292,12 @@
 			field: "vninput_0000",
 			callback: function() { return true; }
 		}, params);
-		
+
 		// Delete old nodes
 		if (!VIC.dateSpawned) {
 			$('.virtual_keyboard, .virtual_numpad').clearQueue().stop().finish().remove();
 		}
-		
+
 		// Load Numpad
 		VIC.buildTime(settings);
 		VIC.buildTimeEvents(settings);
