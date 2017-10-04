@@ -15,10 +15,6 @@
 	<cfoutput>
 		<script>
 			$(document).ready(function(e) {
-				new Vue({
-					el: '##app-endofday'
-				});
-
 				var dc = {
 					dhcid_subtotal: 0,
 					dhcid_total: 0,
