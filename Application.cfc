@@ -51,7 +51,7 @@ component
                 directoryCreate(getDataDir(dir));
             }
         }
-        
+
         if (structKeyExists(url, 'restart')) {
             onApplicationStart();
             onSessionStart();

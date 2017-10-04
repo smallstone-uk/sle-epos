@@ -29,7 +29,7 @@
 	<link href="css/bigSelect.css" rel="stylesheet" type="text/css">
 	<link href="icomoon/style.css" rel="stylesheet" type="text/css">
 	<link href="css/ripple.min.css" rel="stylesheet" type="text/css">
-	
+
 	<!--Core Scripts-->
 	<!---<script src="js/blockContext.js"></script>--->
 	<script src="js/jquery-ui.js"></script>
@@ -65,7 +65,7 @@
 		</cfif>
 	</cfloop>
 	</head>
-	
+
 	<cfobject component="code/epos" name="epos">
 	<cfobject component="code/epos2" name="epos2">
 	<cfset parm = {}>
@@ -73,7 +73,7 @@
 	<cfset parm.url = application.site.normal>
 	<!---<cfset epos.LoadDealsIntoSession()>--->
 	<cfset employees = epos.LoadEmployees()>
-	
+
 	<body id="qz-status">
 		<!---<cfinclude template="qzScripts.cfm">--->
 		<script>
@@ -82,16 +82,16 @@
 					$('.home_screen_content').html(data);
 					$('*').addClass("disable-select");
 				});
-				
+
 				<cfif StructKeyExists(session.user.prefs, "empBackground")>
 					var loggedin = "#session.user.loggedin#";
 					if (loggedin.trim().toLowerCase() == "true") {
 						var screensaver = null, timeout = 900000, isOpen = false;
-						
+
 						requeue = function() {
 							screensaver = setTimeout(function() {
 								isOpen = true;
-								
+
 								$('body').prepend(
 									'<div class="ss_wrapper anim_slidein in">'+
 										'<div class="screensaver_dim"></div>'+
@@ -100,16 +100,16 @@
 										'<div class="screensaver" style="background-image:url(../images/wallpapers/#session.user.prefs.empBackground#);"></div>'+
 									'</div>'
 								);
-								
+
 								$('.ss_time').currentTime();
 							}, timeout);
 						}
-						
+
 						$(document).bind("mousemove", function(event) {
 							clearTimeout(screensaver);
 							if (!isOpen) requeue();
 						});
-						
+
 						$(document).bind("mousedown", function(event) {
 							clearTimeout(screensaver);
 							$('.ss_wrapper').removeClass("anim_slidein").addClass("anim_slideout");
@@ -132,7 +132,7 @@
 </html>
 
 <cfcatch type="any">
-	<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+	<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
 			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 </cfcatch>
 </cftry>
