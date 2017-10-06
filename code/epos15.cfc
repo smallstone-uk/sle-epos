@@ -2930,26 +2930,7 @@
 
 	<cffunction name="LoadEPOSTotals" access="public" returntype="struct">
 		<cfargument name="args" type="struct" required="yes">
-		<cfset var loc = {}>
-		<cfset loc.result = {}>
-
-		<cftry>
-			<cfset loc.result.accounts = {}>
-			<cfquery name="loc.QTotals" datasource="#GetDataSource()#">
-				SELECT *
-				FROM tblEPOS_Totals
-				WHERE totDate='#args.reportDate#'
-			</cfquery>
-			<cfloop query="loc.QTotals">
-				<cfset StructInsert(loc.result.accounts,totAcc,totValue,true)>
-			</cfloop>
-
-		<cfcatch type="any">
-			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
-				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
-		</cfcatch>
-		</cftry>
-		<cfreturn loc.result>
+		<cfreturn new App.EPOSTotal().getTotals(args.reportDate)>
 	</cffunction>
 
 	<cffunction name="LoadDeals" access="public" returntype="void" hint="Load deal info.">

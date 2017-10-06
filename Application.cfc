@@ -96,4 +96,14 @@ component
         include thePage;
         include "settings.cfm";
     }
+
+    /**
+     * Handles any uncaught exception.
+     *
+     * @return any
+     */
+    public any function onError(any exception)
+    {
+        writeDumpToFile(exception);
+    }
 }
