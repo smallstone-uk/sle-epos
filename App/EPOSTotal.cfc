@@ -11,10 +11,7 @@ component extends = "Framework.Model"
     public struct function getTotals(required any date)
     {
         var data = { 'accounts' = {} };
-
-        var totals = new App.EPOSTotal()
-            .where('totDate', date)
-            .get();
+        var totals = this.where('totDate', date).get();
 
         for (total in totals) {
             structInsert(data.accounts, total.totAcc, total.totValue, true);
