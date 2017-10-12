@@ -8,26 +8,26 @@
 	<script>
 		$(document).ready(function(e) {
 			window.eposPaymentsDisabled = false;
-			
+
 			var callback = function() {
 				$.loadBasket(function() {
 					window.eposPaymentsDisabled = false;
 				});
 			}
-			
+
 			var cancel = function() {
 				window.eposPaymentsDisabled = false;
 			}
-			
+
 			$('.payment_item').click(function(event) {
 				if (window.eposPaymentsDisabled) return;
 				window.eposPaymentsDisabled = true;
-				
+
 				var obj = $(this);
 				var type = $(this).data("method");
 				var id = $(this).data("id");
 				var balance = Number("#session.basket.total.balance#");
-				
+
 				switch (type) {
 					case "partcash":
 						$.virtualNumpad({
@@ -188,6 +188,16 @@
 							}
 						});
 						break;
+					case "account":
+						$.ajax({
+						    type: 'GET',
+						    url: "#getUrl('ajax/getPayableAccounts.cfm')#",
+						    success: function(data) {
+						    	window.eposPaymentsDisabled = false;
+						    	$.popup(data);
+						    }
+						});
+						break;
 					default:
 						$.addPayment({
 							account: obj.data("accid"),
@@ -205,7 +215,7 @@
 						}, callback);
 						break;
 				}
-				
+
 				event.preventDefault();
 			});
 		});
@@ -231,6 +241,7 @@
 						<span>Fast Cash</span>
 					</li>
 				</cfcase>
+
 				<cfcase value="card">
 					<cfif not supplier>
 						<li class="payment_item material-ripple" data-method="partcard" data-id="#item.eaID#">
@@ -242,6 +253,13 @@
 						</li>
 					</cfif>
 				</cfcase>
+
+				<cfcase value="account">
+					<li class="payment_item material-ripple" data-method="account" data-id="#item.eaID#">
+						<span>Account</span>
+					</li>
+				</cfcase>
+
 				<cfdefaultcase>
 					<cfif not supplier>
 						<li class="payment_item material-ripple" data-method="#LCase(item.eaTitle)#" data-accid="#item.eaID#" data-id="#item.eaID#">
@@ -265,7 +283,7 @@
 </cfoutput>
 
 <cfcatch type="any">
-	<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+	<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
 			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 </cfcatch>
 </cftry>

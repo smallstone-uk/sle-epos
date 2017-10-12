@@ -49,7 +49,7 @@
 	<script src="js/jquery.touchSwipe.js"></script>
 	<script src="js/jquery.zoomooz.min.js"></script>
 	<script src="js/intro.js"></script>
-	<script src="js/ripple.min.js"></script>
+	<!--- <script src="js/ripple.min.js"></script> --->
 	<script src="https://use.fontawesome.com/d9f3e22a05.js"></script>
 
 	<!--- Include all product group event scripts --->
