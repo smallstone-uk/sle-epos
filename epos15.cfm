@@ -43,7 +43,7 @@
 									$('#pubTitle').val(result.PUBTITLE);
 									$('#prodVATRate').val(result.PUBVATCODE);
 									$('#cashOnly').val(0);
-									$('#credit').val(result.PUBPRICE);							
+									$('#credit').val(result.PUBPRICE);
 									$('#prodSign').val(1);
 								}
 								$('#basket').append('<input type="hidden" name="btnSend" id="btnSend" value="Add" />');
@@ -74,8 +74,8 @@
 					$('#cash').val("");
 					$('#credit').val(mydata.price);
 				}
-			}); 
-			
+			});
+
 			$('#publication').change(function(e) {
 				$("#product").val([]);
 				var mydata = $(this).children('option:selected').data();
@@ -109,7 +109,7 @@
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
 		<cfset loc.LastBought = DateFormat(DateAdd("m",-3,Now()),'yyyy-mm-dd')><cfoutput>#loc.LastBought#</cfoutput>
-		<cftry> 
+		<cftry>
 			<cfquery name="loc.QProducts" datasource="#args.datasource#">
 				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siOurPrice, epcKey
 				FROM tblProducts
@@ -168,7 +168,7 @@
 				INNER JOIN tblEPOS_Cats ON prodEposCatID=epcID
 				WHERE prodSuppID != 21
 				LIMIT 20)
-				UNION	
+				UNION
 				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siOurPrice, epcKey
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct
@@ -181,9 +181,9 @@
 				AND prodEposCatID IN (42,142,152,161,171,181,191,122,221,241,251,261) )
 			</cfquery>
 			<cfreturn loc.QProducts>
-			
+
 		<cfcatch type="any">
-			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
 			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
@@ -193,22 +193,22 @@
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
-		
-		<cftry> 
+
+		<cftry>
 			<cfquery name="loc.QPapers" datasource="#args.datasource#">
 				SELECT pubID,pubTitle,pubPrice,pubTradePrice, 'MEDIA' AS epcKey
-				FROM `tblPublication` 
-				WHERE `pubGroup` = 'News' 
+				FROM `tblPublication`
+				WHERE `pubGroup` = 'News'
 				AND `pubEPOS` = 1
 			</cfquery>
 			<cfreturn loc.QPapers>
 		<cfcatch type="any">
-			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
 			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
 	</cffunction>
-	
+
 	<cffunction name="FillBasket" access="public" returntype="void">
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
@@ -267,7 +267,7 @@
 				</cfloop>
 			</cfloop>
 		<cfcatch type="any">
-			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
 			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
@@ -288,7 +288,7 @@
 			<cfset StructDelete(session,"till",false)>
 			<cfset StructDelete(session,"products",false)>
 		<cfcatch type="any">
-			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
 			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
@@ -372,13 +372,13 @@
 <cfoutput>
 	<div id="tillpanel">
 		<div id="ctrls">
-			<a href="?mode=destroy">Destroy</a> &nbsp; 
-			<a href="?mode=reg">Register</a> &nbsp; 
-			<a href="?mode=rfd">Refund</a> &nbsp; 
-			<a href="?mode=clear">Clear Basket</a> &nbsp; 
-			<a href="?mode=fill">Fill</a> &nbsp; 
-			<a href="?mode=ztill">Z Till</a> &nbsp; 
-			<a href="?mode=staff">Staff</a> &nbsp; 
+			<a href="?mode=destroy">Destroy</a> &nbsp;
+			<a href="?mode=reg">Register</a> &nbsp;
+			<a href="?mode=rfd">Refund</a> &nbsp;
+			<a href="?mode=clear">Clear Basket</a> &nbsp;
+			<a href="?mode=fill">Fill</a> &nbsp;
+			<a href="?mode=ztill">Z Till</a> &nbsp;
+			<a href="?mode=staff">Staff</a> &nbsp;
 			<span><cfif session.till.info.staff> Staff &nbsp; </cfif></span>
 			<span id="mode" class="#session.basket.info.mode#">#session.basket.info.mode# MODE</span>
 		</div>
@@ -396,7 +396,7 @@
 					</cfloop>
 				</select>
 				<br>
-				Newspapers: 
+				Newspapers:
 				<select name="publication" id="publication">
 					<option value="">Select...</option>
 					<cfloop query="session.papers">
@@ -441,7 +441,7 @@
 			<div id="errMsg">Msg : #session.basket.info.errMsg#</div>
 		</form>
 		<form method="post" enctype="multipart/form-data">
-			Report Date: 
+			Report Date:
 			<select name="reportDate" id="reportDate">
 				<option value="">Select date...</option>
 				<cfloop array="#session.dates.recs#" index="item">
@@ -499,7 +499,7 @@
 			</tr>
 		</table>
 	</div>
-	
+
 	<div id="xreading2" class="totalPanel">
 		<div class="header">Basket Totals</div>
 		<table class="tableList" border="1">
@@ -536,17 +536,17 @@
 			</tr>
 		</table>
 	</div>
-	
+
 	<div class="totalPanel" style="width:250px">
 		<div class="header">VAT Analysis</div>
 		<cfset ecfc.VATSummary(session.basket.trans)>
 	</div>
-	
+
 	<cfif NOT StructIsEmpty(session.till.prevtran)>
 		<!---<cfset ecfc.PrintReceipt(session.till.prevtran)>--->
 	</cfif>
 	<div style="clear:both"></div>
-	
+
 	<div id="xreading3" class="totalPanel">
 		<div class="header">Till Header</div>
 		<table class="tableList" border="1">
@@ -583,7 +583,7 @@
 			</tr>
 		</table>
 	</div>
-	
+
 	<div id="xreading4" class="totalPanel">
 		<div class="header">Till Totals</div>
 		<table class="tableList" border="1">

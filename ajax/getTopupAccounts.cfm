@@ -60,16 +60,19 @@
                                 $.addItem({
                                     account: data.account.eaid,
                                     addtobasket: true,
-                                    btnsend: "Account",
-                                    cash: data.method == 'cash' ? value : '',
+                                    btnsend: "Add",
+                                    cash: data.method == 'cash' ? value : 0,
                                     cashonly: 0,
-                                    credit: data.method == 'credit' ? value : '',
+                                    credit: data.method == 'credit' ? value : 0,
                                     prodid: 50621,
-                                    prodtitle: "",
+                                    prodtitle: "Account Payment",
                                     qty: 1,
                                     type: "",
-                                    vrate: "",
-                                    payID: data.account.eaid
+                                    vrate: 0,
+                                    payID: '',
+                                    prodSign: 1,
+                                    itemClass: 'ACCPAY',
+                                    prodClass: ''
                                 }, function() {
                                     $.loadBasket(function() {
                                         $('.popup_box, .dim').remove();
