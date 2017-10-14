@@ -1089,7 +1089,7 @@
 								<cfset CalcValues(args.data)>
 								<cfset UpdateBasket(args)>
 							<cfelse>
-								<cfset session.basket.info.errMsg = "No cash/credit value was passed to AddItem function.">
+								<cfset session.basket.info.errMsg = "This product has no price, please enter it manually.">
 								<cfdump var="#args#" label="AddItem Error" expand="yes" format="html"
 									output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 							</cfif>
@@ -2384,6 +2384,7 @@
 							<cfcase value="CASHINDW|CARDINDW|CHQINDW|CPN|ACCINDW" delimiters="|">
 								<cfset loc.tran.itemType = "pay">
 								<cfset loc.payID = loc.tran.payID>
+								<cfset loc.account = loc.tran.accid>
 								<cfset loc.retail = loc.tran.gross>
 								<cfif loc.showInfo>
 								<tr>
@@ -2852,8 +2853,7 @@
 			<cfquery name="loc.result.Accounts" datasource="#GetDataSource()#">
 				SELECT eaID,eaTitle,eaTillPayment,eaMenu
 				FROM tblEPOS_Account
-				WHERE eaTillPayment = 'Yes'
-				AND eaActive
+				WHERE eaActive
 				ORDER BY eaOrder
 			</cfquery>
 			<cfset loc.result.btns = []>
