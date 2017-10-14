@@ -1026,6 +1026,7 @@
 				var result = JSON.parse(data);
 				if (typeof result.PRODID != "undefined") {
 					var price = (typeof result.ENCODEDVALUE != "undefined" && Math.abs(result.ENCODEDVALUE) > 0) ? result.ENCODEDVALUE : result.SIOURPRICE;
+					if (price == 0) price = result.PRODOURPRICE;
 					if (result.ENCODEDVALUE < 0) {
 						$.addItem({
 							account: "",
