@@ -20,6 +20,7 @@
 	<link href="css/jquery-ui.css" rel="stylesheet" type="text/css">
 	<link href="css/jquery.mobile.css" rel="stylesheet" type="text/css">
 	<link href="css/epos.css" rel="stylesheet" type="text/css">
+	<link href="css/grid.css" rel="stylesheet" type="text/css">
 	<link href="css/virtualInput.css" rel="stylesheet" type="text/css">
 	<link href="css/sections.css" rel="stylesheet" type="text/css">
 	<!---<link href="css/sandbox.css" rel="stylesheet" type="text/css">--->
@@ -49,6 +50,8 @@
 	<script src="js/jquery.touchSwipe.js"></script>
 	<script src="js/jquery.zoomooz.min.js"></script>
 	<script src="js/intro.js"></script>
+	<script src="js/vue.js"></script>
+	<script src="js/vue-resource.js"></script>
 	<!--- <script src="js/ripple.min.js"></script> --->
 	<script src="https://use.fontawesome.com/d9f3e22a05.js"></script>
 

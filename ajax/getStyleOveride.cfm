@@ -52,7 +52,7 @@
 			.supplier_list li:active,
 			.basket_closerefund
 			{background:#userPrefs.empAccent#;}
-			
+
 			<!---BACKGROUND DARK--->
 			button:active,
 			.openSale:active,
@@ -60,7 +60,7 @@
 			.previousBtn:active,
 			.ps_selectedlist .ps_sli_item:active
 			{background:##222;}
-			
+
 			<!---BACKGROUND ACCENT IMPORTANT--->
 			.user_reminders ul li:active,
 			.FCDPPWRIDay_Active,
@@ -84,7 +84,7 @@
 			.payment_item[data-disabled="true"],
 			.basket_payment.touch_menu_active
 			{background:#userPrefs.empAccent# !important;}
-			
+
 			<!---BORDER / COLOUR ACCENT IMPORTANT--->
 			.bo_controlList li:active,
 			.r_row_completed,
@@ -93,19 +93,21 @@
 			.ps_ci_active,
 			textarea.appfld:focus,
 			.hollow,
-			select:focus
+			select:focus,
+			.selector.active,
+			.selector:active
 			{border-color:#userPrefs.empAccent# !important;color:#userPrefs.empAccent# !important;}
-			
+
 			<!---BORDER ACCENT IMPORTANT--->
 			.FCDPPHeader,
 			.FCDPPWRIDay,
 			.bigselect[data-open="true"],
 			{border-color:#userPrefs.empAccent# !important;}
-			
+
 			<!---BORDER ACCENT 3PX SOLID--->
 			input[type="text"]:focus
 			{border:3px solid #userPrefs.empAccent#;}
-			
+
 			<!---COLOUR ACCENT IMPORTANT--->
 			.header_note,
 			.close-button,
@@ -122,7 +124,7 @@
 			.idents,
 			.touchselect li[data-selected="true"]
 			{color: #userPrefs.empAccent# !important;}
-			
+
 			<!--- COLOUR ACCENT --->
 			.touch_menu_active,
 			.touch_menu
@@ -132,31 +134,31 @@
 			.ul_header,
 			.subtitle
 			{color: #userPrefs.empAccent#;}
-			
+
 			<!--- SCROLL BAR --->
 			::-webkit-scrollbar
 			{width: 25px;background:##444;}
 			::-webkit-scrollbar-thumb
 			{background:#userPrefs.empAccent#;}
-			
+
 			.INTRO_OutlineBox {
 				box-shadow: 0 0 50px #userPrefs.empAccent#;
 				border: 5px solid #userPrefs.empAccent#;
 			}
-			
-			@-moz-keyframes blinker {  
+
+			@-moz-keyframes blinker {
 				0% { border-color: ##FFF; box-shadow: 0 0 50px ##FFF; }
 				50% { border-color: #userPrefs.empAccent#; box-shadow: 0 0 50px #userPrefs.empAccent#; }
 				100% { border-color: ##FFF; box-shadow: 0 0 50px ##FFF; }
 			}
-			
-			@-webkit-keyframes blinker {  
+
+			@-webkit-keyframes blinker {
 				0% { border-color: ##FFF; box-shadow: 0 0 50px ##FFF; }
 				50% { border-color: #userPrefs.empAccent#; box-shadow: 0 0 50px #userPrefs.empAccent#; }
 				100% { border-color: ##FFF; box-shadow: 0 0 50px ##FFF; }
 			}
-			
-			@keyframes blinker {  
+
+			@keyframes blinker {
 				0% { border-color: ##FFF; box-shadow: 0 0 50px ##FFF; }
 				50% { border-color: #userPrefs.empAccent#; box-shadow: 0 0 50px #userPrefs.empAccent#; }
 				100% { border-color: ##FFF; box-shadow: 0 0 50px ##FFF; }
@@ -166,7 +168,7 @@
 </cfoutput>
 
 <cfcatch type="any">
-	<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+	<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
 			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 </cfcatch>
 </cftry>

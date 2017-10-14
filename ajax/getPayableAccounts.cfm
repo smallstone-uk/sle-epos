@@ -36,10 +36,13 @@
             });
         </script>
 
-        <cfloop array="#accounts#" index="account">
-            <div class="account-item" data-id="#account.eaID#">
-                #account.eaTitle#
-            </div>
-        </cfloop>
+
+        <div class="grid gap-1 row-size-3">
+            <cfloop array="#accounts#" index="account">
+                <div class="grid-item selector account-item" data-id="#account.eaID#">
+                    <span>#account.eaTitle#</span>
+                </div>
+            </cfloop>
+        </div>
     </div>
 </cfoutput>

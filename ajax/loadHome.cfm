@@ -12,6 +12,15 @@
 				var index = $(this).data("index");
 				switch (index)
 				{
+					case "topupaccount":
+						$.ajax({
+						    type: 'GET',
+						    url: "#getUrl('ajax/getTopupAccounts.cfm')#",
+						    success: function(data) {
+						    	$.popup(data);
+						    }
+						});
+						break;
 					case "barcode":
 						$.virtualNumpad({
 							wholenumber: true,
@@ -46,7 +55,7 @@
 					case "opentill":
 						cf('till.isTranOpen').then(function(isOpen) {
 							if (isOpen) return;
-							
+
 							$.virtualNumpad({
 								autolength: 4,
 								wholenumber: true,
@@ -83,7 +92,7 @@
 </cfoutput>
 
 <cfcatch type="any">
-	<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+	<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
 			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 </cfcatch>
 </cftry>
