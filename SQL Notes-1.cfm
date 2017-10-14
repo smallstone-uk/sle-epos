@@ -52,3 +52,16 @@ FROM `tblEPOS_EmpCats`
 INNER JOIN tblEPOS_Cats ON eecCategory = epcID
 WHERE eecEmployee =122
 ORDER BY eecOrder
+
+//Products & stock items price check where product ourprice <> stock item ourprice
+SELECT prodID,prodTitle,siUnitSize,prodLastBought,prodPriceMarked,prodOurPrice,
+siRRP,siOurPrice,siPOR,siID	
+FROM tblProducts
+INNER JOIN tblEPOS_Cats ON epcID = prodEposCatID
+LEFT JOIN tblStockItem ON prodID = siProduct
+AND tblStockItem.siID = (
+	SELECT MAX( siID )
+	FROM tblStockItem
+	WHERE prodID = siProduct )
+WHERE prodOurPrice!=siOurPrice
+
