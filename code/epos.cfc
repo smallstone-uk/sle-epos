@@ -3148,7 +3148,7 @@
 
 		<cftry>
 			<cfquery name="loc.product" datasource="#GetDatasource()#" result="loc.prodres">
-				SELECT prodID,prodStaffDiscount,prodRef,prodRecordTitle,prodTitle,prodCountDate,prodStockLevel,prodLastBought,prodStaffDiscount
+				SELECT prodID,prodStaffDiscount,prodRef,prodRecordTitle,prodTitle,prodCountDate,prodStockLevel,prodLastBought,prodOurPrice,
 						prodPackPrice,prodValidTo,prodPriceMarked,prodCatID,prodVATRate,prodSign,prodCashOnly,prodClass,
 						siID,siRef,siOrder,siUnitSize,siPackQty,siQtyPacks,siQtyItems,siWSP,siUnitTrade,siRRP,siOurPrice,siPOR,siReceived,siBookedIn,siExpires,siStatus,
 						epcKey
