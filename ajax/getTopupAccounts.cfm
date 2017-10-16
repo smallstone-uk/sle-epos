@@ -1,7 +1,5 @@
 <cfscript>
-    accounts = new App.EPOSAccount()
-        .where('eaMenu', 'Yes')
-        .toArray();
+    accounts = new App.EPOSAccount().getPayableAccounts();
 </cfscript>
 
 <cfoutput>
@@ -9,19 +7,26 @@
         $(document).ready(function(e) {
             #toScript(accounts, 'window.accounts')#;
 
+            Vue.filter('currency', value => {
+                let langage = (navigator.language || navigator.browserLanguage).split('-')[0];
+
+                return value.toLocaleString(langage, {
+                    style: 'currency',
+                    currency: 'gbp'
+                });
+            });
+
             new Vue({
                 el: '.topup-account',
 
                 data: {
                     accounts: window.accounts,
-                    account: null,
-                    method: null
+                    account: null
                 },
 
                 computed: {
                     notValid: function() {
-                        return this.account === null
-                            || this.method === null;
+                        return this.account === null;
                     }
                 },
 
@@ -34,20 +39,8 @@
                         };
                     },
 
-                    getMethodClasses: function(method) {
-                        return {
-                            'grid-item': true,
-                            'selector': true,
-                            'active': method === this.method
-                        };
-                    },
-
                     selectAccount: function(account) {
                         this.account = account;
-                    },
-
-                    selectMethod: function(method) {
-                        this.method = method;
                     },
 
                     complete: function() {
@@ -61,9 +54,9 @@
                                     account: data.account.eaid,
                                     addtobasket: true,
                                     btnsend: "Add",
-                                    cash: data.method == 'cash' ? value : 0,
+                                    cash: 0,
                                     cashonly: 0,
-                                    credit: data.method == 'credit' ? value : 0,
+                                    credit: value,
                                     prodid: 50621,
                                     prodtitle: "Account Payment",
                                     qty: 1,
@@ -89,17 +82,10 @@
     <div class="topup-account">
         <div class="grid gap-1 row-size-3 m-b-2 m-t-1" title="Account">
             <div v-for="(account, index) in accounts" :class="getAccountClasses(account)" @click.prevent="selectAccount(account)">
-                <span>{{ account.eatitle }}</span>
-            </div>
-        </div>
-
-        <div class="grid gap-1 col-2 row-size-3 m-b-2" title="Payment Method">
-            <div :class="getMethodClasses('cash')" @click.prevent="selectMethod('cash')">
-                <span>Cash</span>
-            </div>
-
-            <div :class="getMethodClasses('credit')" @click.prevent="selectMethod('credit')">
-                <span>Credit</span>
+                <span style="padding: 0 1rem">
+                    <span class="pull-left text-left">{{ account.eatitle }}</span>
+                    <span class="pull-right text-right">{{ account.balance | currency }}</span>
+                </span>
             </div>
         </div>
 

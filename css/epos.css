@@ -2773,3 +2773,10 @@ select:focus {
     padding: 0;
     height: 100%;
 }
+
+.text-left {text-align: left;}
+.text-right {text-align: right;}
+.text-center {text-align: center;}
+
+.pull-left {float: left;}
+.pull-right {float: right;}

@@ -104,6 +104,6 @@ component
      */
     public any function onError(any exception)
     {
-        writeDumpToFile(exception);
+        writeDumpToBoth(exception);
     }
 }
