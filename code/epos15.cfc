@@ -1713,6 +1713,7 @@
 									<cfset loc.tran.itemClass = 'CASHINDW'>
 									<cfset loc.tran.itemType = 'pay'>
 									<cfset loc.tran.payID = 12>
+									<cfset loc.tran.accID = 1>
 									<cfset loc.tran.cashonly = "YES">
 									<cfset loc.tran.gross = loc.thisBasket.info.change>
 									<cfset loc.tran.net = loc.thisBasket.info.change>
@@ -2225,6 +2226,7 @@
 
 	<cffunction name="WriteTransaction" access="public" returntype="struct">
 		<cfargument name="args" type="struct" required="yes">
+
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
 		<cfset loc.itemStr = "">
