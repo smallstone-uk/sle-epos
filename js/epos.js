@@ -1,6 +1,10 @@
 ;(function($) {
     //'use strict';
 
+    window.sound = function(name) {
+    	new Audio('audio/' + name + '.mp3').play();
+    }
+
     window.opt = window.optional = (object) => {
 	    return new Proxy(object || {}, {
 	        get: function(target, name) {
@@ -853,6 +857,7 @@
 			url: "ajax/addPayment.cfm",
 			data: params,
 			success: function(data) {
+				// sound('added');
 				var closeTranNow = (data.trim().toLowerCase() == "yes") ? true : false;
 
 				if (closeTranNow) {
@@ -871,6 +876,7 @@
 			url: "ajax/addItem.cfm",
 			data: params,
 			success: function(data) {
+				sound('added');
 				if (typeof callback == "function") callback(params);
 			}
 		});
@@ -1155,6 +1161,7 @@
 			url: "ajax/addToBasket.cfm",
 			data: params,
 			success: function(data) {
+				sound('added');
 				raiseEvent('onAdded', data);
 				$.loadBasket();
 				callback();

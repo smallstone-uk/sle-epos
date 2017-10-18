@@ -2,6 +2,7 @@
 <cfobject component="#application.site.codePath#" name="e">
 
 <cfif StructKeyExists(session,"user") AND session.user.ID eq 0>
+	<script>sound('error')</script>
 	<div class="basket_error">Your session timed out. Please login again.</div>
 	<cfexit>
 </cfif>
@@ -27,13 +28,13 @@
 					});
 					event.preventDefault();
 				});
-				
+
 				$('.basket_checkout').click(function(event) {
 					$('.categories_viewer').loadPayments();
 	                $('*').blur();
 					event.preventDefault();
 				});
-				
+
 				$('.basket_receipt').click(function(event) {
 					var enabled = $(this).data('enabled');
 
@@ -46,7 +47,7 @@
 
 					event.preventDefault();
 				});
-				
+
 				$('.basket_closerefund').click(function(event) {
 					var balance = $(this).data("balance");
 
@@ -59,9 +60,10 @@
 				});
 			});
 		</script>
-		
+
 		<div class="eposBasketDivWrap">
 			<cfif Len(session.basket.info.errMsg)>
+				<script>sound('error')</script>
 				<div class="basket_error">
 					#session.basket.info.errMsg#
 				</div>
@@ -88,7 +90,7 @@
 								}
 							}
 						]);
-						
+
 						$('.ebt_payment').touchHold([
 							{
 								text: "remove",
@@ -104,7 +106,7 @@
 								}
 							}
 						]);
-						
+
 						$('.basket_item').touchHold([
 							{
 								text: "add one",
@@ -140,7 +142,7 @@
 								}
 							}
 						]);
-						
+
 						// Auto-scroll to bottom
 						var basket = $('.eposBasketDivWrap');
 						var height = basket[0].scrollHeight;
@@ -150,7 +152,7 @@
 			</cfif>
 			#e.ShowBasket("html")#
 		</div>
-		
+
 		<cfif loc.thisBasket.tranID>
 			<script>
 				$(document).ready(function(e) {
@@ -231,7 +233,7 @@
 </cfoutput>
 
 <cfcatch type="any">
-	<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+	<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
 		output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 </cfcatch>
 </cftry>
