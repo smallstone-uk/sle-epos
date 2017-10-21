@@ -133,6 +133,7 @@
 								<cfset loc.tran.cashonly = loc.data.cash neq 0>
 								<cfset loc.tran.prodID = loc.prodID>
 								<cfset loc.tran.itemClass = loc.data.itemClass>
+								<cfset loc.tran.unitTrade = loc.data.unitTrade>
 								<cfset loc.tran.price = loc.data.unitPrice>
 								<cfset loc.tran.vrate = loc.data.vrate>
 								<cfset loc.tran.vcode = loc.data.vcode>
@@ -166,6 +167,7 @@
 										<cfset loc.tran.vrate = loc.data.vrate>
 										<cfset loc.tran.vcode = loc.data.vcode>
 										<cfset loc.tran.itemClass = loc.data.itemClass>
+										<cfset loc.tran.unitTrade = loc.data.unitTrade>
 										<cfset loc.tran.price = loc.data.unitprice>
 										<cfset loc.tran.prop = loc.tran.price / loc.dealRec.groupRetail>
 
@@ -204,6 +206,7 @@
 									<cfset loc.tran.vrate = loc.data.vrate>
 									<cfset loc.tran.vcode = loc.data.vcode>
 									<cfset loc.tran.itemClass = loc.data.itemClass>
+									<cfset loc.tran.unitTrade = loc.data.unitTrade>
 									<cfset loc.tran.price = loc.data.unitPrice>
 									<cfset loc.tran.gross = Round((loc.tran.price - loc.itemDiscount) * 100) / 100>
 									<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
@@ -221,143 +224,7 @@
 							<cfset loc.dealRec.totalCharge = loc.dealRec.totalCharge * loc.rec.regMode>
 							<cfset loc.dealRec.savingGross = loc.dealRec.savingGross * loc.rec.regMode>
 						</cfcase>
-
-<!---
-						<cfcase value="anyfor|twofor" delimiters="|">
-							<cfloop array="#loc.dealRec.prices#" index="loc.priceKey">
-								<cfset loc.count++>
-								<cfset loc.price = ListFirst(loc.priceKey," ")>
-								<cfset loc.prodID = ListLast(loc.priceKey," ")>
-								<cfset loc.dealRec.groupRetail += loc.price>
-								<cfset loc.dealRec.remQty = loc.count MOD loc.dealData.edQty>
-								<cfif loc.dealRec.remQty eq 0>
-									<cfset loc.totalGross = 0>
-									<cfset loc.dealRec.lastQual = loc.count>
-									<cfset loc.dealRec.dealQty++>
-									<cfset loc.dealRec.dealTotal = loc.dealRec.dealQty * loc.dealData.edAmount>
-									<cfloop from="#loc.start#" to="#loc.count#" index="loc.i">
-										<cfset loc.tran = {}>
-										<cfset loc.tran.prodID = ListLast(loc.dealRec.prices[loc.i]," ")>
-										<cfset loc.data = StructFind(session.basket.shopItems,loc.tran.prodID)>
-										<cfset loc.tran.cashonly = loc.data.cash neq 0>
-										<cfset loc.tran.price = loc.data.unitprice>
-										<cfset loc.data.discount = 0>
-										<cfset loc.data.style = "red">
-										<cfset loc.tran.vrate = loc.data.vrate>
-										<cfset loc.tran.vcode = loc.data.vcode>
-										<cfset loc.tran.itemClass = loc.data.itemClass>
-										<cfset loc.tran.prop = loc.tran.price / loc.dealRec.groupRetail>
-										<cfif loc.i lt loc.count>
-											<cfset loc.tran.gross = Round(loc.dealData.edAmount * loc.tran.prop * 100) / 100 * loc.tranType * loc.rec.regMode>
-										<cfelse>
-											<cfset loc.tran.gross = loc.dealData.edAmount - loc.totalGross>
-										</cfif>
-										<cfset loc.totalGross -= loc.tran.gross>
-										<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
-										<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
-										<cfset ArrayAppend(session.basket.trans,loc.tran)>
-									</cfloop>
-									<cfset loc.dealRec.groupRetail = 0>
-									<cfset loc.start = loc.count + 1>
-								</cfif>
-							</cfloop>
-							<cfif loc.dealRec.lastQual lt loc.count>
-								<cfloop from="#loc.dealRec.lastQual + 1#" to="#loc.count#" index="loc.i">
-									<cfset loc.tran = {}>
-									<cfset loc.itemDiscount = 0>
-									<cfset loc.tran.price = ListFirst(loc.dealRec.prices[loc.i]," ") * 1>
-									<cfset loc.tran.prodID = ListLast(loc.dealRec.prices[loc.i]," ")>
-									<cfset loc.data = StructFind(session.basket.shopItems,loc.tran.prodID)>
-									<cfset loc.data.discount = 0>
-									<cfset loc.tran.cashonly = loc.data.cash neq 0>
-									<cfif session.till.info.staff AND loc.data.discountable>	<!--- staff sale and is a discountable item --->
-										<cfset loc.itemDiscount = round(loc.data.unitPrice * 100 * session.till.prefs.discount) / 100>
-										<cfset loc.data.discount = loc.itemDiscount * loc.data.qty>
-									</cfif>
-									<cfset loc.tran.prop = 1>
-									<cfset loc.tran.vrate = loc.data.vrate>
-									<cfset loc.tran.vcode = loc.data.vcode>
-									<cfset loc.tran.itemClass = loc.data.itemClass>
-									<cfset loc.tran.price = loc.data.unitPrice>
-									<cfset loc.tran.gross = Round((loc.tran.price - loc.itemDiscount) * 100) / 100 * loc.tranType * loc.rec.regMode>
-									<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
-									<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
-									<cfset ArrayAppend(session.basket.trans,loc.tran)>
-								</cfloop>
-							</cfif>
-							<cfset loc.dealRec.totalCharge = loc.dealRec.groupRetail + loc.dealRec.dealTotal>
-							<cfset loc.dealRec.savingGross = loc.dealRec.retail - loc.dealRec.totalCharge>
-							<cfset loc.dealRec.totalCharge = loc.dealRec.totalCharge * loc.rec.regMode>
-							<cfset loc.dealRec.savingGross = loc.dealRec.savingGross * loc.rec.regMode>
-						</cfcase>
---->
-<!---
-					<cfcase value="bogof">
-							<cfloop array="#loc.dealRec.prices#" index="loc.priceKey">
-								<cfset loc.count++>
-								<cfset loc.price = ListFirst(loc.priceKey," ")>
-								<cfset loc.prodID = ListLast(loc.priceKey," ")>
-								<cfset loc.dealRec.groupRetail += loc.price>
-								<cfset loc.dealRec.remQty = loc.count MOD loc.dealData.edQty>
-								<cfif loc.dealRec.remQty eq 0>
-									<cfset loc.totalGross = 0>
-									<cfset loc.dealRec.lastQual = loc.count>
-									<cfset loc.dealRec.dealQty++>
-									<cfset loc.dealRec.dealTotal = (loc.dealRec.dealQty * loc.price) + (loc.dealRec.remQty * loc.price * 1)>
-									<cfloop from="#loc.start#" to="#loc.count#" index="loc.i">
-										<cfset loc.tran = {}>
-										<cfset loc.tran.prodID = ListLast(loc.dealRec.prices[loc.i]," ")>
-										<cfset loc.data = StructFind(session.basket.shopItems,loc.tran.prodID)>
-										<cfset loc.tran.cashonly = loc.data.cash neq 0>
-										<cfset loc.tran.price = loc.data.unitPrice>
-										<cfset loc.data.discount = 0>
-										<cfset loc.data.style = "red">
-										<cfset loc.tran.vrate = loc.data.vrate>
-										<cfset loc.tran.vcode = loc.data.vcode>
-										<cfset loc.tran.itemClass = loc.data.itemClass>
-										<cfset loc.tran.prop = loc.tran.price / loc.dealRec.groupRetail>
-										<cfif loc.i lt loc.count>
-											<cfset loc.tran.gross = Round(loc.dealRec.dealTotal * loc.tran.prop * 100) / 100 * loc.tranType * loc.rec.regMode>
-										<cfelse>
-											<cfset loc.tran.gross = (loc.dealRec.dealTotal - loc.totalGross) * loc.tranType * loc.rec.regMode>
-										</cfif>
-										<cfset loc.totalGross -= loc.tran.gross>
-										<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
-										<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
-										<cfdump var="#loc#" label="bogof" expand="false">
-										<cfset ArrayAppend(session.basket.trans,loc.tran)>
-									</cfloop>
-									<cfset loc.dealRec.groupRetail = 0>
-									<cfset loc.start = loc.count + 1>
-								</cfif>
-							</cfloop>
-							<cfif loc.dealRec.lastQual lt loc.count>
-								<cfloop from="#loc.dealRec.lastQual + 1#" to="#loc.count#" index="loc.i">
-									<cfset loc.tran = {}>
-									<cfset loc.itemDiscount = 0>
-									<cfset loc.tran.price = ListFirst(loc.dealRec.prices[loc.i]," ") * 1>
-									<cfset loc.tran.prodID = ListLast(loc.dealRec.prices[loc.i]," ")>
-									<cfset loc.data = StructFind(session.basket.shopItems,loc.tran.prodID)>
-									<cfset loc.tran.cashonly = loc.data.cash neq 0>
-									<cfset loc.tran.price = loc.data.unitPrice>
-									<cfif session.till.info.staff AND loc.data.discountable>	<!--- staff sale and is a discountable item --->
-										<cfset loc.itemDiscount = round(loc.data.unitPrice * 100 * session.till.prefs.discount) / 100>
-										<cfset loc.data.discount = loc.itemDiscount * loc.data.qty>
-									</cfif>
-									<cfset loc.tran.prop = 1>
-									<cfset loc.tran.vrate = loc.data.vrate>
-									<cfset loc.tran.vcode = loc.data.vcode>
-									<cfset loc.tran.itemClass = loc.data.itemClass>
-									<cfset loc.tran.gross = Round((loc.tran.price - loc.itemDiscount) * 100) / 100 * loc.tranType * loc.rec.regMode>
-									<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
-									<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
-									<cfset ArrayAppend(session.basket.trans,loc.tran)>
-								</cfloop>
-							</cfif>
-							<cfset loc.dealRec.totalCharge = loc.dealRec.groupRetail + loc.dealRec.dealTotal>
-							<cfset loc.dealRec.savingGross = loc.dealRec.retail - loc.dealRec.totalCharge>
-						</cfcase>
---->
+						
 						<cfcase value="only">
 							<cfloop array="#loc.dealRec.prices#" index="loc.priceKey">
 								<cfset loc.count++>
@@ -378,6 +245,7 @@
 										<cfset loc.tran.vrate = loc.data.vrate>
 										<cfset loc.tran.vcode = loc.data.vcode>
 										<cfset loc.tran.itemClass = loc.data.itemClass>
+										<cfset loc.tran.unitTrade = loc.data.unitTrade>
 										<cfset loc.tran.prop = 1>
 										<cfset loc.tran.gross = Round(loc.dealData.edAmount * 100) / 100 * loc.tranType * loc.rec.regMode>
 										<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
@@ -416,6 +284,7 @@
 										<cfset loc.tran.vrate = loc.data.vrate>
 										<cfset loc.tran.vcode = loc.data.vcode>
 										<cfset loc.tran.itemClass = loc.data.itemClass>
+										<cfset loc.tran.unitTrade = loc.data.unitTrade>
 										<cfset loc.tran.prop = 1>
 										<cfset loc.tran.gross = Round((loc.data.unitPrice / 2) * 100) / 100 * loc.tranType * loc.rec.regMode>
 										<cfif loc.i MOD 2 IS 0>
@@ -446,6 +315,7 @@
 									<cfset loc.tran.vrate = loc.data.vrate>
 									<cfset loc.tran.vcode = loc.data.vcode>
 									<cfset loc.tran.itemClass = loc.data.itemClass>
+									<cfset loc.tran.unitTrade = loc.data.unitTrade>
 									<cfset loc.tran.gross = Round((loc.tran.price - loc.itemDiscount) * 100) / 100 * loc.tranType * loc.rec.regMode>
 									<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
 									<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
@@ -478,6 +348,7 @@
 										<cfset loc.tran.vrate = loc.data.vrate>
 										<cfset loc.tran.vcode = loc.data.vcode>
 										<cfset loc.tran.itemClass = loc.data.itemClass>
+										<cfset loc.tran.unitTrade = loc.data.unitTrade>
 										<cfset loc.tran.prop = 1>
 										<cfset loc.tran.gross = Round((loc.data.unitPrice / 2) * 100) / 100 * loc.tranType * loc.rec.regMode>
 										<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
@@ -516,6 +387,7 @@
 										<cfset loc.tran.vrate = loc.data.vrate>
 										<cfset loc.tran.vcode = loc.data.vcode>
 										<cfset loc.tran.itemClass = loc.data.itemClass>
+										<cfset loc.tran.unitTrade = loc.data.unitTrade>
 										<cfset loc.tran.prop = 1>
 										<cfif loc.i MOD 2 eq 0>
 											<cfset loc.tran.gross = Round((loc.data.unitPrice * 0.5) * 100) / 100 * loc.tranType * loc.rec.regMode>
@@ -549,6 +421,7 @@
 									<cfset loc.tran.vrate = loc.data.vrate>
 									<cfset loc.tran.vcode = loc.data.vcode>
 									<cfset loc.tran.itemClass = loc.data.itemClass>
+									<cfset loc.tran.unitTrade = loc.data.unitTrade>
 									<cfset loc.tran.gross = Round((loc.tran.price - loc.itemDiscount) * 100) / 100 * loc.tranType * loc.rec.regMode>
 									<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
 									<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
@@ -710,6 +583,7 @@
 			<cfset loc.vatRate = 1 + (val(loc.rec.vrate) / 100)>
 			<cfset loc.rec.discountable = StructKeyExists(args.form,"discountable") AND args.form.discountable>
 			<cfset loc.rec.cashonly = args.form.cashonly>
+			<cfset loc.rec.unitTrade = args.form.unitTrade>
 			<cfset loc.rec.cash = args.data.cash>
 			<cfset loc.rec.credit = args.data.credit>
 			<cfset loc.rec.unitPrice = loc.rec.cash + loc.rec.credit>
@@ -834,6 +708,7 @@
 			<cfset args.data.discount = 0>
 			<cfset args.data.account = val(args.form.account)>
 			<cfset args.data.prodSign = args.form.prodSign>
+			<cfset args.data.unitTrade = args.form.unitTrade>
 			<cfset args.data.qty = val(args.form.qty)>
 			<cfset args.data.cash = abs(val(args.form.cash)) * args.form.prodSign>
 			<cfset args.data.credit = abs(val(args.form.credit)) * args.form.prodSign>
@@ -2262,6 +2137,7 @@
 							<td align="right" width="50">vat</td>
 							<td align="right" width="50">rate</td>
 							<td align="right" width="50">disc</td>
+							<td align="right" width="50">wsp</td>
 						</tr>
 					</cfif>
 					<cfloop array="#args.trans#" index="loc.tran">
@@ -2294,6 +2170,7 @@
 									<td align="right">#loc.tran.vat#</td>
 									<td align="right">#loc.tran.vrate#%</td>
 									<td align="right">#loc.disc#</td>
+									<td align="right">#loc.tran.unitTrade#</td>
 								</tr>
 								</cfif>
 							</cfcase>
@@ -2428,8 +2305,11 @@
 						<cfset loc.total.disc += loc.disc>
 						<cfset loc.net = DecimalFormat(loc.tran.net)>
 						<cfset loc.vat = DecimalFormat(loc.tran.vat)>
+						<cfif StructKeyExists(loc.tran,"unitTrade")>
+							<cfset loc.trade = val(loc.tran.unitTrade)>
+						<cfelse><cfset loc.trade = 0></cfif>
 						<cfset loc.itemStr = "#loc.itemStr#,(#loc.ID#,'#loc.tran.itemType#','#loc.tran.itemClass#',#loc.prodID#,#loc.pubID#,#loc.payID#,
-							#loc.account#,#loc.retail#,#loc.net#,#loc.vat#)">
+							#loc.account#,#loc.retail#,#loc.net#,#loc.vat#,#loc.trade#)">
 					</cfloop>
 					<cfset loc.itemStr = RemoveChars(loc.itemStr,1,1)>
 						<cfif loc.showInfo>
@@ -2455,7 +2335,8 @@
 							eiAccID,
 							eiRetail,
 							eiNet,
-							eiVAT
+							eiVAT,
+							eiTrade
 						)">
 					<cfquery name="loc.QInsertItem" datasource="#GetDataSource()#">
 						INSERT INTO tblEPOS_Items (
@@ -2468,7 +2349,8 @@
 							eiAccID,
 							eiRetail,
 							eiNet,
-							eiVAT
+							eiVAT,
+							eiTrade
 						) VALUES
 						#PreserveSingleQuotes(loc.itemStr)#
 					</cfquery>
@@ -3084,6 +2966,7 @@
 					<th align="right">VAT</th>
 					<th align="right">DR</th>
 					<th align="right">CR</th>
+					<th align="right">Trade</th>
 				</tr>
 				<cfset loc.balance = 0>
 				<cfloop query="loc.QTrans">
@@ -3119,6 +3002,7 @@
 							<td align="right"></td>
 							<td align="right">#DecimalFormat(-loc.gross)#</td>
 						</cfif>
+						<td>##</td>
 					</tr>
 					<cfset loc.tran = eiParent>
 					<cfset loc.balance += loc.gross>

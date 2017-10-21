@@ -37,6 +37,7 @@
 									$('#prodSign').val(result.PRODSIGN);
 									$('#prodClass').val(result.PRODCLASS);
 									$('#discountable').prop('checked', result.PRODSTAFFDISCOUNT);
+									$('#unitTrade').val(result.unittrade);
 								} else if (result.PUBID && result.PUBTITLE) {
 									$('#itemClass').val(result.EPCKEY);
 									$('#pubID').val(result.PUBID);
@@ -67,6 +68,7 @@
 				$('#prodSign').val(mydata.sign);
 				$('#prodClass').val(mydata.prodClass);
 				$('#discountable').prop('checked', mydata.staffdiscount == "Yes");
+				$('#unitTrade').val(mydata.unittrade);
 				if (mydata.cashonly) {
 					$('#cash').val(mydata.price);
 					$('#credit').val("");
@@ -111,7 +113,7 @@
 		<cfset loc.LastBought = DateFormat(DateAdd("m",-3,Now()),'yyyy-mm-dd')><cfoutput>#loc.LastBought#</cfoutput>
 		<cftry>
 			<cfquery name="loc.QProducts" datasource="#args.datasource#">
-				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siOurPrice, epcKey
+				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siOurPrice, epcKey
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct
 				AND tblStockItem.siID = (
@@ -123,7 +125,7 @@
 				WHERE prodLastBought > '#loc.LastBought#'
 				LIMIT 100)
 				UNION
-				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siOurPrice, epcKey
+				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siOurPrice, epcKey
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct
 				AND tblStockItem.siID = (
@@ -134,7 +136,7 @@
 				WHERE prodLastBought > '#loc.LastBought#'
 				LIMIT 15)
 				UNION
-				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siOurPrice, epcKey
+				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siOurPrice, epcKey
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct
 				AND tblStockItem.siID = (
@@ -146,7 +148,7 @@
 				AND prodVatRate <> 0
 				LIMIT 15)
 				UNION
-				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siOurPrice, epcKey
+				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siOurPrice, epcKey
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct
 				AND tblStockItem.siID = (
@@ -158,7 +160,7 @@
 				AND prodVatRate = 5
 				LIMIT 5)
 				UNION
-				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siOurPrice, epcKey
+				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siOurPrice, epcKey
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct
 				AND tblStockItem.siID = (
@@ -169,7 +171,7 @@
 				WHERE prodSuppID != 21
 				LIMIT 20)
 				UNION
-				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siOurPrice, epcKey
+				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siOurPrice, epcKey
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct
 				AND tblStockItem.siID = (
@@ -217,7 +219,7 @@
 		<cftry>
 			<cfloop list="#loc.prodIDs#" delimiters="," index="loc.pID">
 				<cfquery name="loc.QProduct" datasource="#GetDataSource()#">
-					SELECT prodID,prodSign,prodTitle,prodCashOnly,prodStaffDiscount,prodVATRate,prodClass, siOurPrice, epcKey
+					SELECT prodID,prodSign,prodTitle,prodCashOnly,prodStaffDiscount,prodVATRate,prodClass, siUnitTrade,siOurPrice, epcKey
 					FROM tblProducts
 					LEFT JOIN tblStockItem ON prodID = siProduct
 					AND tblStockItem.siID = (
@@ -391,7 +393,8 @@
 						<cfif val(siOurPrice) neq 0><cfset itemPrice = siOurPrice>
 							<cfelse><cfset itemPrice = prodOurPrice></cfif>
 						<option value="#prodID#" data-price="#itemPrice#" data-cashonly="#prodCashOnly#" data-epckey="#epcKey#" data-sign="#prodSign#" data-prodid="#prodID#"
-							data-staffDiscount="#prodStaffDiscount#" data-title="#prodTitle#" data-vatrate="#prodVATRate#" data-prodClass="#prodClass#">
+							data-staffDiscount="#prodStaffDiscount#" data-title="#prodTitle#" data-vatrate="#prodVATRate#" 
+							data-prodClass="#prodClass#" data-unittrade="#siUnitTrade#">
 							#prodCashOnly# - #prodStaffDiscount# - #prodID# - #epcKey# - #Left(prodTitle,20)# - #itemPrice# - #prodVatRate#%</option>
 					</cfloop>
 				</select>
@@ -420,6 +423,7 @@
 					<input type="checkbox" name="discountable" id="discountable" value="1" />Discountable
 					<input type="submit" name="btnSend" id="btnSend" class="addBtn" value="Add" />
 				</div>
+				<input name="unitTrade" id="unitTrade" type="text" value="" />
 				<input name="prodSign" id="prodSign" type="text" value="1" size="3" />
 				<input name="prodTitle" id="prodTitle" type="text" value="" />
 				<input name="prodClass" id="prodClass" type="text" value="" size="3" />

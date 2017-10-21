@@ -12,6 +12,7 @@
 			$('.products_item').click(function(event) {
 				var obj = $(this);
 				var dataAttributes = getDataAttributes( $(this) );
+				console.log(dataAttributes);
 				if (dataAttributes.credit != 0 || dataAttributes.cash != 0) {
 					$.addToBasket(dataAttributes);
 				} else {
@@ -57,6 +58,7 @@
 					data-cashonly="#item.prodCashOnly#"
 					data-prodsign="#item.prodSign#"
 					data-itemclass="#item.epcKey#"
+					data-unittrade="#item.siUnitTrade#"
 					<cfif item.prodCashOnly is 1>
 						data-cash="#ourPrice#"
 						data-credit="0"

@@ -57,6 +57,7 @@
 					data-cashonly="#item.prodCashOnly#"
 					data-prodsign="#item.prodSign#"
 					data-itemclass="#item.epcKey#"
+					data-unittrade="#item.siUnitTrade#"
 					<cfif item.prodCashOnly is 1>
 						data-cash="#ourPrice#"
 						data-credit="0"

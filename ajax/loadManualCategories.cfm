@@ -49,6 +49,7 @@
                 data-itemclass="#item.hasOne('EPOSCat', 'prodEposCatID').epcKey#"
                 data-credit="0"
                 data-cash="0"
+				data-unittrade="#item.siUnitTrade#"
             ><span><strong>#item.prodTitle#</strong></span></li>
         </cfloop>
     </ul>

@@ -1078,7 +1078,8 @@
 							vrate: result.PRODVATRATE,
 							cashonly: result.PRODCASHONLY,
 							cash: (result.PRODCASHONLY == 1) ? price : 0,
-							credit: (result.PRODCASHONLY == 1) ? 0 : price
+							credit: (result.PRODCASHONLY == 1) ? 0 : price,
+							unitTrade: result.SIUNITTRADE
 						}, callback);
 					}
 				} else {
