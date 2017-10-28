@@ -70,7 +70,7 @@
 	</head>
 
 	<cfobject component="code/epos" name="epos">
-	<cfobject component="code/epos2" name="epos2">
+	<!---<cfobject component="code/epos2" name="epos2">--->
 	<cfset parm = {}>
 	<cfset parm.datasource = application.site.datasource1>
 	<cfset parm.url = application.site.normal>
