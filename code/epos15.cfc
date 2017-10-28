@@ -1716,134 +1716,135 @@
 		<cfset var loc = {}>
 
 		<cftry>
-			<cfset session.basket.vatAnalysis = {}>
-			<cfoutput>
-				<cfset loc.basketCount = 0>
-				<cfset loc.totalRetail = 0>
-				<cfset loc.qualifyingDeals = 0>
-				<cfset session.basket.header.bCash = 0>
-				<cfset session.basket.header.bCredit = 0>
-				<cfset session.basket.header.balance = 0>
-				<cfset session.basket.header.cashtaken = 0>
-				<cfset session.basket.header.cardsales = 0>
-				<cfset session.basket.header.chqsales = 0>
-				<cfset session.basket.header.cashback = 0>
-				<cfset session.basket.header.discdeal = 0>
-				<cfset session.basket.header.discstaff = 0>
-				<cfset session.basket.total.balance = 0>
-				<cfset session.basket.total.discount = 0>
-				<cfset session.basket.total.discstaff = 0>
-				<cfset session.basket.info.totaldue = 0>
-				<cfset session.basket.info.change = 0>
-				<cfset session.basket.info.canClose = false>
-				<cfloop array="#session.till.catKeys#" index="loc.key">
-					<cfset loc.section = StructFind(session.basket,loc.key)>
-					<cfset StructUpdate(session.basket.total,loc.key,0)>
-					<cfloop array="#loc.section#" index="loc.item">
-						<cfset loc.style = "">
-						<cfif IsStruct(loc.item)>
-							<cfset loc.data = loc.item>
-						<cfelse>
-							<cfset loc.sectionData = StructFind(session.basket,"#loc.key#Items")>
-							<cfset loc.data = StructFind(loc.sectionData,loc.item)>
-						</cfif>
-						<cfset loc.totalRetail -= loc.data.retail>
-						<cfset session.basket.total.balance -= (loc.data.retail + loc.data.discount)>
-						<cfset loc.cashtotal = loc.data.cash * loc.data.qty * loc.data.regMode>
-						<cfset loc.credittotal = loc.data.credit * loc.data.qty * loc.data.regMode>
-						<cfset session.basket.header.bCash -= loc.cashtotal>
-						<cfset session.basket.header.bCredit -= loc.credittotal>
-						<cfset session.basket.header.balance += (loc.cashtotal + loc.credittotal - loc.data.discount)>
-
-						<cfset loc.total = StructFind(session.basket.total,loc.data.itemClass)>
-						<cfset StructUpdate(session.basket.total,loc.data.itemClass,loc.total + loc.data.totalGross)>	<!--- - loc.data.discount TODO staff disc issue --->
-						<cfset session.basket.total.discstaff += loc.data.discount>
-						<cfset session.basket.header.discstaff += loc.data.discount>
-						<cfif StructKeyExists(loc.data,"dealID")>
-							<cfif loc.data.dealID neq 0><cfset loc.style = "dealItem"></cfif>
-						</cfif>
+			<cflock scope="session" timeout="5" type="exclusive">
+				<cfset session.basket.vatAnalysis = {}>
+				<cfoutput>
+					<cfset loc.basketCount = 0>
+					<cfset loc.totalRetail = 0>
+					<cfset loc.qualifyingDeals = 0>
+					<cfset session.basket.header.bCash = 0>
+					<cfset session.basket.header.bCredit = 0>
+					<cfset session.basket.header.balance = 0>
+					<cfset session.basket.header.cashtaken = 0>
+					<cfset session.basket.header.cardsales = 0>
+					<cfset session.basket.header.chqsales = 0>
+					<cfset session.basket.header.cashback = 0>
+					<cfset session.basket.header.discdeal = 0>
+					<cfset session.basket.header.discstaff = 0>
+					<cfset session.basket.total.balance = 0>
+					<cfset session.basket.total.discount = 0>
+					<cfset session.basket.total.discstaff = 0>
+					<cfset session.basket.info.totaldue = 0>
+					<cfset session.basket.info.change = 0>
+					<cfset session.basket.info.canClose = false>
+					<cfloop array="#session.till.catKeys#" index="loc.key">
+						<cfset loc.section = StructFind(session.basket,loc.key)>
+						<cfset StructUpdate(session.basket.total,loc.key,0)>
+						<cfloop array="#loc.section#" index="loc.item">
+							<cfset loc.style = "">
+							<cfif IsStruct(loc.item)>
+								<cfset loc.data = loc.item>
+							<cfelse>
+								<cfset loc.sectionData = StructFind(session.basket,"#loc.key#Items")>
+								<cfset loc.data = StructFind(loc.sectionData,loc.item)>
+							</cfif>
+							<cfset loc.totalRetail -= loc.data.retail>
+							<cfset session.basket.total.balance -= (loc.data.retail + loc.data.discount)>
+							<cfset loc.cashtotal = loc.data.cash * loc.data.qty * loc.data.regMode>
+							<cfset loc.credittotal = loc.data.credit * loc.data.qty * loc.data.regMode>
+							<cfset session.basket.header.bCash -= loc.cashtotal>
+							<cfset session.basket.header.bCredit -= loc.credittotal>
+							<cfset session.basket.header.balance += (loc.cashtotal + loc.credittotal - loc.data.discount)>
+	
+							<cfset loc.total = StructFind(session.basket.total,loc.data.itemClass)>
+							<cfset StructUpdate(session.basket.total,loc.data.itemClass,loc.total + loc.data.totalGross)>	<!--- - loc.data.discount TODO staff disc issue --->
+							<cfset session.basket.total.discstaff += loc.data.discount>
+							<cfset session.basket.header.discstaff += loc.data.discount>
+							<cfif StructKeyExists(loc.data,"dealID")>
+								<cfif loc.data.dealID neq 0><cfset loc.style = "dealItem"></cfif>
+							</cfif>
+						</cfloop>
 					</cfloop>
-				</cfloop>
-
-				<cfif StructKeyExists(session.basket,"deals")>
-					<cfloop collection="#session.basket.deals#" item="loc.key">
-						<cfset loc.data = StructFind(session.basket.deals,loc.key)>
-						<cfif loc.data.dealQty neq 0>
-							<cfset session.basket.total.balance -= loc.data.savingGross>
-							<cfset session.basket.total.discount += loc.data.savingGross>
-							<cfset session.basket.header.balance -= loc.data.savingGross>
-							<cfset session.basket.header.discdeal += loc.data.savingGross>
-						</cfif>
+	
+					<cfif StructKeyExists(session.basket,"deals")>
+						<cfloop collection="#session.basket.deals#" item="loc.key">
+							<cfset loc.data = StructFind(session.basket.deals,loc.key)>
+							<cfif loc.data.dealQty neq 0>
+								<cfset session.basket.total.balance -= loc.data.savingGross>
+								<cfset session.basket.total.discount += loc.data.savingGross>
+								<cfset session.basket.header.balance -= loc.data.savingGross>
+								<cfset session.basket.header.discdeal += loc.data.savingGross>
+							</cfif>
+						</cfloop>
+					</cfif>
+					<cfset session.basket.info.totaldue = session.basket.total.balance>
+					<cfset loc.payCount = 0>
+					<cfloop list="#session.till.prefs.payList#" delimiters="," index="loc.pay">
+						<cfset StructUpdate(session.basket.total,loc.pay,0)>
 					</cfloop>
-				</cfif>
-				<cfset session.basket.info.totaldue = session.basket.total.balance>
-				<cfset loc.payCount = 0>
-				<cfloop list="#session.till.prefs.payList#" delimiters="," index="loc.pay">
-					<cfset StructUpdate(session.basket.total,loc.pay,0)>
-				</cfloop>
-				<cfloop array="#session.basket.payments#" index="loc.item">
-					<cfset loc.payCount++>
-
-					<cfswitch expression="#loc.item.itemClass#">
-						<cfcase value="CASHINDW">
-							<cfset session.basket.total.cashINDW += (loc.item.cash + loc.item.credit)>
-							<cfset session.basket.header.cashtaken += loc.item.cash + loc.item.credit>
-							<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
-							<cfset session.basket.info.canClose = true>
-						</cfcase>
-						<cfcase value="CARDINDW">
-							<cfset session.basket.total.cardINDW += (loc.item.cash + loc.item.credit)>
-							<cfset session.basket.header.cardsales += loc.item.credit>
-							<cfset session.basket.header.cashback += loc.item.cash>
-							<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
-							<cfset session.basket.info.canClose = true>
-						</cfcase>
-						<cfcase value="CHQINDW">
-							<cfset session.basket.total.chqINDW += (loc.item.cash + loc.item.credit)>
-							<cfset session.basket.header.chqsales += (loc.item.cash + loc.item.credit)>
-							<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
-							<cfset session.basket.info.canClose = true>
-						</cfcase>
-						<cfcase value="ACCINDW">
-							<cfset session.basket.total.accINDW += (loc.item.cash + loc.item.credit)>
-							<cfset session.basket.header.accsales += (loc.item.cash + loc.item.credit)>
-							<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
-							<cfset session.basket.info.canClose = true>
-						</cfcase>
-						<cfdefaultcase>
-							<cfset loc.payValue = StructFind(session.basket.total,loc.item.itemClass)>
-							<cfset StructUpdate(session.basket.total,loc.item.itemClass,loc.payValue + (loc.item.cash + loc.item.credit))>
-								<!--- TODO may fail if key not found --->
-							<cfset StructUpdate(session.basket.header,loc.item.itemClass,loc.payValue + (loc.item.cash + loc.item.credit))>
-							<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
-						</cfdefaultcase>
-					</cfswitch>
-					<cfset session.basket.total.balance -= (loc.item.cash + loc.item.credit)>
-					<!---<cfset session.basket.info.canClose = ArrayLen(session.basket.payments) gt 0>--->
-				</cfloop>
-
-				<cfif session.basket.info.itemcount gt 0 AND ArrayLen(session.basket.payments) GT 0>
-					<cfif session.basket.info.mode eq "reg">
-						<cfif session.basket.total.balance lte 0>
-							<cfset session.basket.info.change = session.basket.total.balance>
-							<cfset session.basket.total.cashINDW += session.basket.info.change>
-							<cfset session.basket.header.cashtaken += session.basket.info.change>
-							<cfset session.basket.header.balance = 0>
-							<cfset session.basket.total.balance = 0>
-						</cfif>
-					<cfelse>
-						<cfif session.basket.total.balance lt 0>
+					<cfloop array="#session.basket.payments#" index="loc.item">
+						<cfset loc.payCount++>
+	
+						<cfswitch expression="#loc.item.itemClass#">
+							<cfcase value="CASHINDW">
+								<cfset session.basket.total.cashINDW += (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.header.cashtaken += loc.item.cash + loc.item.credit>
+								<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.info.canClose = true>
+							</cfcase>
+							<cfcase value="CARDINDW">
+								<cfset session.basket.total.cardINDW += (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.header.cardsales += loc.item.credit>
+								<cfset session.basket.header.cashback += loc.item.cash>
+								<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.info.canClose = true>
+							</cfcase>
+							<cfcase value="CHQINDW">
+								<cfset session.basket.total.chqINDW += (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.header.chqsales += (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.info.canClose = true>
+							</cfcase>
+							<cfcase value="ACCINDW">
+								<cfset session.basket.total.accINDW += (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.header.accsales += (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.info.canClose = true>
+							</cfcase>
+							<cfdefaultcase>
+								<cfset loc.payValue = StructFind(session.basket.total,loc.item.itemClass)>
+								<cfset StructUpdate(session.basket.total,loc.item.itemClass,loc.payValue + (loc.item.cash + loc.item.credit))>
+									<!--- TODO may fail if key not found --->
+								<cfset StructUpdate(session.basket.header,loc.item.itemClass,loc.payValue + (loc.item.cash + loc.item.credit))>
+								<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
+							</cfdefaultcase>
+						</cfswitch>
+						<cfset session.basket.total.balance -= (loc.item.cash + loc.item.credit)>
+						<!---<cfset session.basket.info.canClose = ArrayLen(session.basket.payments) gt 0>--->
+					</cfloop>
+	
+					<cfif session.basket.info.itemcount gt 0 AND ArrayLen(session.basket.payments) GT 0>
+						<cfif session.basket.info.mode eq "reg">
+							<cfif session.basket.total.balance lte 0>
+								<cfset session.basket.info.change = session.basket.total.balance>
+								<cfset session.basket.total.cashINDW += session.basket.info.change>
+								<cfset session.basket.header.cashtaken += session.basket.info.change>
+								<cfset session.basket.header.balance = 0>
+								<cfset session.basket.total.balance = 0>
+							</cfif>
 						<cfelse>
-							<cfset session.basket.info.change = session.basket.total.balance>
-							<cfset session.basket.total.cashINDW += session.basket.info.change>
-							<cfset session.basket.header.cashtaken += session.basket.info.change>
-							<cfset session.basket.header.balance = 0>
-							<cfset session.basket.total.balance = 0>
+							<cfif session.basket.total.balance lt 0>
+							<cfelse>
+								<cfset session.basket.info.change = session.basket.total.balance>
+								<cfset session.basket.total.cashINDW += session.basket.info.change>
+								<cfset session.basket.header.cashtaken += session.basket.info.change>
+								<cfset session.basket.header.balance = 0>
+								<cfset session.basket.total.balance = 0>
+							</cfif>
 						</cfif>
 					</cfif>
-				</cfif>
-			</cfoutput>
-
+				</cfoutput>
+			</cflock>
 			<cfreturn loc>
 		<cfcatch type="any">
 			<cfdump var="#cfcatch#" label="" expand="yes" format="html"
@@ -2264,7 +2265,7 @@
 								<cfset loc.tran.itemType = "pay">
 								<cfset loc.payID = loc.tran.payID>
 								<cfset loc.account = loc.tran.accid>
-								<cfset loc.retail = loc.tran.gross>
+								<cfset loc.retail = 0>
 								<cfif loc.showInfo>
 								<tr>
 									<td>#loc.tran.itemClass#</td>
@@ -2967,6 +2968,8 @@
 					<th align="right">DR</th>
 					<th align="right">CR</th>
 					<th align="right">Trade</th>
+					<th align="right">Retail</th>
+					<th align="right">Profit</th>
 				</tr>
 				<cfset loc.balance = 0>
 				<cfloop query="loc.QTrans">
@@ -3002,7 +3005,9 @@
 							<td align="right"></td>
 							<td align="right">#DecimalFormat(-loc.gross)#</td>
 						</cfif>
-						<td>##</td>
+						<td align="right"><cfif eiTrade neq 0>#eiTrade#</cfif></td>
+						<td align="right"><cfif eiRetail neq 0>#eiRetail#</cfif></td>
+						<td align="right">#eiNet+eiTrade#</td>
 					</tr>
 					<cfset loc.tran = eiParent>
 					<cfset loc.balance += loc.gross>
