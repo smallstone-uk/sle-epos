@@ -32,7 +32,8 @@
 								qty: 1,
 								cash: value,
 								credit: 0,
-								vrate: 0
+								vrate: 0,
+								unitTrade: 0
 							});
 						}
 					}
