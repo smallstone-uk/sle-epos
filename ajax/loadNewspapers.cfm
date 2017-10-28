@@ -32,6 +32,7 @@
 						prodid: 0,
 						account: 1,
 						itemclass: "MEDIA",
+						unitTrade: 0
 					});
 				} else {
 					$.virtualNumpad({
@@ -55,7 +56,7 @@
 	<div class="products">
 		<ul class="products_list">
 			<cfloop array="#publications#" index="item">
-				<li class="products_item scalebtn" data-id="#item.id#" data-title="#item.title#" data-price="#item.price#" data-type="publication" data-cashonly="0">
+				<li class="products_item scalebtn" data-id="#item.id#" data-title="#item.title#" data-price="#item.price#" data-tradePrice="#item.tradePrice#" data-type="publication" data-cashonly="0">
 					<span><strong>#item.title#</strong></span>
 					<span>
 						<cfif item.price gt 0>

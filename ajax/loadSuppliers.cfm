@@ -44,7 +44,7 @@
 	<div class="products">
 		<ul class="products_list">
 			<cfloop array="#suppliers#" index="item">
-				<li class="products_item scalebtn" data-id="#item.accID#" data-title="#item.accName#" data-type="supplier" data-cashonly="1">
+				<li class="products_item scalebtn" data-id="#item.accID#" data-title="#item.accName#" data-type="supplier" data-cashonly="1" data-unittrade=0>
 					<span><strong>#item.accName#</strong></span>
 				</li>
 			</cfloop>

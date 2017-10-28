@@ -1057,7 +1057,8 @@
 							prodsign: result.PRODSIGN,
 							qty: 1,
 							type: "VOUCHER",
-							vrate: ""
+							vrate: "",
+							unitTrade: 0
 						}, function() { $.loadBasket(); callback(); });
 					} else {
 						$.addToBasket({

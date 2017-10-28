@@ -3031,7 +3031,7 @@
 		<cftry>
 		
 		<cfquery name="loc.pubs" datasource="#args.datasource#">
-			SELECT pubID, pubTitle, pubRoundTitle, pubPrice
+			SELECT pubID, pubTitle, pubRoundTitle, pubPrice, pubTradePrice
 			FROM tblPublication
 			WHERE pubGroup = 'news'
 			<cfif args.daynow is "saturday">
@@ -3052,6 +3052,7 @@
 			<cfset loc.item.id = pubID>
 			<cfset loc.item.title = (Len(pubRoundTitle)) ? pubRoundTitle : pubTitle>
 			<cfset loc.item.price = pubPrice>
+			<cfset loc.item.tradePrice = pubTradePrice>
 			<cfset ArrayAppend(loc.result, loc.item)>
 		</cfloop>
 

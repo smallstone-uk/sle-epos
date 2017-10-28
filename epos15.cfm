@@ -46,6 +46,7 @@
 									$('#cashOnly').val(0);
 									$('#credit').val(result.PUBPRICE);
 									$('#prodSign').val(1);
+									$('#unitTrade').val(result.PUBTRADEPRICE);
 								}
 								$('#basket').append('<input type="hidden" name="btnSend" id="btnSend" value="Add" />');
 								$('#basket').submit();
@@ -89,6 +90,7 @@
 				$('#prodVATRate').val(mydata.vatrate);
 				$('#cashOnly').val(mydata.cashonly);
 				$('#prodSign').val(mydata.sign);
+				$('#unitTrade').val(mydata.PUBTRADEPRICE);
 				if (mydata.cashonly) {
 					$('#cash').val(mydata.price);
 					$('#credit').val("");
@@ -404,7 +406,7 @@
 					<option value="">Select...</option>
 					<cfloop query="session.papers">
 						<option value="#pubID#" data-price="#pubPrice#" data-cashonly="0" data-staffDiscount="1" data-epckey="#epcKey#" data-pubID="#pubID#"
-							data-title="#pubTitle#" data-sign="1" data-vatrate="0" data-prodClass="multiple">
+							data-title="#pubTitle#" data-sign="1" data-vatrate="0" data-unittrade="#pubTradePrice#" data-prodClass="multiple">
 							0 - 1 - #pubID# - #epcKey# - #Left(pubTitle,20)# - #pubPrice# - 0%</option>
 					</cfloop>
 				</select>
