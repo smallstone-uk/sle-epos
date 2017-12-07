@@ -44,7 +44,8 @@
 					dc.dhsc_total = 0;
 					for (var i = 1; i <= 8; i++) {
 						dc.dhsc_total += nf($('.dhsc_g' + i + '_total').val(), "num");
-					}
+					} 
+					$('##scrTotal').val(nf(dc.dhsc_total, "str"));
 				}, { forceCallback: true });
 
 				$('.ui').virtualNumpad(function(value) {
@@ -191,13 +192,13 @@
 						<cfset gStart = "dhsc_g#game#_start">
 						<cfset gEnd = "dhsc_g#game#_end">
 						<cfif StructIsEmpty(today)>
-							<cfset start = 0>
-							<cfset end = 0>
+							<cfset start = "">
+							<cfset end = "">
 						<cfelse>
 							<cfset start = StructFind(today,gStart)>
 							<cfset end = StructFind(today,gEnd)>
 						</cfif>
-						<cfset sold = end - start>
+						<cfset sold = val(end) - val(start)>
 						<cfset value = sold * gameValues[game]>
 						<cfset totalSC += value>
 						<tr>
@@ -212,6 +213,10 @@
 							<td><input type="text" name="dhsc_g#game#_total" value="#DecimalFormat(value)#" class="money dhsc_g#game#_total" disabled="disabled"></td>
 						</tr>
 					</cfloop>
+					<tr>
+						<td colspan="6" align="right">Total</td>
+						<td align="right"><input type="text" name="scrTotal" id="scrTotal" class="money" disabled="disabled" /></td>
+					</tr>
 				</table>
 
 				<input type="submit" class="appbtn" value="Continue">
