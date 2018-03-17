@@ -1084,7 +1084,7 @@
 						}, callback);
 					}
 				} else {
-					$.msgBox("Product not found", "error");
+					$.confirmation("Product not found");
 				}
 			}
 		});
