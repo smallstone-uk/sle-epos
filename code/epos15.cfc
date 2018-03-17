@@ -708,7 +708,9 @@
 			<cfset args.data.discount = 0>
 			<cfset args.data.account = val(args.form.account)>
 			<cfset args.data.prodSign = args.form.prodSign>
-			<cfset args.data.unitTrade = args.form.unitTrade>
+			<cfif StructKeyExists(args.data,"unitTrade")>
+				<cfset args.data.unitTrade = args.form.unitTrade>
+			<cfelse><cfset args.data.unitTrade = 0></cfif>
 			<cfset args.data.qty = val(args.form.qty)>
 			<cfset args.data.cash = abs(val(args.form.cash)) * args.form.prodSign>
 			<cfset args.data.credit = abs(val(args.form.credit)) * args.form.prodSign>
