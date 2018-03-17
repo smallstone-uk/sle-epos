@@ -647,8 +647,6 @@
 	<cffunction name="AddItem" access="public" returntype="struct">
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
-<cfdump var="#args#" label="AddItem" expand="yes" format="html" 
-	output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 		<!--- Store this item as the last added --->
 		<!--- Used in the customer display --->

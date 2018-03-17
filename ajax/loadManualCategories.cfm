@@ -26,6 +26,7 @@
             });
         });
     </script>
+
     <ul class="products_list">
         <cfloop array="#products#" index="item">
             <li
@@ -49,7 +50,8 @@
                 data-itemclass="#item.hasOne('EPOSCat', 'prodEposCatID').epcKey#"
                 data-credit="0"
                 data-cash="0"
-				data-unittrade="#item.siUnitTrade#"
+				<cfif StructKeyExists(item,"siUnitTrade")>data-unittrade="#item.siUnitTrade#"
+					<cfelse>data-unittrade=0</cfif>
             ><span><strong>#item.prodTitle#</strong></span></li>
         </cfloop>
     </ul>
