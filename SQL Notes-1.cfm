@@ -53,6 +53,7 @@ INNER JOIN tblEPOS_Cats ON eecCategory = epcID
 WHERE eecEmployee =122
 ORDER BY eecOrder
 
+
 //Products & stock items price check where product ourprice <> stock item ourprice
 SELECT prodID,prodTitle,siUnitSize,prodLastBought,prodPriceMarked,prodOurPrice,
 siRRP,siOurPrice,siPOR,siID	
@@ -64,4 +65,22 @@ AND tblStockItem.siID = (
 	FROM tblStockItem
 	WHERE prodID = siProduct )
 WHERE prodOurPrice!=siOurPrice
+
+
+// List products selected by Group 
+SELECT pgTitle,pcatTitle,tblproducts.* 
+FROM `tblproducts`
+INNER JOIN tblproductcats ON prodCatID=pcatID
+INNER JOIN tblproductgroups ON pcatGroup=pgID
+WHERE pgTitle='Tobacco'
+
+
+//Update discount flag based on above criteria
+UPDATE tblproducts
+INNER JOIN tblproductcats ON prodCatID=pcatID
+INNER JOIN tblproductgroups ON pcatGroup=pgID
+SET prodStaffDiscount='No'
+WHERE pgTitle='Tobacco'
+
+
 

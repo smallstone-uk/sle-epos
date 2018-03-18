@@ -21,6 +21,9 @@
 						    }
 						});
 						break;
+					case "paynews":
+						alert("Function not yet ready");
+						break;
 					case "barcode":
 						$.virtualNumpad({
 							wholenumber: true,

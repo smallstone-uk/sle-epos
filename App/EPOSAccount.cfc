@@ -31,13 +31,20 @@ component extends = "Framework.Model"
      */
     public numeric function balance()
     {
-        return val(this.sql("
+        var d = this.sql("
             SELECT eaTitle, SUM(eiNet + eiVAT) AS balance
             FROM tblEPOS_Account
             LEFT JOIN tblEPOS_Items ON eaID = eiAccID
             WHERE eaMenu = 'Yes'
             AND eaID = #this.eaID#
             GROUP BY eaID
-        ").balance);
+        ");
+		
+		writeDumpToFile(d);
+		if (d.recordcount == 1) {
+			return val(d.balance);
+		} else {
+			return 0;
+		}
     }
 }
