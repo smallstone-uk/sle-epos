@@ -50,6 +50,7 @@
 	<script src="js/jquery.touchSwipe.js"></script>
 	<script src="js/jquery.zoomooz.min.js"></script>
 	<script src="js/intro.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script src="js/vue.js"></script>
 	<script src="js/vue-resource.js"></script>
 	<!--- <script src="js/ripple.min.js"></script> --->
@@ -80,6 +81,8 @@
 	<body id="qz-status">
 		<!---<cfinclude template="qzScripts.cfm">--->
 		<script>
+	        window.ajax = axios;
+
 			$(document).ready(function(e) {
 				$.get("ajax/loadHomeScreen.cfm", function(data) {
 					$('.home_screen_content').html(data);

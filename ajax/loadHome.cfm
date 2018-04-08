@@ -12,6 +12,15 @@
 				var index = $(this).data("index");
 				switch (index)
 				{
+					case "newsaccount":
+						$.ajax({
+						    type: 'GET',
+						    url: "#getUrl('ajax/getNewsAccounts.cfm')#",
+						    success: function(data) {
+						    	$.popup(data);
+						    }
+						});
+						break;
 					case "topupaccount":
 						$.ajax({
 						    type: 'GET',

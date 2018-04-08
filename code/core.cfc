@@ -1,6 +1,63 @@
 <cfcomponent displayname="core">
 	<cfset this.salesSections = ["product", "publication", "paystation", "deal", "supplier"]>
 	<cfset this.requiredKeys  = ["product", "publication", "paystation", "deal", "supplier", "payment", "discount", "account"]>
+
+	<cffunction name="SearchClients" access="public" returntype="array">
+		<cfargument name="keyword" type="string" required="yes">
+		<cfset var result=[]>
+		<cfset var item={}>
+		<cfset var QClients="">
+
+		<cftry>
+			<cfquery name="QClients" datasource="#getDatasource()#">
+				SELECT *
+				FROM tblClients,tblStreets2
+				WHERE <cfif val(keyword) neq 0>1<cfelse>cltAccountType <> 'N'</cfif>
+				AND cltStreetCode=stID
+				AND (
+				<cfloop list="#keyword#" delimiters=" " index="i">
+					<cfif val(keyword) neq 0>
+						cltRef=#val(i)# OR
+					<cfelse>
+						cltName LIKE '%#i#%'
+						OR cltCompanyName LIKE '%#i#%'
+						OR cltDelHouseName LIKE '%#i#%'
+						OR cltDelHouseNumber LIKE '%#i#%'
+						OR cltDelTown LIKE '%#i#%'
+						OR cltDelCity LIKE '%#i#%'
+						OR cltDelPostcode LIKE '%#i#%'
+						OR stName LIKE '%#i#%' OR
+					</cfif>
+				</cfloop>
+				cltID=0
+				)
+				ORDER BY cltRef asc
+			</cfquery>
+			<cfloop query="QClients">
+				<cfset item={}>
+				<cfset item.ID=cltID>
+				<cfset item.Ref=cltRef>
+				<cfif len(cltName) AND len(cltCompanyName)>
+					<cfset item.Name="#cltName# #cltCompanyName#">
+				<cfelse>
+					<cfset item.Name="#cltName##cltCompanyName#">
+				</cfif>
+				<cfif len(cltDelHouseName) AND len(cltDelHouseNumber)>
+					<cfset item.House="#cltDelHouseName#, #cltDelHouseNumber#">
+				<cfelse>
+					<cfset item.House="#cltDelHouseName##cltDelHouseNumber#">
+				</cfif>
+				<cfset item.Street="#stName#">
+				<cfset ArrayAppend(result,item)>
+			</cfloop>
+	
+			<cfcatch type="any">
+				<cfdump var="#cfcatch#" label="cfcatch" expand="no">
+			</cfcatch>
+		</cftry>
+		
+		<cfreturn result>
+	</cffunction>
 	
 	<cffunction name="addToBasket" access="public" returntype="struct">
 		<cfargument name="args" type="struct" required="yes">
