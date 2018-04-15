@@ -16,12 +16,6 @@
                 </span>
             </div>
         </div>
-
-        <div class="grid gap-1 row-size-3">
-            <div class="grid-item">
-                <button class="button is-primary">Complete</button>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -54,8 +48,6 @@
 
             watch: {
                 query: function (newValue, oldValue) {
-                    this.query = newValue;
-
                     if (newValue !== oldValue) {
                         this.search();
                     }
@@ -71,10 +63,17 @@
                 },
 
                 select: function (account) {
-                    ajax.post('/ajax/addNewsAccountToBasket.cfm', account)
-                        .then(function (r) {
-                            $.loadBasket();
-                        });
+                    $.virtualNumpad({
+                        hint: "Enter an amount",
+                        callback: function(value) {
+                            ajax.post('/ajax/addNewsAccountToBasket.cfm', {
+                                account: account,
+                                amount: value
+                            }).then(function (r) {
+                                $.loadBasket();
+                            });
+                        }
+                    });
                 }
             },
 

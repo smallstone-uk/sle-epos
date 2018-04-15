@@ -10,7 +10,7 @@
 
 		<cftry>
 			<cfquery name="QClients" datasource="#getDatasource()#">
-				SELECT *
+				SELECT * <!--- TODO Add outstanding balance --->
 				FROM tblClients,tblStreets2
 				WHERE <cfif val(keyword) neq 0>1<cfelse>cltAccountType <> 'N'</cfif>
 				AND cltStreetCode=stID
@@ -48,6 +48,7 @@
 					<cfset item.House="#cltDelHouseName##cltDelHouseNumber#">
 				</cfif>
 				<cfset item.Street="#stName#">
+				<!--- TODO Add outstanding balance --->
 				<cfset ArrayAppend(result,item)>
 			</cfloop>
 	
