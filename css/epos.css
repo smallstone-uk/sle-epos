@@ -50,6 +50,10 @@ ul {
     margin: 0;
 }
 
+.w-full {
+    width: 100%;
+}
+
 .splash_user {
     width: 150px;
     height: 150px;

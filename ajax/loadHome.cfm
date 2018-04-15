@@ -17,7 +17,8 @@
 						    type: 'GET',
 						    url: "#getUrl('ajax/getNewsAccounts.cfm')#",
 						    success: function(data) {
-						    	$.popup(data);
+						    	// $('body').prepend(data);
+								$('.categories_viewer').html(data);
 						    }
 						});
 						break;

@@ -1,9 +1,5 @@
-<cfheader
-    name="Content-Type"
-    value="application/json">
-
 <cfscript>
-    accounts = new code.core().searchClients(url.query);
+    accounts = new code.core().searchClients(jsonForm().query);
 
     outputJson({ "accounts" = accounts });
 </cfscript>
