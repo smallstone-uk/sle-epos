@@ -68,9 +68,9 @@
 						}, callback);
 						break;
 					case "partcard":
-						// sometimes shows values from previous transactions 	01/08/2017
+						// sometimes shows values from previous transactions 	01/08/2017 (fixed)
 						var cashTotal = Number("#-session.basket.header.bcash#");
-						var creditTotal = Number("#-session.basket.header.bcredit - session.basket.header.discdeal#");
+						var creditTotal = Number("#-session.basket.header.bcredit - session.basket.header.discdeal - session.basket.header.chqsales#");
 					//	var creditTotal = Number("#session.basket.header.balance#");
 						$.virtualNumpad({
 							fields: [
