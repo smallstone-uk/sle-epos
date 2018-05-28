@@ -1084,7 +1084,8 @@
 						}, callback);
 					}
 				} else {
-					$.confirmation("Product not found");
+					sound('error');
+					$.confirmation("epos: Product not found",true);
 				}
 			}
 		});

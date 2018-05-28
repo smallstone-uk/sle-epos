@@ -20,6 +20,7 @@
 				updateTillModeDisplay();
 
 				$('.basket_clear').click(function(event) {
+					sound('error');
 					$.confirmation("Are you sure you want to clear the basket?", function() {
 						ajax.emptyBasket({}, function(data) {
 							$.loadBasket();
@@ -63,7 +64,7 @@
 
 		<div class="eposBasketDivWrap">
 			<cfif Len(session.basket.info.errMsg)>
-				<script>sound('error')</script>
+				<script>sound('error');</script>
 				<div class="basket_error">
 					#session.basket.info.errMsg#
 				</div>

@@ -59,6 +59,7 @@
 								data: {"mode": "rfd"},
 								success: function(data) {
 									if (data.trim() == "true") {
+										sound('added');
 										$('.backoffice').hide();
 										$.loadBasket();
 										$.msgBox("You are now in refund mode!");
@@ -71,6 +72,7 @@
 											}
 										});
 									} else {
+										sound('error');
 										$.msgBox("You cannot switch modes during a transaction.");
 									}
 								}
@@ -84,6 +86,7 @@
 							data: {"mode": "reg"},
 							success: function(data) {
 								if (data.trim() == "true") {
+									sound('added');
 									$('.backoffice').hide();
 									$.loadBasket();
 									$.msgBox("You are now in register mode!");
@@ -96,6 +99,7 @@
 										}
 									});
 								} else {
+									sound('error');
 									$.msgBox("You cannot switch modes during a transaction.");
 								}
 							}
@@ -108,6 +112,7 @@
 							data: {"bool": true},
 							success: function(data) {
 								if (data.trim() == "YES") {
+									sound('added');
 									$('.backoffice').hide();
 									$.loadBasket();
 									$.msgBox("You are now in staff mode!");
