@@ -126,7 +126,7 @@
 								<cfset loc.dealRec.dealQty++>
 									<cfif session.till.info.staff AND loc.data.discountable>	<!--- staff sale and is a discountable item --->
 										<cfset loc.itemDiscount = round(loc.data.unitPrice * 100 * session.till.prefs.discount) / 100>
-										<cfset loc.data.discount = loc.itemDiscount * loc.data.qty>
+										<cfset loc.data.discount = loc.itemDiscount * loc.data.qty * loc.rec.regMode>
 									</cfif>
 								<cfset loc.tran = {}>
 								<cfset loc.tran.prop = 1>
@@ -195,7 +195,6 @@
 									<cfset loc.data.style = "red">
 
 									<cfset loc.tran.price = ListFirst(loc.dealRec.prices[loc.i]," ") * 1>
-									<cfset loc.data.discount = 0>
 									<cfset loc.tran.cashonly = loc.data.cash neq 0>
 									<cfif session.till.info.staff AND loc.data.discountable>	<!--- staff sale and is a discountable item --->
 										<cfset loc.itemDiscount = round(loc.data.unitPrice * 100 * session.till.prefs.discount) / 100>
@@ -607,6 +606,7 @@
 				<cfset loc.rec.totalGross = loc.rec.totalGross * loc.rec.regMode * loc.tranType>
 				<cfset loc.rec.totalNet = loc.rec.totalNet * loc.rec.regMode * loc.tranType>
 				<cfset loc.rec.totalVAT = loc.rec.totalVAT * loc.rec.regMode * loc.tranType>
+				<!---<cfset loc.rec.discount = loc.rec.discount * loc.rec.regMode>--->
 			</cfif>
 			<cfif loc.insertItem>	<!--- if item not in struct --->
 				<cfset StructInsert(loc.section,loc.itemKey,loc.rec)>
@@ -1035,7 +1035,11 @@
 						<cfif args.data.cash is 0>
 							<cfset args.data.cash = session.basket.total.balance>
 						</cfif>
-						<cfset this.closeTranNow = args.data.cash gte session.basket.total.balance>
+						<cfif session.basket.info.mode eq "reg">
+							<cfset this.closeTranNow = args.data.cash gte session.basket.total.balance>
+						<cfelseif session.basket.info.mode eq "rfd">
+							<cfset this.closeTranNow = args.data.cash lte session.basket.total.balance>
+						</cfif>
 						<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
 						<cfset args.data.class = "pay">
 						<cfset args.data.itemClass = "CASHINDW">
@@ -1427,7 +1431,7 @@
 							</tr> --->
 						<cfelse>
 							request += builder.createAlignmentElement({position: 'left'});
-							request += builder.createTextElement(styles.bold(align.lr("STAFF DISCOUNT", "#chr(156)##DecimalFormat(loc.thisBasket.total.discstaff)#")));
+							request += builder.createTextElement(styles.bold(align.lr("STAFF DISCOUNT", "#chr(156)##DecimalFormat(-loc.thisBasket.total.discstaff)#")));
 							request += builder.createTextElement({data: '\n'});
 						</cfif>
 					</cfif>
@@ -1639,6 +1643,7 @@
 									<cfset loc.tran.itemClass = 'CASHINDW'>
 									<cfset loc.tran.itemType = 'pay'>
 									<cfset loc.tran.payID = 12>
+									<cfset loc.tran.accID = 1>
 									<cfset loc.tran.cashonly = "YES">
 									<cfset loc.tran.gross = loc.thisBasket.info.change>
 									<cfset loc.tran.net = loc.thisBasket.info.change>
@@ -1750,6 +1755,7 @@
 								<cfset loc.sectionData = StructFind(session.basket,"#loc.key#Items")>
 								<cfset loc.data = StructFind(loc.sectionData,loc.item)>
 							</cfif>
+							<!---<cfset loc.data.discount = loc.data.discount * loc.data.regMode>--->
 							<cfset loc.totalRetail -= loc.data.retail>
 							<cfset session.basket.total.balance -= (loc.data.retail + loc.data.discount)>
 							<cfset loc.cashtotal = loc.data.cash * loc.data.qty * loc.data.regMode>
