@@ -83,6 +83,10 @@
 			<td align="right">#epos.accounts.cpn#</td>
 		</tr>
 		<tr>
+			<td>HS Coupons</td>
+			<td align="right">#epos.accounts.Healthy#</td>
+		</tr>
+		<tr>
 			<td>Cash Total</td>
 			<td align="right">#DecimalFormat(noteTotal + coinTotal)#</td>
 		</tr>

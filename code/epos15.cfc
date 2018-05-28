@@ -74,6 +74,7 @@
 		<cfset session.basket.header.SPrize = 0>
 		<cfset session.basket.header.voucher = 0>
 		<cfset session.basket.header.cpn = 0>
+		<cfset session.basket.header.healthy = 0>
 
 		<cfset session.basket.header.cashtaken = 0>
 		<cfset session.basket.header.cardsales = 0>
@@ -1023,7 +1024,7 @@
 
 			<!--- difference between cash sales and cash received... --->
 			<cfset loc.cashBalance = session.basket.header.bCash + session.basket.header.cashTaken
-				+ session.basket.header.cashback + session.basket.header.LPrize + session.basket.header.SPrize + session.basket.header.cpn>
+				+ session.basket.header.cashback + session.basket.header.LPrize + session.basket.header.SPrize + session.basket.header.cpn + session.basket.header.Healthy>
 
 			<!--- payment methods --->
 			<cfswitch expression="#args.form.btnSend#">
@@ -1184,6 +1185,28 @@
 							<cfset args.data.class = "pay">
 							<cfset args.data.itemClass = "CPN">
 							<cfset args.data.title = "Coupon Redemption">
+							<cfset args.data.account = 1>
+							<cfset args.data.prodID = 1>
+							<cfset ArrayAppend(session.basket.payments,args.data)>
+							<cfset loc.addTran = true>
+						</cfif>
+					</cfif>
+				</cfcase>
+
+				<cfcase value="Healthy">
+					<cfif 1 eq 2>
+						<cfset session.basket.info.errMsg = "Please put a PayStation item in the basket before accepting a coupon.">
+					<cfelse>
+						<cfset args.data.cash = args.data.cash + args.data.credit>
+						<cfset args.data.credit = 0>
+						<cfif args.data.cash is 0>
+							<cfset session.basket.info.errMsg = "Please enter the coupon value.">
+						<cfelseif args.data.cash gt session.basket.info.totaldue>
+							<cfset session.basket.info.errMsg = "Coupon value cannot exceed basket total.">
+						<cfelse>
+							<cfset args.data.class = "pay">
+							<cfset args.data.itemClass = "Healthy">
+							<cfset args.data.title = "Healthy Start">
 							<cfset args.data.account = 1>
 							<cfset args.data.prodID = 1>
 							<cfset ArrayAppend(session.basket.payments,args.data)>
@@ -2071,7 +2094,7 @@
 							<td align="right">#DecimalFormat(loc.disc)#</td>
 						</tr>
 					</cfcase>
-					<cfcase value="CASHINDW|CARDINDW|CHQINDW|CPN|ACCINDW" delimiters="|">
+					<cfcase value="CASHINDW|CARDINDW|CHQINDW|CPN|Healthy|ACCINDW" delimiters="|">
 						<cfset loc.tran.itemType = "pay">
 						<cfset loc.payID = loc.tran.payID>
 						<cfset loc.retail = loc.tran.gross>
@@ -2269,7 +2292,7 @@
 								</tr>
 								</cfif>
 							</cfcase>
-							<cfcase value="CASHINDW|CARDINDW|CHQINDW|CPN|ACCINDW" delimiters="|">
+							<cfcase value="CASHINDW|CARDINDW|CHQINDW|CPN|Healthy|ACCINDW" delimiters="|">
 								<cfset loc.tran.itemType = "pay">
 								<cfset loc.payID = loc.tran.payID>
 								<cfset loc.account = loc.tran.accid>

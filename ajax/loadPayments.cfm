@@ -126,7 +126,7 @@
 						break;
 					case "cheque":
 						$.virtualNumpad({
-							hint: "Enter the cheque's value",
+							hint: "Enter the cheque value",
 							cancel: cancel,
 							callback: function(value) {
 								$.addPayment({
@@ -182,6 +182,27 @@
 									prodtitle: "Coupon",
 									qty: 1,
 									type: "CPN",
+									vrate: "",
+									payID: id
+								}, callback);
+							}
+						});
+						break;
+					case "healthy":
+						$.virtualNumpad({
+							hint: "Enter the Healthy Start coupon amount",
+							cancel: cancel,
+							callback: function(value) {
+								$.addPayment({
+									account: "",
+									addtobasket: true,
+									btnsend: "Healthy",
+									cash: value,
+									cashonly: 1,
+									credit: "",
+									prodtitle: "Healthy",
+									qty: 1,
+									type: "Healthy",
 									vrate: "",
 									payID: id
 								}, callback);

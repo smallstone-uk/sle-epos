@@ -364,7 +364,7 @@
 			<cfcase value="Add|Voucher" delimiters="|">
 				<cfset ecfc.AddItem(parm)>
 			</cfcase>
-			<cfcase value="Cash|Card|Cheque|Account|Coupon" delimiters="|">
+			<cfcase value="Cash|Card|Cheque|Account|Coupon|Healthy" delimiters="|">
 				<cfset ecfc.AddPayment(parm)>
 			</cfcase>
 		</cfswitch>
