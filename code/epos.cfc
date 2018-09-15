@@ -1884,6 +1884,7 @@
 			SELECT *
 			FROM tblEPOS_Account
 			WHERE eaTillPayment = 'Yes'
+			AND eaActive=1
 			ORDER BY eaOrder ASC, eaID ASC
 		</cfquery>
 
@@ -3090,22 +3091,26 @@
 	<cffunction name="SearchProductByName" access="public" returntype="array" hint="load products and stock items for items actually stocked and active.">
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
-		
+		<cfset loc.products = []>
 		<cftry>
 		
-		<cfquery name="loc.prods" datasource="#args.datasource#">
-			SELECT tblProducts.*, siUnitSize,siOurPrice, epcKey
-			FROM tblProducts
-			INNER JOIN tblStockItem ON prodID = siProduct
-			AND tblStockItem.siID = (
-				SELECT MAX( siID )
-				FROM tblStockItem
-				WHERE prodID = siProduct 
-				AND siStatus NOT IN ('returned','inactive','promo'))
-			INNER JOIN tblEPOS_Cats ON prodEposCatID=epcID
-			WHERE prodTitle LIKE '%#args.form.title#%'
-			ORDER BY prodTitle ASC, siUnitSize ASC
-		</cfquery>
+			<cfquery name="loc.prods" datasource="#args.datasource#">
+				SELECT tblProducts.*, siUnitSize,siOurPrice, soDate, epcKey
+				FROM tblProducts
+				INNER JOIN tblStockItem ON prodID = siProduct
+				AND tblStockItem.siID = (
+					SELECT MAX( siID )
+					FROM tblStockItem
+					WHERE prodID = siProduct 
+					AND siStatus NOT IN ('returned','inactive','promo'))
+				INNER JOIN tblEPOS_Cats ON prodEposCatID=epcID
+				INNER JOIN tblStockOrder ON siOrder=soID
+				WHERE prodTitle LIKE '%#args.form.title#%'
+				AND soDate > #DateAdd("d",-365,Now())#	<!--- DATE_ADD(CURDATE(), - INTERVAL 365, DAYS)--->
+				ORDER BY prodTitle ASC, siUnitSize ASC, soDate DESC
+			</cfquery>
+			 <cfdump var="#loc.prods#" label="prods" expand="yes" format="html" 
+			 	output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 		<cfcatch type="any">
 			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
@@ -3277,6 +3282,8 @@
 					<cfset loc.result.msg = "#barcode# barcode not found">
 				</cfif>
 			</cfif>
+			 <cfdump var="#loc#" label="loc" expand="yes" format="html" 
+			 	output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 			
 		<cfcatch type="any">
 			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
@@ -3339,6 +3346,8 @@
 			 	output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
+			 <cfdump var="#loc#" label="loc" expand="yes" format="html" 
+			 	output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 				
 		<cfreturn loc.result>
 	</cffunction>
