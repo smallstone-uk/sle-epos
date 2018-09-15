@@ -563,7 +563,7 @@
 			<cfset loc.tranType = -1>
 			<cfset loc.section = StructFind(session.basket,"#args.form.itemClass#ITEMS")>
 			<cfset loc.sectionArray = StructFind(session.basket,args.form.itemClass)>
-			<cfset session.till.isTranOpen = true>
+			<!---<cfset session.till.isTranOpen = true>--->
 
 			<cfif StructKeyExists(loc.section,loc.itemKey)>
 				<cfset loc.rec = StructFind(loc.section,loc.itemKey)>
@@ -796,12 +796,12 @@
 						</cfif>
 					</cfcase>
 					<cfcase value="SCRATCHCARD">
-						<cfset args.data.credit = args.data.cash + args.data.credit>
+						<cfset args.data.cash = args.data.cash + args.data.credit>
 						<cfif args.form.addToBasket>
 							<cfif args.data.credit neq 0>
 								<cfset args.data.class = "lot">
-								<!--- <cfset args.data.credit = 0>	force empty - only use cash figure
-								<cfset args.data.gross = args.data.cash>	calc gross transaction value --->
+								<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
+								<cfset args.data.gross = args.data.cash>	<!--- calc gross transaction value --->
 								<cfset CalcValues(args.data)>
 								<cfif args.form.addToBasket><cfset ArrayAppend(session.basket.scratchcard,args.data)></cfif>
 								<cfset CheckDeals()>
@@ -1069,8 +1069,12 @@
 						<cfset session.basket.info.errMsg = "Please put an item in the basket before accepting payment.">
 					<cfelseif ArrayLen(session.basket.supplier) gt 0>
 						<cfset session.basket.info.errMsg = "Cannot accept a card payment during a supplier transaction.">
+					<cfelseif session.basket.info.mode eq "reg" AND session.basket.header.bcash neq 0 AND session.basket.header.bcredit gt -session.till.prefs.mincard>
+						<cfset session.basket.info.errMsg = "Minimum sale of &pound;#session.till.prefs.mincard# required.<br>(Excludes lottery, stamps & top-ups).">
+<!---
 					<cfelseif session.basket.info.mode eq "reg" AND loc.cashBalance lt 0>
 						<cfset session.basket.info.errMsg = "Some items in the basket must be paid by cash or cashback. (&pound;#DecimalFormat(-loc.cashBalance)#)">
+--->
 					<cfelseif session.basket.info.mode eq "rfd" AND loc.cashBalance gt 0>
 						<cfset session.basket.info.errMsg = "Some items in the basket must be refunded by cash.">
 					<cfelseif session.basket.info.mode eq "reg" AND loc.test.diff gt 0>

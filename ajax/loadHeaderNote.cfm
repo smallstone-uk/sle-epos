@@ -8,8 +8,14 @@
 							type: "GET",
 							url: "ajax/openArchive.cfm",
 							success: function(data) {
-								$.loadBasket();
-								$('.header_note').remove();
+								var msg = JSON.parse(data);
+								console.log(msg);
+								if (msg.MSG != "OK") {
+									$.confirmation(msg.MSG,function(){},true);
+								} else {
+									$.loadBasket();
+									$('.header_note').remove();
+								}
 							}
 						});
 						event.preventDefault();

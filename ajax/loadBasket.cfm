@@ -64,8 +64,16 @@
 
 		<div class="eposBasketDivWrap">
 			<cfif Len(session.basket.info.errMsg)>
-				<script>sound('error');</script>
-				<div class="basket_error">
+				<script>
+					$(document).ready(function(e) {
+						sound('error');
+					// once error appear, till breaks and items cannot be added to basket.
+					//	var err_box = document.getElementById('##bskt_Error');
+					//	err_box.scrollIntoView();
+						//$('.basket_error').scrollIntoView();
+					})
+				</script>
+				<div id="bskt_Error" class="basket_error">
 					#session.basket.info.errMsg#
 				</div>
 			</cfif>
