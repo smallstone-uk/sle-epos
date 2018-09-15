@@ -283,7 +283,7 @@
 
 				<cfdefaultcase>
 					<cfif not supplier>
-						<li class="payment_item material-ripple" data-method="#LCase(item.eaTitle)#" data-accid="#item.eaID#" data-id="#item.eaID#">
+						<li class="payment_item material-ripple" data-method="#LCase(item.eaCode)#" data-accid="#item.eaID#" data-id="#item.eaID#">
 							<span>#item.eaTitle#</span>
 						</li>
 					</cfif>
