@@ -2992,7 +2992,7 @@
 					<th>Tran</th>
 					<th>Mode</th>
 					<th>ID</th>
-					<th>Timestamp</th>
+					<th width="120">Timestamp</th>
 					<th>Class</th>
 					<th>Type</th>
 					<th>Method</th>
@@ -3023,7 +3023,7 @@
 						<td>#eiParent#</td>
 						<td>#ehMode#</td>
 						<td>#eiID#</td>
-						<td>#LSDateFormat(eiTimestamp)# #LSTimeFormat(eiTimestamp)#</td>
+						<td>#LSDateFormat(eiTimestamp,"dd-mmm")# #LSTimeFormat(eiTimestamp)#</td>
 						<td>#eiClass#</td>
 						<td>#eiType#</td>
 						<td>#eiPayType#</td>
@@ -3042,7 +3042,7 @@
 						</cfif>
 						<td align="right"><cfif eiTrade neq 0>#eiTrade#</cfif></td>
 						<td align="right"><cfif eiRetail neq 0>#eiRetail#</cfif></td>
-						<td align="right">#eiNet+eiTrade#</td>
+						<td align="right">#DecimalFormat(eiNet+eiTrade)#</td>
 					</tr>
 					<cfset loc.tran = eiParent>
 					<cfset loc.balance += loc.gross>
