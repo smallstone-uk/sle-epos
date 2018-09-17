@@ -3109,8 +3109,6 @@
 				AND soDate > #DateAdd("d",-365,Now())#	<!--- DATE_ADD(CURDATE(), - INTERVAL 365, DAYS)--->
 				ORDER BY prodTitle ASC, siUnitSize ASC, soDate DESC
 			</cfquery>
-			 <cfdump var="#loc.prods#" label="prods" expand="yes" format="html" 
-			 	output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 		<cfcatch type="any">
 			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
@@ -3282,8 +3280,6 @@
 					<cfset loc.result.msg = "#barcode# barcode not found">
 				</cfif>
 			</cfif>
-			 <cfdump var="#loc#" label="loc" expand="yes" format="html" 
-			 	output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 			
 		<cfcatch type="any">
 			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
@@ -3346,8 +3342,6 @@
 			 	output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
-			 <cfdump var="#loc#" label="loc" expand="yes" format="html" 
-			 	output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 				
 		<cfreturn loc.result>
 	</cffunction>
@@ -3357,7 +3351,7 @@
 		<cfset var loc = {}>
 		<cftry>
 			<cfquery name="loc.products" datasource="#GetDatasource()#">
-				SELECT prodID,prodTitle,prodOurPrice,prodStaffDiscount,prodClass,prodVatRate,prodCashOnly,prodSign, siUnitTrade,siOurPrice, epcKey,epcOrder
+				SELECT prodID,prodTitle,prodOurPrice,prodStaffDiscount,prodClass,prodVatRate,prodCashOnly,prodSign, siUnitTrade,siUnitSize,siOurPrice, epcKey,epcOrder
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct
 				AND tblStockItem.siID = (

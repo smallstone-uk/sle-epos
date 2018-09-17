@@ -64,6 +64,7 @@
 				$('#pubID').val(0);
 				$('#itemClass').val(mydata.epckey);
 				$('#prodTitle').val(mydata.title);
+				$('#unitSize').val(mydata.unitsize);
 				$('#prodVATRate').val(mydata.vatrate);
 				$('#cashOnly').val(mydata.cashonly);
 				$('#prodSign').val(mydata.sign);
@@ -115,7 +116,7 @@
 		<cfset loc.LastBought = DateFormat(DateAdd("m",-3,Now()),'yyyy-mm-dd')><cfoutput>#loc.LastBought#</cfoutput>
 		<cftry>
 			<cfquery name="loc.QProducts" datasource="#args.datasource#">
-				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siOurPrice, epcKey
+				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siUnitSize,siOurPrice, epcKey
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct
 				AND tblStockItem.siID = (
@@ -127,7 +128,7 @@
 				WHERE prodLastBought > '#loc.LastBought#'
 				LIMIT 100)
 				UNION
-				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siOurPrice, epcKey
+				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siUnitSize,siOurPrice, epcKey
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct
 				AND tblStockItem.siID = (
@@ -138,7 +139,7 @@
 				WHERE prodLastBought > '#loc.LastBought#'
 				LIMIT 15)
 				UNION
-				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siOurPrice, epcKey
+				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siUnitSize,siOurPrice, epcKey
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct
 				AND tblStockItem.siID = (
@@ -150,7 +151,7 @@
 				AND prodVatRate <> 0
 				LIMIT 15)
 				UNION
-				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siOurPrice, epcKey
+				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siUnitSize,siOurPrice, epcKey
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct
 				AND tblStockItem.siID = (
@@ -162,7 +163,7 @@
 				AND prodVatRate = 5
 				LIMIT 5)
 				UNION
-				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siOurPrice, epcKey
+				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siUnitSize,siOurPrice, epcKey
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct
 				AND tblStockItem.siID = (
@@ -173,7 +174,7 @@
 				WHERE prodSuppID != 21
 				LIMIT 20)
 				UNION
-				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siOurPrice, epcKey
+				(SELECT prodID,prodRef,prodTitle,prodVATRate,prodCashOnly,prodStaffDiscount,prodSign,prodOurPrice,prodClass, siUnitTrade,siUnitSize,siOurPrice, epcKey
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct
 				AND tblStockItem.siID = (
@@ -221,7 +222,7 @@
 		<cftry>
 			<cfloop list="#loc.prodIDs#" delimiters="," index="loc.pID">
 				<cfquery name="loc.QProduct" datasource="#GetDataSource()#">
-					SELECT prodID,prodSign,prodTitle,prodCashOnly,prodStaffDiscount,prodVATRate,prodClass, siUnitTrade,siOurPrice, epcKey
+					SELECT prodID,prodSign,prodTitle,prodCashOnly,prodStaffDiscount,prodVATRate,prodClass, siUnitTrade,siUnitSize,siOurPrice, epcKey
 					FROM tblProducts
 					LEFT JOIN tblStockItem ON prodID = siProduct
 					AND tblStockItem.siID = (
@@ -260,6 +261,7 @@
 					<cfset loc.rec.prodID = prodID>
 					<cfset loc.rec.prodSign = prodSign>
 					<cfset loc.rec.prodTitle = prodTitle>
+					<cfset loc.rec.unitSize = siUnitSize>
 					<cfset loc.rec.vrate = prodVATRate>
 					<cfset loc.rec.pubID = 0>
 					<cfset loc.rec.publication = "">
@@ -396,8 +398,8 @@
 							<cfelse><cfset itemPrice = prodOurPrice></cfif>
 						<option value="#prodID#" data-price="#itemPrice#" data-cashonly="#prodCashOnly#" data-epckey="#epcKey#" data-sign="#prodSign#" data-prodid="#prodID#"
 							data-staffDiscount="#prodStaffDiscount#" data-title="#prodTitle#" data-vatrate="#prodVATRate#" 
-							data-prodClass="#prodClass#" data-unittrade="#siUnitTrade#">
-							#prodCashOnly# - #prodStaffDiscount# - #prodID# - #epcKey# - #Left(prodTitle,20)# - #itemPrice# - #prodVatRate#%</option>
+							data-prodClass="#prodClass#" data-unittrade="#siUnitTrade#" data-unitsize="#siUnitSize#"><!------>
+							#prodCashOnly# - #prodStaffDiscount# - #prodID# - #epcKey# - #Left(prodTitle,20)# - #siUnitSize# - #itemPrice# - #prodVatRate#%</option>
 					</cfloop>
 				</select>
 				<br>
@@ -425,11 +427,12 @@
 					<input type="checkbox" name="discountable" id="discountable" value="1" />Discountable
 					<input type="submit" name="btnSend" id="btnSend" class="addBtn" value="Add" />
 				</div>
-				<input name="unitTrade" id="unitTrade" type="text" value="" />
-				<input name="prodSign" id="prodSign" type="text" value="1" size="3" />
-				<input name="prodTitle" id="prodTitle" type="text" value="" />
-				<input name="prodClass" id="prodClass" type="text" value="" size="3" />
-				<input name="pubTitle" id="pubTitle" type="text" value="" />
+				<input name="unitTrade" id="unitTrade" type="text" size="5" value="" />
+				<input name="prodSign" id="prodSign" type="text" size="5" value="1" />
+				<input name="prodTitle" id="prodTitle" type="text" size="5" value="" />
+				<input name="unitSize" id="unitSize" type="text" size="5" value="" />
+				<input name="prodClass" id="prodClass" type="text" size="5" value="" />
+				<input name="pubTitle" id="pubTitle" type="text" size="5" value="" />
 				<div style="clear:both"></div>
 			</div>
 			<div style="width:480px; margin:auto; margin-top:10px; padding:10px; border:solid 2px ##ccc; background:##999999;">

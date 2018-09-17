@@ -57,7 +57,7 @@
 							$('input[name="title"]').val(result.prodtitle);
 							$('input[name="tradeprice"]').val( nf(result.produnittrade, "str") );
 							$('input[name="ourprice"]').val( nf(result.siOurprice, "str") );
-							$('input[name="unitsize"]').val(result.produnitsize);
+							$('input[name="unitsize"]').val(result.produnitsize);	// TODO should be siUnitSize
 						} else {
 							isNew = true;
 							$('##AddProductForm')[0].reset();

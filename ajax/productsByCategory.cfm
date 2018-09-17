@@ -50,6 +50,7 @@
 					data-pubid=""
 					data-prodid="#item.prodID#"
 					data-prodtitle="#item.prodTitle#"
+					data-unitsize="#item.siUnitSize#"
 					data-qty="1"
 					data-type="prod-#item.prodID#"
 					data-prodClass="#item.prodClass#"

@@ -966,7 +966,7 @@
 				var key = attr.nodeName.match(re_dataAttr)[1];
 				var isNum = attr.value.isNumber();
 				var isBool = attr.value.isBoolean();
-
+				
 				if (typeof type != "undefined" && type == "plain") {
 					var value = attr.value;
 				} else {
@@ -982,7 +982,6 @@
 						var value = attr.value;
 					}
 				}
-
 				d[key] = value;
 			}
 		});
@@ -1055,6 +1054,7 @@
 							pubid: "",
 							prodtitle: result.PRODTITLE,
 							prodsign: result.PRODSIGN,
+							unitsize: result.SIUNITSIZE,
 							qty: 1,
 							type: "VOUCHER",
 							vrate: "",
@@ -1071,6 +1071,7 @@
 							prodid: result.PRODID,
 							pubid: "1",
 							prodtitle: result.PRODTITLE,
+							unitsize: result.SIUNITSIZE,
 							prodsign: result.PRODSIGN,
 							prodClass: result.PRODCLASS,
 							qty: "1",

@@ -572,6 +572,7 @@
 				<cfset loc.rec = {}>
 				<cfset loc.rec.itemID = args.data.itemID>
 				<cfset loc.rec.title = args.data.title>
+				<cfset loc.rec.unitsize = args.data.unitsize>
 				<cfset loc.rec.vrate = args.form.vrate>
 				<cfset loc.rec.prodClass = args.data.prodClass>
 				<cfset loc.rec.prodSign = args.data.prodSign>
@@ -662,6 +663,7 @@
 			args.form.prodID
 			args.form.pubID
 			args.form.prodTitle
+			args.form.siUnitSize
 			args.form.pubTitle
 			args.form.itemClass
 			args.form.account
@@ -677,7 +679,7 @@
 		<cfset loc.result.err = "">
 		<cftry>
 			<cfif session.user.id eq 0>
-				<cfset session.basket.info.errMsg = "Please login to the till before serving.">
+				<cfset session.basket.info.errMsg = "Session timed out. Please log-in to the till before serving.">
 				<cfset loc.result.err = session.basket.info.errMsg>
 				<cfreturn loc.result>
 			</cfif>
@@ -694,11 +696,14 @@
 			<cfif val(args.form.prodID) gt 0>	<!--- product passed --->
 				<cfset args.form.pubID = 1>
 				<cfset args.data.itemID = args.form.prodID>
+				<cfset args.data.unitsize = args.form.unitSize>
 				<cfset args.data.title = args.form.prodTitle>
+				<cfset args.data.unitsize = args.form.unitsize>
 			<cfelseif val(args.form.pubID) gt 0>	<!--- publication passed --->
 				<cfset args.form.prodID = 1>
 				<cfset args.data.itemID = args.form.pubID>
 				<cfset args.data.title = args.form.pubTitle>
+				<cfset args.data.unitsize = ''>
 			<cfelse>	<!--- TODO then what? --->
 				<cfset args.data.itemID = 1>
 			</cfif>
@@ -1198,8 +1203,8 @@
 				</cfcase>
 
 				<cfcase value="Healthy">
-					<cfif 1 eq 2>
-						<cfset session.basket.info.errMsg = "Please put a PayStation item in the basket before accepting a coupon.">
+					<cfif 1 eq 2>	<!--- ignore this --->
+						<cfset session.basket.info.errMsg = "Please...">
 					<cfelse>
 						<cfset args.data.cash = args.data.cash + args.data.credit>
 						<cfset args.data.credit = 0>
@@ -1324,7 +1329,7 @@
 						<cfset loc.totalCount += loc.data.qty>
 						<cfif arguments.type eq "html">
 							<div class="btr_item material-ripple basket_item" #StructToDataAttributes(loc.data)#>
-								<span style="width: 50%;">#loc.data.title#</span>
+								<span style="width: 50%;">#loc.data.title# #loc.data.unitsize#</span>
 								<span style="width: 10%;text-align: right;">#loc.data.qty#</span>
 								<span style="width: 20%;text-align: right;">#DecimalFormat(loc.data.unitPrice)#</span>
 								<span style="width: 20%;text-align: right;">#DecimalFormat(-loc.data.retail)#</span>

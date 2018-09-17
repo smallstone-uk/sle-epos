@@ -20,6 +20,7 @@
 					$.addToBasket({
 						pubid: id,
 						pubtitle: title,
+						unitSize: "",
 						type: type,
 						price: price,
 						cash: 0,
@@ -40,6 +41,7 @@
 							$.addToBasket({
 								id: id,
 								title: title,
+								unitsize: "",
 								type: type,
 								price: value,
 								qty: 1,

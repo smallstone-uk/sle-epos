@@ -22,6 +22,7 @@
 								prodID: id,
 								pubID: 1,
 								prodTitle: title,
+								unitsize: "",
 								itemClass: 'SUPPLIER',
 								type: type,
 								price: value,
