@@ -1079,7 +1079,7 @@
 						<cfset session.basket.info.errMsg = "Cannot accept a card payment during a supplier transaction.">
 					<cfelseif session.basket.info.mode eq "reg" AND session.basket.header.bcash neq 0 AND session.basket.header.bcredit gt -session.till.prefs.mincard>
 						<cfset session.basket.info.errMsg = "Minimum sale of &pound;#session.till.prefs.mincard# required.<br>(Excludes lottery, stamps & top-ups).">
-<!---
+<!--- ok if spent more than £3
 					<cfelseif session.basket.info.mode eq "reg" AND loc.cashBalance lt 0>
 						<cfset session.basket.info.errMsg = "Some items in the basket must be paid by cash or cashback. (&pound;#DecimalFormat(-loc.cashBalance)#)">
 --->
