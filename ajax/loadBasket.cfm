@@ -99,7 +99,7 @@
 								}
 							}
 						]);
-
+<!--- not working
 						$('.ebt_payment').touchHold([
 							{
 								text: "remove",
@@ -115,7 +115,7 @@
 								}
 							}
 						]);
-
+--->
 						$('.basket_item').touchHold([
 							{
 								text: "add one",
