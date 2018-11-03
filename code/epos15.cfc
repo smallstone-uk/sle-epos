@@ -34,9 +34,6 @@
 	</cffunction>
 
 	<cffunction name="ClearBasket" access="public" returntype="void" hint="clear current transaction without affecting till totals.">
-		<cfdump var="#session.basket#" label="ClearBasket" expand="yes" format="html" 
-			output="#application.site.dir_logs#clr-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
-
 		<cfset StructDelete(session,"basket",false)>
 		<cfset session.basket = {}>
 		<cfset session.basket.deals = {}>
