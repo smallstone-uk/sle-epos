@@ -34,7 +34,9 @@
 	</cffunction>
 
 	<cffunction name="ClearBasket" access="public" returntype="void" hint="clear current transaction without affecting till totals.">
-		<cfset StructDelete(session,"basket",false)>
+		<cfif StructKeyExists(session,"basket")>
+			<cfset StructDelete(session,"basket",false)>
+		</cfif>
 		<cfset session.basket = {}>
 		<cfset session.basket.deals = {}>
 		<cfset session.basket.header = {}>
@@ -44,6 +46,7 @@
       	<cfset session.basket.mediaItems = {}>
       	<cfset session.basket.magsItems = {}>
       	<cfset session.basket.voucherItems = {}>
+		<cfset session.basket.supplier = {}>
 		<cfset session.basket.trans = []>
 		<cfset session.basket.tranID = 0>
 		<cfset session.basket.lastItemAdded = {}>
@@ -440,7 +443,7 @@
 				</cfif>
 			</cfloop>
 		<cfcatch type="any">
-			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
+			<cfdump var="#cfcatch#" label="ProcessDeals" expand="yes" format="html"
 			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
@@ -1929,7 +1932,7 @@
 				</cfquery>
 			</cfif>
 		<cfcatch type="any">
-			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
+			<cfdump var="#cfcatch#" label="WriteTotal" expand="yes" format="html"
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
@@ -2531,7 +2534,7 @@
 
 		<cfcatch type="any">
 			<p>An error occurred printing the receipt.</p>
-			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
+			<cfdump var="#cfcatch#" label="PrintReceipt" expand="yes" format="html"
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
@@ -2763,7 +2766,7 @@
 				</table>
 			</cfoutput>
 		<cfcatch type="any">
-			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
+			<cfdump var="#cfcatch#" label="VATSummary" expand="yes" format="html"
 			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
@@ -2792,7 +2795,7 @@
 			</cfloop>
 
 		<cfcatch type="any">
-			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
+			<cfdump var="#cfcatch#" label="GetAccounts" expand="yes" format="html"
 			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
@@ -2822,7 +2825,7 @@
 			</cfif>
 
 		<cfcatch type="any">
-			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
+			<cfdump var="#cfcatch#" label="GetDates" expand="yes" format="html"
 			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
@@ -2846,7 +2849,7 @@
 			</cfloop>
 
 		<cfcatch type="any">
-			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
+			<cfdump var="#cfcatch#" label="LoadTillTotals" expand="yes" format="html"
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
@@ -2906,7 +2909,7 @@
 			<cfset session.qualys = loc.QualifyingProducts>
 
 		<cfcatch type="any">
-			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
+			<cfdump var="#cfcatch#" label="LoadDeals" expand="yes" format="html"
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
@@ -2957,7 +2960,7 @@
 				</cfif>
 			</cfloop>
 		<cfcatch type="any">
-			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
+			<cfdump var="#cfcatch#" label="LoadCatKeys" expand="yes" format="html"
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
@@ -3071,7 +3074,7 @@
 			</cfoutput>
 
 		<cfcatch type="any">
-			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html"
+			<cfdump var="#cfcatch#" label="DumpTrans" expand="yes" format="html"
 			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
