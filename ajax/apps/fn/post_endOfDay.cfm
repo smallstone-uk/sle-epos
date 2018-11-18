@@ -9,7 +9,6 @@
 
         dayHeader = {};
         today = new App.DayHeader().today();
-
         if (structIsEmpty(today)) {
             // Create a new record for today
             dayHeader = new App.DayHeader().save(form);
@@ -17,6 +16,12 @@
             // Update the existing record for today
             dayHeader = new App.DayHeader(today.dhID).save(form);
         }
+		
+        yesterday = new App.DayHeader().yesterday();
+        if (structIsEmpty(today)) {
+			writeDumpToFile("unable to load previous day data");
+        }
+		writeDumpToFile(yesterday);
     } catch(any error) {
         writeDumpToFile(error);
     }

@@ -92,4 +92,20 @@ component extends = "Framework.Model"
 
         return (arrayIsEmpty(records)) ? {} : records[1];
     }
+	
+    /**
+     * Gets yesterday's day header record for the scratch card numbers.
+     *
+     * @return Model
+     */
+    public any function yesterday()
+    {
+		var from = createDateTime(year(now()), month(now()), day(now()), 0, 0, 0);
+		var to = createDateTime(year(now()), month(now()), day(now()), 23, 59, 59);
+		from = DateAdd("d",-1,from);
+		to = DateAdd("d",-1,to);
+        var records = this.timeframe('dhTimestamp', from, to);
+
+        return (arrayIsEmpty(records)) ? {} : records[1];
+    }
 }

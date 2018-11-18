@@ -11,6 +11,7 @@
 		lottoPrizes = dayHeader.lottoPrizes();
 		scratchPrizes = dayHeader.scratchPrizes();
 		today = dayHeader.today();
+		yesterday = dayHeader.yesterday();
 	</cfscript>
 	<cfoutput>
 		<script>
@@ -195,12 +196,13 @@
 							<cfset start = "">
 							<cfset end = "">
 						<cfelse>
-							<cfset start = StructFind(today,gStart)>
+							<cfset start = StructFind(yesterday,gStart)>
 							<cfset end = StructFind(today,gEnd)>
 						</cfif>
 						<cfset sold = val(end) - val(start)>
 						<cfset value = sold * gameValues[game]>
 						<cfset totalSC += value>
+						<cfif end eq 0><cfset end = ""></cfif>
 						<tr>
 							<th>#game#</th>
 							<th>#packQtys[game]#</th>
