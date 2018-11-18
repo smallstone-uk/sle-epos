@@ -247,6 +247,8 @@
 
 <cfcatch type="any">
 	<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
-			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+		output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+	<cfdump var="#session#" label="session" expand="yes" format="html" 
+		output="#application.site.dir_logs#epos\sess-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 </cfcatch>
 </cftry>
