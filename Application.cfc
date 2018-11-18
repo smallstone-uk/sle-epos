@@ -6,7 +6,7 @@ component
     this.sessionManagement = true;
     this.applicationTimeout = createTimeSpan(2,0,0,0);
     this.sessionTimeout = createTimeSpan(0,0,60,0);
-    this.setClientCookies = true;
+    this.setClientCookies = true; // must be true
     this.jarPaths = ["file://#getDirectoryFromPath(getCurrentTemplatePath())#"];
 
     // Boot Framework
