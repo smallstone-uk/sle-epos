@@ -18,6 +18,19 @@
 <cfif StructKeyExists(form,"reportDate")>
 	<cfset parm.reportDate = form.reportDate>
 	<cfset epos = ecfc.LoadEPOSTotals(parm)>
+<!---	<cfquery name="QItemSum2" datasource="#parm.datasource#">
+		SELECT pcatGroup, prodCatID,prodEposCatID, eiClass, eiType, pgTitle, pgNomGroup, nomTitle, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
+		FROM `tblEPOS_Items`
+		INNER JOIN tblEPOS_Header ON ehID = eiParent
+		INNER JOIN tblProducts ON prodID = eiProdID
+		INNER JOIN tblProductCats ON pcatID = prodCatID
+		INNER JOIN tblProductGroups ON pgID = pcatGroup
+		INNER JOIN tblNominal ON pgNomGroup = nomCode
+		WHERE DATE( ehTimeStamp ) = '#form.reportDate#'
+		GROUP by pgNomGroup,eiType
+	</cfquery>
+	<cfdump var="#QItemSum2#" label="QItemSum2" expand="false">
+--->
 	<cfquery name="QItemSummary" datasource="#parm.datasource#">
 		SELECT pcatGroup, prodCatID,prodEposCatID, eiClass, eiType, pgTitle, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
 		FROM `tblEPOS_Items`
@@ -28,6 +41,7 @@
 		WHERE DATE( ehTimeStamp ) = '#form.reportDate#'
 		GROUP by eiClass, eiType, pgTitle,prodEposCatID
 	</cfquery>
+	<cfdump var="#QItemSummary#" label="QItemSummary" expand="false">
 </cfif>
 <body>
 	<cfoutput>

@@ -2989,6 +2989,7 @@
 				INNER JOIN tblemployee ON empID = ehEmployee
 				WHERE DATE(ehTimeStamp) = '#args.reportDate#'
 			</cfquery>
+			<!---<cfdump var="#loc.QTrans#" label="QTrans" expand="false">--->
 			<cfset loc.result.QTrans = loc.QTrans>
 			<cfset loc.net = 0>
 			<cfset loc.vat = 0>
