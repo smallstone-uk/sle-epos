@@ -2973,7 +2973,7 @@
 
 		<cftry>
 			<cfquery name="loc.QTrans" datasource="#GetDataSource()#" result="loc.qtrandump">
-				SELECT tblEPOS_Items.*,ehMode,
+				SELECT tblEPOS_Items.*,ehMode, empFirstName,
 				IF (eiClass='DISC',
 					(SELECT edTitle FROM tblEPOS_Deals WHERE edID=eiDealID),
 					IF (eiType='MEDIA',
@@ -2986,6 +2986,7 @@
 				) title
 				FROM tblEPOS_Items
 				INNER JOIN tblEPOS_Header ON ehID = eiParent
+				INNER JOIN tblemployee ON empID = ehEmployee
 				WHERE DATE(ehTimeStamp) = '#args.reportDate#'
 			</cfquery>
 			<cfset loc.result.QTrans = loc.QTrans>
@@ -2995,11 +2996,12 @@
 			<cfset loc.dr = 0>
 			<cfset loc.tran = 0>
 			<cfoutput>
-			<table class="tableList" width="980">
+			<table class="tableList">
 				<tr>
 					<th>Tran</th>
 					<th>Mode</th>
 					<th>ID</th>
+					<th>User</th>
 					<th width="120">Timestamp</th>
 					<th>Class</th>
 					<th>Type</th>
@@ -3031,6 +3033,7 @@
 						<td>#eiParent#</td>
 						<td>#ehMode#</td>
 						<td>#eiID#</td>
+						<td>#empFirstName#</td>
 						<td>#LSDateFormat(eiTimestamp,"dd-mmm")# #LSTimeFormat(eiTimestamp)#</td>
 						<td>#eiClass#</td>
 						<td>#eiType#</td>
