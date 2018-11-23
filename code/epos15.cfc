@@ -46,7 +46,6 @@
       	<cfset session.basket.mediaItems = {}>
       	<cfset session.basket.magsItems = {}>
       	<cfset session.basket.voucherItems = {}>
-		<cfset session.basket.supplier = {}>
 		<cfset session.basket.trans = []>
 		<cfset session.basket.tranID = 0>
 		<cfset session.basket.lastItemAdded = {}>
