@@ -2218,6 +2218,7 @@
 								</cfif>
 							</cfcase>
 							<cfcase value="MAGS">
+								<cfset loc.prodID = 6>
 								<cfset loc.prodKey = "#loc.tran.prodID#-#loc.tran.price#">
 								<cfif StructKeyExists(args.magsItems,loc.prodKey)>
 									<cfset loc.data = StructFind(args.magsItems,loc.prodKey)>
@@ -2242,10 +2243,17 @@
 								</tr>
 								</cfif>
 							</cfcase>
-							<cfcase value="paystation|NEWS|LOTTERY|SCRATCHCARD|SRV|SPRIZE|LPRIZE|VOUCHER" delimiters="|">
+							<cfcase value="PAYSTATION|SRV|LOTTERY|SCRATCHCARD|SPRIZE|LPRIZE|NEWS|VOUCHER" delimiters="|">
+								<cfswitch expression="#loc.tran.itemClass#">
+									<cfcase value="VOUCHER">
+										<cfset loc.prodID = 9>
+									</cfcase>
+									<cfdefaultcase>
+										<cfset loc.prodID = loc.tran.prodID>
+									</cfdefaultcase>
+								</cfswitch>
 								<cfset loc.total.retail -= loc.tran.gross>
 								<cfset loc.tran.itemType = "item">
-								<cfset loc.prodID = loc.tran.prodID>
 								<cfset loc.retail = loc.tran.gross>
 								<cfif loc.showInfo>
 								<tr>
@@ -2279,6 +2287,7 @@
 								</cfif>
 							</cfcase>
 							<cfcase value="MEDIA">
+								<cfset loc.prodID = 6>
 								<cfset loc.pubKey = "#loc.tran.pubID#-#loc.tran.price#">
 								<cfif StructKeyExists(args.mediaItems,loc.pubKey)>
 									<cfset loc.data = StructFind(args.mediaItems,loc.pubKey)>
@@ -2303,7 +2312,30 @@
 								</tr>
 								</cfif>
 							</cfcase>
-							<cfcase value="CASHINDW|CARDINDW|CHQINDW|CPN|Healthy|ACCINDW" delimiters="|">
+							<cfcase value="CASHINDW|CARDINDW|CHQINDW|ACCINDW|CPN|HEALTHY" delimiters="|">
+								<cfswitch expression="#loc.tran.itemClass#">
+									<cfcase value="CARDINDW">
+										<cfset loc.prodID = 2>
+									</cfcase>
+									<cfcase value="CASHINDW">
+										<cfset loc.prodID = 3>
+									</cfcase>
+									<cfcase value="CHQINDW">
+										<cfset loc.prodID = 4>
+									</cfcase>
+									<cfcase value="ACCINDW">
+										<cfset loc.prodID = 7>
+									</cfcase>
+									<cfcase value="HEALTHY">
+										<cfset loc.prodID = 8>
+									</cfcase>
+									<cfcase value="CPN">
+										<cfset loc.prodID = 11>
+									</cfcase>
+									<cfdefaultcase>
+										<cfset loc.prodID = 1>
+									</cfdefaultcase>
+								</cfswitch>
 								<cfset loc.tran.itemType = "pay">
 								<cfset loc.payID = loc.tran.payID>
 								<cfset loc.account = loc.tran.accid>
@@ -2322,6 +2354,7 @@
 								</cfif>
 							</cfcase>
 							<cfcase value="SUPPLIER">
+								<cfset loc.prodID = 5>
 								<cfset loc.tran.itemType = "supp">
 								<cfset loc.retail = loc.tran.gross>
 								<cfif loc.showInfo>
@@ -2992,6 +3025,7 @@
 			<cfset loc.result.QTrans = loc.QTrans>
 			<cfset loc.net = 0>
 			<cfset loc.vat = 0>
+			<cfset loc.profit = 0>
 			<cfset loc.cr = 0>
 			<cfset loc.dr = 0>
 			<cfset loc.tran = 0>
@@ -3055,6 +3089,9 @@
 						<td align="right"><cfif eiRetail neq 0>#eiRetail#</cfif></td>
 						<td align="right">#DecimalFormat(eiNet+eiTrade)#</td>
 					</tr>
+					<cfif eiClass eq 'sale'>
+						<cfset loc.profit += (eiNet+eiTrade)>
+					</cfif>
 					<cfset loc.tran = eiParent>
 					<cfset loc.balance += loc.gross>
 				</cfloop>
@@ -3068,10 +3105,14 @@
 					<th></th>
 					<th></th>
 					<th></th>
+					<th></th>
 					<th align="right">#DecimalFormat(loc.net)#</th>
 					<th align="right">#DecimalFormat(loc.vat)#</th>
 					<th align="right">#DecimalFormat(loc.dr)#</th>
 					<th align="right">#DecimalFormat(loc.cr)#</th>
+					<th></th>
+					<th></th>
+					<th align="right">#DecimalFormat(loc.profit)#</th>
 				</tr>
 			</table>
 			</cfoutput>
