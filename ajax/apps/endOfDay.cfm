@@ -13,6 +13,9 @@
 		today = dayHeader.today();
 		yesterday = dayHeader.yesterday();
 	</cfscript>
+	<cfdump var="#yesterday#" label="yesterday" expand="yes" format="html" 
+	output="#application.site.dir_logs#epos\yest-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+
 	<cfoutput>
 		<script>
 			$(document).ready(function(e) {
