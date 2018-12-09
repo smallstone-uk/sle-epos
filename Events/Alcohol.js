@@ -8,7 +8,7 @@ class Alcohol
     onAdded(product)
     {
         var date = new Date();
-        var isSunday = date.getDay() == 6;	// sunday = 0, saturday = 6
+        var isSunday = date.getDay() == 0;	// sunday = 0, saturday = 6
 
         // if (true) {
         if (isSunday && date.getHours() < 10) {
