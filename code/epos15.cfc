@@ -2248,6 +2248,12 @@
 									<cfcase value="VOUCHER">
 										<cfset loc.prodID = 9>
 									</cfcase>
+									<cfcase value="NEWS">
+										<cfset loc.prodID = 10>
+									</cfcase>
+									<cfcase value="PAYSTATION">
+										<cfset loc.prodID = 11>
+									</cfcase>
 									<cfdefaultcase>
 										<cfset loc.prodID = loc.tran.prodID>
 									</cfdefaultcase>
