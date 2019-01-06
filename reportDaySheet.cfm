@@ -202,6 +202,10 @@
 				<th align="right">#DecimalFormat(drtotal)#</th>
 				<th align="right">#DecimalFormat(crtotal)#</th>
 			</tr>
+			<tr>
+				<td colspan="3">Cash Taken (add cashback): </td>
+				<td align="right">#GetTotal(epos.accounts,"cashindw") + GetTotal(epos.accounts,"supplier")#</td>
+			</tr>
 		</table>
 	</div>
 <!--- Not got cashback figure available
