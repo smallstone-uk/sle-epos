@@ -1868,7 +1868,8 @@
 		<cfset session.grocer_stories = loc.grocerResult>
 
 		<cfcatch type="any">
-			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+			 	output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
 		
@@ -1889,7 +1890,8 @@
 		</cfquery>
 
 		<cfcatch type="any">
-			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+			 	output=	"#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
 		
