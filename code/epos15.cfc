@@ -3118,12 +3118,12 @@
 					<th>Mode</th>
 					<th>ID</th>
 					<th>User</th>
-					<th width="160">Timestamp</th>
+					<th width="80">Timestamp</th>
 					<th>Class</th>
 					<th>Type</th>
 					<th>Method</th>
 					<th>Qty</th>
-					<th>Category</th>
+					<th width="120">Category</th>
 					<th>Description</th>
 					<th align="right">Net</th>
 					<th align="right">VAT</th>
@@ -3138,7 +3138,8 @@
 					<cfif loc.tran gt 0 AND loc.tran neq eiParent>
 						<cfif abs(loc.balance) gt 0.001>
 							<tr class="searchrow" data-title="#title#" data-prodID="#eiProdID#">
-								<td colspan="18" align="right" class="balError">#DecimalFormat(loc.balance)#</td>
+								<td colspan="15" align="right" class="balError">#DecimalFormat(loc.balance)#</td>
+								<td colspan="3" class="balError"></td>
 							</tr>
 						<cfelse>
 							<tr class="searchrow" data-title="#title#" data-prodID="#eiProdID#">
@@ -3160,7 +3161,7 @@
 						<td>#eiType#</td>
 						<td>#eiPayType#</td>
 						<td align="center">#eiQty#</td>
-						<td>#pcatTitle#</td>
+						<td><span title="#pcatTitle#">#Left(pcatTitle,20)#</span></td>
 						<td>#title#</td>
 						<td align="right">#eiNet#</td>
 						<td align="right">#eiVAT#</td>
