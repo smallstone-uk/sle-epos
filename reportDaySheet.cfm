@@ -3,7 +3,26 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="stylesheet" type="text/css" href="css/tillshell.css">
+	<script src="js/jquery-1.11.1.min.js"></script>
 	<title>Day Report</title>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#quicksearch').on("keyup",function() {
+				var srch=$(this).val();
+				$('.searchrow').each(function() {
+					var id=$(this).attr("data-prodID");
+					var str=$(this).attr("data-title");
+					
+					if (str.toLowerCase().indexOf(srch.toLowerCase()) == -1) {
+						$(this).hide();
+					} else {
+						$(this).show();
+					}
+					
+				});
+			});
+		});
+	</script>
 </head>
 <cfset parm = {}>
 <cfset parm.datasource = application.site.datasource1>
@@ -88,27 +107,27 @@
 			<cfset vatTotal = 0>
 			<cfset countTotal = 0>
 			<cfloop query="QItemSummary">
-			<cfset countTotal += itemCount>
-			<cfset vatTotal += vat>
-			<cfset gross = net + vat>
-			<cfif gross gt 0>
-				<cfset drtotal += gross>
-				<cfelse>
-				<cfset crtotal += gross>
-			</cfif>
-			<tr>
-				<td>#pcatGroup#</td>
-				<td>#pgTitle#</td>
-				<td>#eiClass#</td>
-				<td>#eiType#</td>
-				<td align="right"><cfif gross gt 0>
-						#DecimalFormat(net)#
-					</cfif></td>
-				<td align="right"><cfif gross lt 0>
-						#DecimalFormat(-net)#
-					</cfif></td>
-				<td align="right">#itemCount#</td>
-			</tr>
+				<cfset countTotal += itemCount>
+				<cfset vatTotal += vat>
+				<cfset gross = net + vat>
+				<cfif gross gt 0>
+					<cfset drtotal += gross>
+					<cfelse>
+					<cfset crtotal += gross>
+				</cfif>
+				<tr>
+					<td>#pcatGroup#</td>
+					<td>#pgTitle#</td>
+					<td>#eiClass#</td>
+					<td>#eiType#</td>
+					<td align="right"><cfif gross gt 0>
+							#DecimalFormat(net)#
+						</cfif></td>
+					<td align="right"><cfif gross lt 0>
+							#DecimalFormat(-net)#
+						</cfif></td>
+					<td align="right">#itemCount#</td>
+				</tr>
 			</cfloop>
 			<tr>
 				<td></td>
@@ -204,7 +223,7 @@
 			</tr>
 			<tr>
 				<td colspan="3">Cash Taken (add cashback): </td>
-				<td align="right">#GetTotal(epos.accounts,"cashindw") + GetTotal(epos.accounts,"supplier")#</td>
+				<td align="right">#GetTotal(epos.accounts,"cashindw") + GetTotal(epos.accounts,"supplier") + GetTotal(epos.accounts,"float")#</td>
 			</tr>
 		</table>
 	</div>

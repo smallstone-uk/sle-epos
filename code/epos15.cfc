@@ -3057,7 +3057,23 @@
 		</cfcatch>
 		</cftry>
 	</cffunction>
-
+<!---
+				SELECT tblEPOS_Items.*,ehMode, empFirstName,
+				IF (eiClass='DISC',
+					(SELECT edTitle FROM tblEPOS_Deals WHERE edID=eiDealID),
+					IF (eiType='MEDIA',
+						(SELECT pubTitle FROM tblPublication WHERE pubID=eiPubID),
+						IF (eiClass='pay',
+							(SELECT eaTitle FROM tblEPOS_Account WHERE eaID=eiPayID),
+								(SELECT prodTitle FROM tblProducts WHERE prodID=eiProdID)
+						)
+					)
+				) title
+				FROM tblEPOS_Items
+				INNER JOIN tblEPOS_Header ON ehID = eiParent
+				INNER JOIN tblemployee ON empID = ehEmployee
+				WHERE DATE(ehTimeStamp) = '#args.reportDate#'
+--->
 	<cffunction name="DumpTrans" access="public" returntype="struct">
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
@@ -3075,10 +3091,13 @@
 								(SELECT prodTitle FROM tblProducts WHERE prodID=eiProdID)
 						)
 					)
-				) title
+				) title,
+				tblProducts.prodCatID, tblproductcats.pcatTitle
 				FROM tblEPOS_Items
 				INNER JOIN tblEPOS_Header ON ehID = eiParent
 				INNER JOIN tblemployee ON empID = ehEmployee
+				INNER JOIN tblProducts ON prodID=eiProdID
+				INNER JOIN tblproductcats ON prodCatID=pcatID
 				WHERE DATE(ehTimeStamp) = '#args.reportDate#'
 			</cfquery>
 			<!---<cfdump var="#loc.QTrans#" label="QTrans" expand="false">--->
@@ -3092,15 +3111,19 @@
 			<cfoutput>
 			<table class="tableList">
 				<tr>
+					<th align="left" colspan="18"><input type="text" id="quicksearch" value="" placeholder="Search list"></th>
+				</tr>
+				<tr>
 					<th>Tran</th>
 					<th>Mode</th>
 					<th>ID</th>
 					<th>User</th>
-					<th width="120">Timestamp</th>
+					<th width="160">Timestamp</th>
 					<th>Class</th>
 					<th>Type</th>
 					<th>Method</th>
 					<th>Qty</th>
+					<th>Category</th>
 					<th>Description</th>
 					<th align="right">Net</th>
 					<th align="right">VAT</th>
@@ -3114,25 +3137,30 @@
 				<cfloop query="loc.QTrans">
 					<cfif loc.tran gt 0 AND loc.tran neq eiParent>
 						<cfif abs(loc.balance) gt 0.001>
-							<tr><td colspan="13" align="right" class="balError">#DecimalFormat(loc.balance)#</td>
+							<tr class="searchrow" data-title="#title#" data-prodID="#eiProdID#">
+								<td colspan="18" align="right" class="balError">#DecimalFormat(loc.balance)#</td>
+							</tr>
 						<cfelse>
-							<tr><td colspan="13">&nbsp;</td></tr>
+							<tr class="searchrow" data-title="#title#" data-prodID="#eiProdID#">
+								<td colspan="18">&nbsp;</td>
+							</tr>
 						</cfif>
 						<cfset loc.balance = 0>
 					</cfif>
 					<cfset loc.gross = eiNet + eiVAT>
 					<cfset loc.net += eiNet>
 					<cfset loc.vat += eiVAT>
-					<tr>
+					<tr class="searchrow" data-title="#pcatTitle# #title#" data-prodID="#eiProdID#">
 						<td>#eiParent#</td>
 						<td>#ehMode#</td>
 						<td>#eiID#</td>
 						<td>#empFirstName#</td>
-						<td>#LSDateFormat(eiTimestamp,"dd-mmm")# #LSTimeFormat(eiTimestamp)#</td>
+						<td nowrap>#LSDateFormat(eiTimestamp,"dd-mmm")# #LSTimeFormat(eiTimestamp)#</td>
 						<td>#eiClass#</td>
 						<td>#eiType#</td>
 						<td>#eiPayType#</td>
 						<td align="center">#eiQty#</td>
+						<td>#pcatTitle#</td>
 						<td>#title#</td>
 						<td align="right">#eiNet#</td>
 						<td align="right">#eiVAT#</td>
@@ -3155,7 +3183,8 @@
 					<cfset loc.tran = eiParent>
 					<cfset loc.balance += loc.gross>
 				</cfloop>
-				<tr>
+				<tr class="searchrow" data-title="#pcatTitle# #title#" data-prodID="#eiProdID#">
+					<th></th>
 					<th></th>
 					<th></th>
 					<th></th>
