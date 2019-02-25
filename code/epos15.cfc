@@ -3183,7 +3183,7 @@
 					<cfset loc.tran = eiParent>
 					<cfset loc.balance += loc.gross>
 				</cfloop>
-				<tr class="searchrow" data-title="#pcatTitle# #title#" data-prodID="#eiProdID#">
+				<tr id="pagetotals">
 					<th></th>
 					<th></th>
 					<th></th>

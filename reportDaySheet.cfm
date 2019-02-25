@@ -9,17 +9,21 @@
 		$(document).ready(function() {
 			$('#quicksearch').on("keyup",function() {
 				var srch=$(this).val();
+				var hidetotals = false;
 				$('.searchrow').each(function() {
 					var id=$(this).attr("data-prodID");
 					var str=$(this).attr("data-title");
 					
 					if (str.toLowerCase().indexOf(srch.toLowerCase()) == -1) {
 						$(this).hide();
+						hidetotals = true;
 					} else {
 						$(this).show();
 					}
 					
 				});
+				if (hidetotals) $('#pagetotals').hide()
+					else $('#pagetotals').show();
 			});
 		});
 	</script>
