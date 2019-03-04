@@ -3047,7 +3047,7 @@
 			AND pubSaleType = 'variable'
 			AND pubEPOS
 			AND pubActive
-			ORDER BY pubType ASC, pubTitle ASC
+			ORDER BY pubType ASC, pubRoundTitle ASC
 		</cfquery>
 		
 		<cfloop query="loc.pubs">
