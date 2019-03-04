@@ -3363,7 +3363,7 @@
 				INNER JOIN tblEPOS_Cats ON prodEposCatID=epcID
 				WHERE epcParent = #val(catID)#
 				AND prodStatus = 'active'
-				ORDER BY epcOrder
+				ORDER BY epcOrder, prodTitle
 			</cfquery>
 			<cfcatch type="any">
 				 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
