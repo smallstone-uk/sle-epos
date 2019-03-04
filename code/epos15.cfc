@@ -775,6 +775,7 @@
 							<cfif ArrayLen(session.basket.srv) eq 1>
 								<cfset ArrayDeleteAt(session.basket.srv,1)>
 								<cfset session.basket.info.service = 0>	<!--- remove service charge --->
+								<cfset CheckDeals()>
 							</cfif>
 						</cfif>
 					</cfcase>
@@ -800,6 +801,7 @@
 									<cfbreak>
 								</cfif>
 							</cfloop>
+							<cfset CheckDeals()>
 						</cfif>
 					</cfcase>
 					<cfcase value="SCRATCHCARD">
@@ -824,6 +826,7 @@
 									<cfbreak>
 								</cfif>
 							</cfloop>
+							<cfset CheckDeals()>
 						</cfif>
 					</cfcase>
 					<cfcase value="LPRIZE">
@@ -848,6 +851,7 @@
 									<cfbreak>
 								</cfif>
 							</cfloop>
+							<cfset CheckDeals()>
 						</cfif>
 					</cfcase>
 					<cfcase value="SPRIZE">
@@ -872,6 +876,7 @@
 									<cfbreak>
 								</cfif>
 							</cfloop>
+							<cfset CheckDeals()>
 						</cfif>
 					</cfcase>
 					<cfcase value="NEWS">
@@ -893,6 +898,7 @@
 									<cfbreak>
 								</cfif>
 							</cfloop>
+							<cfset CheckDeals()>
 						</cfif>
 					</cfcase>
 					<cfcase value="ACCPAY">
@@ -920,6 +926,7 @@
 									<cfbreak>
 								</cfif>
 							</cfloop>
+							<cfset CheckDeals()>
 						</cfif>
 					</cfcase>
 					<cfcase value="VOUCHER">
@@ -949,56 +956,9 @@
 									<cfbreak>
 								</cfif>
 							</cfloop>
-						</cfif>
-					</cfcase>
-<!---
-					<cfcase value="VOUCHER">
-							<cfif ArrayLen(session.basket.media) eq 0>
-								<cfset session.basket.info.errMsg = "Please put a news item in the basket before accepting a voucher.">
-							<cfelse>
-								<cfset args.data.cash = args.data.cash + args.data.credit>
-								<cfset args.data.credit = 0>
-								
-								<cfset args.data.title = "NV #args.data.cash# #session.basket.total.voucher# #session.basket.total.media#">
-								<cfif args.data.cash is 0>
-									<cfset session.basket.info.errMsg = "Please enter the voucher value.">
-								<cfelseif abs(args.data.cash + session.basket.total.voucher) gt abs(session.basket.total.media)>
-									<cfset session.basket.info.errMsg = "Voucher total cannot exceed newspaper total.">
-								<cfelse>
-									<cfset args.data.class = "pay">
-									<cfset args.data.itemClass = "VOUCHER">
-									<cfset CalcValues(args.data)>
-									<cfset UpdateBasket(args)>
-								</cfif>
-							</cfif>
-					</cfcase>
---->
-<!---
-					<cfcase value="VOUCHER|CPN" delimiters="|">
-						<cfset args.data.cash = args.data.cash + args.data.credit>
-						<cfif args.data.cash neq 0>
-							<cfset args.data.class = "VOUCHER">
-							<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
-							<cfset args.data.gross = args.data.cash>	<!--- calc gross transaction value --->
-							<cfset CalcValues(args.data)>
-							<cfif args.form.addToBasket><cfset ArrayAppend(session.basket.voucher,args.data)></cfif>
 							<cfset CheckDeals()>
-						<cfelse>
-							<cfset session.basket.info.errMsg = "Invalid #args.form.itemClass# amount entered.">
-						</cfif>
-
-						<cfset args.data.cash = args.data.cash + args.data.credit>
-						<cfif args.data.cash neq 0>
-							<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
-							<cfset args.form.btnSend = args.form.itemClass>
-							<cfset args.form.payID = 92>	<!--- TODO select correct ID --->
-							<cfset AddPayment(args)>
-							<cfset CheckDeals()>
-						<cfelse>
-							<cfset session.basket.info.errMsg = "Please enter the voucher value.">
 						</cfif>
 					</cfcase>
---->
 					<cfcase value="SUPPLIER">
 						<cfif ArrayLen(session.basket.supplier) GT 0>
 							<cfset session.basket.info.errMsg = "You can only pay one supplier at a time.">
