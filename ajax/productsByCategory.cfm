@@ -68,7 +68,8 @@
 						data-cash="0"
 					</cfif>
 				>
-					<span><strong>#item.prodTitle#</strong><cfif item.prodCashOnly eq 1><br />(Cash Only)</cfif></span>
+					<span class="priceTitle">#item.prodTitle#</span>
+					<cfif item.prodCashOnly eq 1><span class="priceCash">(Cash Only)</span></cfif>
 					<span class="priceButton">
 						<cfif ourPrice gt 0>
 							&pound;#DecimalFormat(ourPrice)#
