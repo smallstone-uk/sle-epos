@@ -2947,8 +2947,8 @@
 				FROM tblEPOS_DealItems
 				INNER JOIN tblEPOS_Deals ON ediParent = edID
 				WHERE edStatus = 'active'
-				AND edStarts <= #Now()#		<!--- TODO check time issues --->
-				AND edEnds >= #Now()#
+				AND edStarts <= DATE(#Now()#)
+				AND edEnds >= DATE(#Now()#)
 			</cfquery>
 			<cfset session.dealIDs = {}>
 			<cfloop query="loc.QualifyingProducts">
