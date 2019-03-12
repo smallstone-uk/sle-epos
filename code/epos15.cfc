@@ -101,6 +101,7 @@
 			<cfset loc.tranType = -1>
 			<cfset loc.rec.regMode = (2 * int(session.basket.info.mode eq "reg")) - 1>	<!--- modes: reg = 1 refund = -1 --->
 			<cfset session.basket.trans = []>
+			<cfset loc.today = CreateDate(year(now()),month(now()),day(now()))>
 			<cfloop collection="#session.basket.deals#" item="loc.dealKey">
 				<cfset loc.dealData = StructFind(session.dealData,loc.dealKey)>
 				<cfset loc.dealRec = StructFind(session.basket.deals,loc.dealKey)>
@@ -115,7 +116,7 @@
 				<cfset loc.dealRec.remQty = 0>
 				<cfset loc.count = 0>
 				<cfset loc.start = 1>
-				<cfif loc.dealData.edEnds gt Now()>
+				<cfif loc.dealData.edEnds gte loc.today>
 					<cfswitch expression="#loc.dealData.edDealType#">
 
 						<cfcase value="nodeal">
