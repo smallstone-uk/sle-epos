@@ -2170,10 +2170,12 @@
 					<cfquery name="loc.QInsertHeader" datasource="#GetDataSource()#" result="loc.QInsertHeaderResult">
 						INSERT INTO tblEPOS_Header (
 							ehEmployee,
-							ehMode
+							ehMode,
+							ehCashback
 						) VALUES (
 							#session.user.ID#,	<!--- TODO check user ID --->
-							'#session.basket.info.mode#'
+							'#session.basket.info.mode#',
+							#session.basket.header.cashback#
 						)
 					</cfquery>
 					<cfset loc.ID = loc.QInsertHeaderResult.generatedkey>
