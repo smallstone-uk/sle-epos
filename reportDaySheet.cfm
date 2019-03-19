@@ -50,9 +50,9 @@
 		INNER JOIN tblProductGroups ON pgID = pcatGroup
 		INNER JOIN tblNominal ON pgNomGroup = nomCode
 		WHERE DATE( ehTimeStamp ) = '#form.reportDate#'
-		GROUP by pgNomGroup
+		GROUP by eiClass,pgNomGroup
 	</cfquery>
-	<!---<cfdump var="#QItemSum2#" label="QItemSum2" expand="false">--->
+	<cfdump var="#QItemSum2#" label="QItemSum2" expand="false">
 	
 	<cfquery name="QItemSummary" datasource="#parm.datasource#">
 		SELECT pcatGroup, prodCatID,prodEposCatID, eiClass, eiType, pgTitle, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
@@ -206,19 +206,27 @@
 			<cfset drTotal = 0>
 			<cfset crTotal = 0>
 			<cfloop query="QItemSum2">
-			<cfset gross = net + vat>
-			<tr>
-				<td>#pgNomGroup#</td>
-				<td>#nomTitle#</td>
-				<td align="right"><cfif gross gt 0>
+				<cfset drValue = 0>
+				<cfset crValue = 0>
+				<cfset gross = net + vat>
+				<cfif Find(eiClass,"supp,pay")>
+					<cfset drValue = gross>
+					<cfset drTotal += gross>
+				<cfelseif Find(eiClass,"sale,item")>
+					<cfif eiType eq 'VOUCHER'>
+						<cfset drValue = gross>
 						<cfset drTotal += gross>
-						#DecimalFormat(gross)#
-					</cfif></td>
-				<td align="right"><cfif gross lt 0>
+					<cfelse>
+						<cfset crValue = gross>
 						<cfset crTotal -= gross>
-						#DecimalFormat(gross * -1)#
-					</cfif></td>
-			</tr>
+					</cfif>
+				</cfif>
+				<tr>
+					<td>#pgNomGroup#</td>
+					<td>#nomTitle#</td>
+					<td align="right"><cfif drValue neq 0>#DecimalFormat(drValue)#</cfif></td>
+					<td align="right"><cfif crValue neq 0>#DecimalFormat(crValue * -1)#</cfif></td>
+				</tr>
 			</cfloop>
 			<tr>
 				<th align="right" colspan="2">Totals</th>
