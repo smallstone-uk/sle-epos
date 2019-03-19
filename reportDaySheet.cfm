@@ -52,7 +52,7 @@
 		WHERE DATE( ehTimeStamp ) = '#form.reportDate#'
 		GROUP by eiClass,pgNomGroup
 	</cfquery>
-	<cfdump var="#QItemSum2#" label="QItemSum2" expand="false">
+	<!---<cfdump var="#QItemSum2#" label="QItemSum2" expand="false">--->
 	
 	<cfquery name="QItemSummary" datasource="#parm.datasource#">
 		SELECT pcatGroup, prodCatID,prodEposCatID, eiClass, eiType, pgTitle, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
@@ -65,6 +65,11 @@
 		GROUP by eiClass, eiType, pgTitle,prodEposCatID
 	</cfquery>
 	<!---<cfdump var="#QItemSummary#" label="QItemSummary" expand="false">--->
+	<cfquery name="QCashback" datasource="#parm.datasource#">
+		SELECT SUM(ehCashback) AS total
+		FROM tblEPOS_Header
+		WHERE DATE( ehTimeStamp ) = '#form.reportDate#'
+	</cfquery>
 </cfif>
 
 	<cffunction name="GetTotal" access="public" returntype="numeric">
@@ -234,27 +239,28 @@
 				<th align="right">#DecimalFormat(crtotal)#</th>
 			</tr>
 			<tr>
-				<td colspan="3">Cash Taken (add cashback): </td>
-				<td align="right">#GetTotal(epos.accounts,"cashindw") + GetTotal(epos.accounts,"supplier") + GetTotal(epos.accounts,"float")#</td>
+				<td colspan="3">Cash in Drawer:</td>
+				<td align="right">#GetTotal(epos.accounts,"cashindw")#</td>
+			</tr>
+			<tr>
+				<td colspan="3">Suppliers Paid:</td>
+				<td align="right">#GetTotal(epos.accounts,"supplier")#</td>
+			</tr>
+			<tr>
+				<td colspan="3">Cashback:</td>
+				<td align="right">#DecimalFormat(val(QCashback.total))#</td>
+			</tr>
+			<tr>
+				<td colspan="3">Less float:</td>
+				<td align="right">#GetTotal(epos.accounts,"float")#</td>
+			</tr>
+			<cfset cashTaken = GetTotal(epos.accounts,"cashindw") + GetTotal(epos.accounts,"supplier") + GetTotal(epos.accounts,"float") + val(QCashback.total)>
+			<tr>
+				<td colspan="3"><strong>Cash Taken:</strong></td>
+				<td align="right"><strong>#DecimalFormat(cashTaken)#</strong></td>
 			</tr>
 		</table>
 	</div>
-<!--- Not got cashback figure available
-	<div id="xreading6" class="totalPanel">
-		<div class="header">Cash Up</div>
-		<table class="tableList" border="1">
-			<tr>
-				<th>DESCRIPTION</th>
-				<th width="70" align="right">DR</th>
-				<th width="70" align="right">CR</th>
-			</tr>
-			<tr>
-				<td>Cash Taken</td>
-				<td>#GetTotal(epos.accounts,"cashindw") + GetTotal(epos.accounts,"supplier")#</td>
-			</tr>
-		</table>
-	</div>
---->
 	<div style="clear:both"></div>
 	<div class="totalPanel">
 		<div class="header">Tran Dump</div>
