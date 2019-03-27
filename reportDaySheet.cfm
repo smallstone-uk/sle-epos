@@ -199,6 +199,7 @@
 			</tr>
 		</table>
 	</div>
+	<cfif NOT StructIsEmpty(epos.accounts)>
 	<div id="xreading5" class="totalPanel">
 		<div class="header">Gross Totals by Group</div>
 		<table class="tableList" border="1">
@@ -251,6 +252,10 @@
 				<td align="right">#DecimalFormat(val(QCashback.total))#</td>
 			</tr>
 			<tr>
+				<td colspan="3">Card Sales:</td>
+				<td align="right">#DecimalFormat(epos.accounts.cardindw) - val(QCashback.total)#</td>
+			</tr>
+			<tr>
 				<td colspan="3">Less float:</td>
 				<td align="right">#GetTotal(epos.accounts,"float")#</td>
 			</tr>
@@ -261,6 +266,7 @@
 			</tr>
 		</table>
 	</div>
+	</cfif>
 	<div style="clear:both"></div>
 	<div class="totalPanel">
 		<div class="header">Tran Dump</div>
