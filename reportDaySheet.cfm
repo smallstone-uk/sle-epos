@@ -50,7 +50,7 @@
 		INNER JOIN tblProductGroups ON pgID = pcatGroup
 		INNER JOIN tblNominal ON pgNomGroup = nomCode
 		WHERE DATE( ehTimeStamp ) = '#form.reportDate#'
-		GROUP by eiClass,pgNomGroup
+		GROUP by pgNomGroup
 	</cfquery>
 	<!---<cfdump var="#QItemSum2#" label="QItemSum2" expand="false">--->
 	
