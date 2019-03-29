@@ -6,7 +6,7 @@
 <cfset parm.form = form>
 <cfset products = epos.LoadProductsByCategory(parm.form.catID)>
 <cfdump var="#products#" label="products" expand="yes" format="html" 
-	output="#application.site.dir_logs#epos/err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+	output="#application.site.dir_logs#epos/prod-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 <cfoutput>
 	<script>
