@@ -5,6 +5,8 @@
 <cfset parm.url = application.site.normal>
 <cfset parm.form = form>
 <cfset products = epos.LoadProductsByCategory(parm.form.catID)>
+<cfdump var="#products#" label="products" expand="yes" format="html" 
+	output="#application.site.dir_logs#epos/err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 <cfoutput>
 	<script>
@@ -39,15 +41,17 @@
 				<cfelse>
 					<cfset ourPrice = item.siOurPrice>
 				</cfif>
+				<cfif StructKeyExists(item,"siUnitTrade") AND val(item.siUnitTrade) neq 0><cfset unittrade=item.siUnitTrade>
+					<cfelse><cfset unittrade=val(item.prodUnitTrade)></cfif>
 				<li
 					class="products_item material-ripple"
-					data-account=""
+					data-account="0"
 					data-addtobasket="true"
 					data-btnsend="add"
 					data-class="item"
 					data-discount="0"
 					data-discountable="#item.prodStaffDiscount#"
-					data-pubid=""
+					data-pubid="0"
 					data-prodid="#item.prodID#"
 					data-prodtitle="#item.prodTitle#"
 					data-unitsize="#item.siUnitSize#"
@@ -59,7 +63,7 @@
 					data-cashonly="#item.prodCashOnly#"
 					data-prodsign="#item.prodSign#"
 					data-itemclass="#item.epcKey#"
-					data-unittrade="#item.siUnitTrade#"
+					data-unittrade="#unittrade#"
 					<cfif item.prodCashOnly is 1>
 						data-cash="#ourPrice#"
 						data-credit="0"
