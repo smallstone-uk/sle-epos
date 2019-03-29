@@ -3155,7 +3155,7 @@
 		<cftry>
 			<cfquery name="loc.product" datasource="#GetDatasource()#" result="loc.prodres">
 				SELECT prodID,prodStaffDiscount,prodRef,prodRecordTitle,prodTitle,prodCountDate,prodStockLevel,prodLastBought,prodOurPrice,
-						prodPackPrice,prodValidTo,prodPriceMarked,prodCatID,prodVATRate,prodSign,prodCashOnly,prodClass,
+						prodPackPrice,prodValidTo,prodPriceMarked,prodCatID,prodVATRate,prodSign,prodCashOnly,prodClass,prodUnitTrade,
 						siID,siRef,siOrder,siUnitSize,siPackQty,siQtyPacks,siQtyItems,siWSP,siUnitTrade,siRRP,siOurPrice,siPOR,siReceived,siBookedIn,siExpires,siStatus,
 						epcKey
 				FROM tblProducts
@@ -3353,7 +3353,8 @@
 		<cfset var loc = {}>
 		<cftry>
 			<cfquery name="loc.products" datasource="#GetDatasource()#">
-				SELECT prodID,prodTitle,prodOurPrice,prodStaffDiscount,prodClass,prodVatRate,prodCashOnly,prodSign, siUnitTrade,siUnitSize,siOurPrice, epcKey,epcOrder
+				SELECT prodID,prodTitle,prodOurPrice,prodStaffDiscount,prodClass,prodVatRate,prodCashOnly,prodSign,prodUnitTrade,
+					siUnitTrade,siUnitSize,siOurPrice, epcKey,epcOrder
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct
 				AND tblStockItem.siID = (
