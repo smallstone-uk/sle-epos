@@ -37,7 +37,7 @@
                 data-class="item"
                 data-discount="0"
                 data-discountable="#item.prodStaffDiscount#"
-                data-pubid=""
+                data-pubid="0"
                 data-prodid="#item.prodID#"
                 data-prodtitle="#item.prodTitle#"
 				data-unitsize=""	<!---#item.siUnitSize#--->
@@ -52,7 +52,7 @@
                 data-credit="0"
                 data-cash="0"
 				<cfif StructKeyExists(item,"siUnitTrade")>data-unittrade="#item.siUnitTrade#"
-					<cfelse>data-unittrade=0</cfif>
+					<cfelse>data-unittrade="#val(item.prodUnitTrade)#"</cfif>
             ><span><strong>#item.prodTitle#</strong></span></li>
         </cfloop>
     </ul>

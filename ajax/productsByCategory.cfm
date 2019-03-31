@@ -5,8 +5,6 @@
 <cfset parm.url = application.site.normal>
 <cfset parm.form = form>
 <cfset products = epos.LoadProductsByCategory(parm.form.catID)>
-<cfdump var="#products#" label="products" expand="yes" format="html" 
-	output="#application.site.dir_logs#epos/prod-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 <cfoutput>
 	<script>
@@ -14,7 +12,7 @@
 			$('.products_item').click(function(event) {
 				var obj = $(this);
 				var dataAttributes = getDataAttributes( $(this) );
-				console.log(dataAttributes);
+				//console.log(dataAttributes);
 				if (dataAttributes.credit != 0 || dataAttributes.cash != 0) {
 					$.addToBasket(dataAttributes);
 				} else {

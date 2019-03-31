@@ -3139,7 +3139,7 @@
 						</cfif>
 						<td align="right"><cfif eiTrade neq 0>#eiTrade#</cfif></td>
 						<td align="right"><cfif eiRetail neq 0>#eiRetail#</cfif></td>
-						<td align="right">#DecimalFormat(eiNet+eiTrade)#</td>
+						<td align="right"><cfif eiClass eq 'sale'>#DecimalFormat(eiNet+eiTrade)#</cfif></td>
 					</tr>
 					<cfif eiClass eq 'sale'>
 						<cfset loc.profit += (eiNet+eiTrade)>

@@ -26,7 +26,7 @@
 					data: {"barcode": barcode},
 					success: function(data) {
 						var result = data.toJava();
-						console.log(result);
+						//console.log(result);
 						
 						if (result.signal) {
 							isNew = false;

@@ -194,6 +194,17 @@
 
 				event.preventDefault();
 			});
+
+			$('##hti_reload').click(function(event) {
+				window.location.reload();
+				event.preventDefault();
+			});
+
+			$('##hti_nokiosk').click(function(event) {
+				window.open('#application.site.normal#', '_blank');
+				window.location.href = 'http://closekiosk';
+				event.preventDefault();
+			});
 		});
 	</script>
 	<cfif session.user.loggedin>
@@ -212,6 +223,8 @@
 				<!---<li data-page="help">Help</li>--->
 			</ul>
 			<ul class="header_icons">
+				<li id="hti_nokiosk" class="material-ripple" style="font-size: 32px;"><i class="fa fa-cog"></i></li>
+				<li id="hti_reload" class="material-ripple" style="font-size: 32px;"><i class="fa fa-refresh"></i></li>
 				<li id="hti_home" class="material-ripple"><i class="fa fa-home"></i></li>
 				<li id="hti_search" class="material-ripple" style="font-size: 32px;"><i class="fa fa-search"></i></li>
 				<li id="hti_manualcats" class="material-ripple" style="font-size: 32px;"><i class="fa fa-list"></i></li>
