@@ -2622,6 +2622,7 @@ select:focus {
 
 .header_toolbar {
     float: left;
+	width:200px;
     height: 75px;
 }
 
