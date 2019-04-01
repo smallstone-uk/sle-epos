@@ -2627,7 +2627,7 @@ select:focus {
 }
 
 .header_icons {
-    float: right;
+    float: left;
     height: 100%;
     margin: 0;
     padding: 0;
