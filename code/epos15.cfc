@@ -3061,7 +3061,11 @@
 				INNER JOIN tblemployee ON empID = ehEmployee
 				INNER JOIN tblProducts ON prodID=eiProdID
 				INNER JOIN tblproductcats ON prodCatID=pcatID
-				WHERE DATE(ehTimeStamp) = '#args.reportDate#'
+				WHERE 1
+				<cfif len(args.reportDate)>AND DATE(ehTimeStamp) = '#args.reportDate#' </cfif>
+				<cfif StructKeyExists(args,"accountID")>
+					AND eiParent IN (#args.aIDs#)
+				</cfif>
 			</cfquery>
 			<!---<cfdump var="#loc.QTrans#" label="QTrans" expand="false">--->
 			<cfset loc.result.QTrans = loc.QTrans>
