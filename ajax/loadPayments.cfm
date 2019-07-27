@@ -4,6 +4,7 @@
 <cfset parm.datasource = application.site.datasource1>
 <cfset parm.url = application.site.normal>
 <cfset payments = epos.LoadPayments(parm)>
+
 <cfoutput>
 	<script>
 		$(document).ready(function(e) {
@@ -70,7 +71,7 @@
 					case "partcard":
 						// sometimes shows values from previous transactions 	01/08/2017 (fixed)
 						var cashTotal = Number("0"); // session.basket.header.bcash included prize money as cashback so set to zero 
-						var creditTotal = Number("#-session.basket.header.bcash -session.basket.header.bcredit - session.basket.header.discdeal - session.basket.header.chqsales#");
+						var creditTotal = Number("#-session.basket.header.bcash - session.basket.header.bcredit - session.basket.header.discdeal - session.basket.header.chqsales - session.basket.header.discStaff#");
 					//	var creditTotal = Number("#session.basket.header.balance#");
 						$.virtualNumpad({
 							fields: [
@@ -301,6 +302,19 @@
 		<!---<li class="payment_item_special" data-method="paypointcharge">PayPoint Charge</li>--->
 		<!---<li class="payment_item_special" data-method="notused"></li>--->
 	</ul>
+	<!---<cfdump var="#session.basket#" label="basket" expand="false">--->
+	<cfset cardOKCheck = session.basket.header.bcredit + session.basket.header.discstaff + session.till.prefs.mincard>
+	<cfif cardOKCheck gt 0>
+		<script>sound('error')</script>
+		<div class="payWarning">
+			Cash only please!<br />
+			Spend another &pound;#DecimalFormat(cardOKCheck)# to pay on card.
+		</div>
+	<cfelse>
+		<div class="payOK">
+			Card payment acceptable.
+		</div>
+	</cfif>
 </cfoutput>
 
 <cfcatch type="any">
