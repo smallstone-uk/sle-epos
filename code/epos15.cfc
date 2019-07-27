@@ -808,7 +808,7 @@
 					<cfcase value="SCRATCHCARD">
 						<cfset args.data.cash = args.data.cash + args.data.credit>
 						<cfif args.form.addToBasket>
-							<cfif args.data.credit neq 0>
+							<cfif args.data.cash neq 0>
 								<cfset args.data.class = "lot">
 								<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
 								<cfset args.data.gross = args.data.cash>	<!--- calc gross transaction value --->
