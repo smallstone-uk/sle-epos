@@ -1,11 +1,11 @@
 ;(function($) {
-    //'use strict';
+//    'use strict';
 
     window.sound = function(name) {
     	new Audio('audio/' + name + '.mp3').play();
     }
 
-    window.opt = window.optional = (object) => {
+    window.opt = window.optional = function (object) {
 	    return new Proxy(object || {}, {
 	        get: function(target, name) {
 	            return (name in target)
@@ -28,7 +28,7 @@
 	        }
 	    }
 	    return output;
-	};
+	}
 
 	// Usage: cf('some.key.in.session').then(function(data) { ... });
 	cf = function(key) {
