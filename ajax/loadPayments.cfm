@@ -4,6 +4,7 @@
 <cfset parm.datasource = application.site.datasource1>
 <cfset parm.url = application.site.normal>
 <cfset payments = epos.LoadPayments(parm)>
+<cfset cardOKCheck = session.basket.header.bcredit + session.basket.header.discstaff + session.till.prefs.mincard>
 
 <cfoutput>
 	<script>
@@ -246,9 +247,6 @@
 	<cfset supplier = lCase(session.basket.info.bod) eq "supplier">
 
 	<ul class="payment_list">
-		<!---<li class="payment_item material-ripple">
-			<span>#session.basket.header.balance#</span>
-		</li>--->
 		<cfset counter = 0>
 		<cfloop array="#payments#" index="item">
 			<cfswitch expression="#LCase(item.eaTitle)#">
@@ -277,9 +275,11 @@
 				</cfcase>
 
 				<cfcase value="account">
-					<li class="payment_item material-ripple" data-method="account" data-id="#item.eaID#">
-						<span>Account</span>
-					</li>
+					<cfif not supplier>
+						<li class="payment_item material-ripple" data-method="account" data-id="#item.eaID#">
+							<span>Account</span>
+						</li>
+					</cfif>
 				</cfcase>
 
 				<cfdefaultcase>
@@ -291,29 +291,20 @@
 				</cfdefaultcase>
 			</cfswitch>
 			<cfset counter++>
-			<!---<cfif counter is 1>
-				<li class="payment_item" data-method="part#LCase(item.eaTitle)#">Part #item.eaTitle#</li>
-				<li class="payment_item" data-method="fast#LCase(item.eaTitle)#">Fast #item.eaTitle#</li>
-			<cfelse>
-				<li class="payment_item" data-method="#LCase(item.eaTitle)#">#item.eaTitle#</li>
-			</cfif>--->
 		</cfloop>
-		<!---<li class="payment_item_special" data-method="staffdiscount">Staff Discount</li>--->
-		<!---<li class="payment_item_special" data-method="paypointcharge">PayPoint Charge</li>--->
-		<!---<li class="payment_item_special" data-method="notused"></li>--->
 	</ul>
-	<!---<cfdump var="#session.basket#" label="basket" expand="false">--->
-	<cfset cardOKCheck = session.basket.header.bcredit + session.basket.header.discstaff + session.till.prefs.mincard>
-	<cfif cardOKCheck gt 0>
-		<script>sound('error')</script>
-		<div class="payWarning">
-			Cash only please!<br />
-			Spend another &pound;#DecimalFormat(cardOKCheck)# to pay on card.
-		</div>
-	<cfelse>
-		<div class="payOK">
-			Card payment acceptable.
-		</div>
+	<cfif session.basket.header.balance neq 0 AND session.basket.info.type neq 'purch'>
+		<cfif cardOKCheck gt 0>
+			<script>sound('error')</script>
+			<div class="payWarning">
+				Cash only please!<br />
+				Spend another &pound;#DecimalFormat(cardOKCheck)# to pay on card.
+			</div>
+		<cfelse>
+			<div class="payOK">
+				Card payment acceptable.
+			</div>
+		</cfif>
 	</cfif>
 </cfoutput>
 

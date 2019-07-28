@@ -1090,7 +1090,7 @@
 						<cfset session.basket.info.errMsg = "Please put an item in the basket before accepting payment.">
 					<cfelseif ArrayLen(session.basket.supplier) gt 0>
 						<cfset session.basket.info.errMsg = "Cannot accept a card payment during a supplier transaction.">
-					<cfelseif session.basket.info.mode eq "reg" AND session.basket.header.bcash neq 0 AND session.basket.header.bcredit gt -session.till.prefs.mincard>
+					<cfelseif session.basket.info.mode eq "reg" AND session.basket.header.bcash neq 0 AND (session.basket.header.bcredit + session.basket.header.discstaff) gt -session.till.prefs.mincard>
 						<cfset session.basket.info.errMsg = "Minimum sale of &pound;#session.till.prefs.mincard# required.<br>(Excludes lottery, stamps & top-ups).">
 <!--- ok if spent more than £3
 					<cfelseif session.basket.info.mode eq "reg" AND loc.cashBalance lt 0>

@@ -24,6 +24,7 @@
 					$.confirmation("Are you sure you want to clear the basket?", function() {
 						ajax.emptyBasket({}, function(data) {
 							$.loadBasket();
+							$('##hti_home').click();
 	                        $('*').blur();
 						});
 					});
@@ -94,6 +95,7 @@
 										},
 										success: function(data) {
 											$.loadBasket();
+											$('##hti_home').click();
 										}
 									});
 								}
@@ -110,6 +112,7 @@
 										data: a,
 										success: function(data) {
 											$.loadBasket();
+											$('##hti_home').click();
 										}
 									});
 								}
@@ -121,6 +124,7 @@
 								text: "add one",
 								action: function(a, e) {
 									ajax.incBasketItem(a, $.loadBasket);
+									$('##hti_home').click();
 								}
 							},
 							{
@@ -134,6 +138,7 @@
 										callback: function(value) {
 											a.incqty = value;
 											ajax.incBasketItemMany(a, $.loadBasket);
+											$('##hti_home').click();
 										}
 									});
 								}
@@ -142,12 +147,14 @@
 								text: "remove one",
 								action: function(a, e) {
 									ajax.removeFromBasket(a, $.loadBasket);
+									$('##hti_home').click();
 								}
 							},
 							{
 								text: "remove all",
 								action: function(a, e) {
 									ajax.removeAllFromBasket(a, $.loadBasket);
+									$('##hti_home').click();
 								}
 							}
 						]);
