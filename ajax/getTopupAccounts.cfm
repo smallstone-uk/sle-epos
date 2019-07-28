@@ -7,10 +7,10 @@
         $(document).ready(function(e) {
             #toScript(accounts, 'window.accounts')#;
 
-            Vue.filter('currency', value => {
-                let langage = (navigator.language || navigator.browserLanguage).split('-')[0];
+            Vue.filter('currency', function(value) {
+                var language = (navigator.language || navigator.browserLanguage).split('-')[0];
 
-                return value.toLocaleString(langage, {
+                return value.toLocaleString(language, {
                     style: 'currency',
                     currency: 'gbp'
                 });
