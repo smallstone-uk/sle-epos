@@ -187,10 +187,7 @@
 									</cfloop>
 									<cfset loc.dealRec.groupRetail = 0>
 									<cfset loc.start = loc.count + 1>
-								</cfif>
-								<cfdump var="#loc#" label="ProcessDeals" expand="yes" format="html" 
-									output="#application.site.dir_logs#epos/err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
-									
+								</cfif>									
 							</cfloop>
 							<cfif loc.dealRec.lastQual lt loc.count>
 								<cfloop from="#loc.dealRec.lastQual + 1#" to="#loc.count#" index="loc.i">
