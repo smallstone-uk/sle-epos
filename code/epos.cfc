@@ -3038,9 +3038,9 @@
 			FROM tblPublication
 			WHERE pubGroup = 'news'
 			<cfif args.daynow is "saturday">
-				AND pubType IN ('saturday', 'weekly')
+				AND pubType IN ('saturday', 'weekly', 'weekend')
 			<cfelseif args.daynow is "sunday">
-				AND pubType IN ('sunday', 'weekly')
+				AND pubType IN ('sunday', 'weekly', 'weekend')
 			<cfelse>
 				AND pubType IN ('morning', 'weekly')
 			</cfif>
