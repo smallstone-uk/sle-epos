@@ -160,6 +160,7 @@
 									<cfset loc.dealRec.lastQual = loc.count>
 									<cfset loc.dealRec.dealQty++>
 									<cfset loc.dealRec.dealTotal = loc.dealRec.dealQty * loc.dealData.edAmount>
+									<cfset loc.totProp = 0>
 									<cfloop from="#loc.start#" to="#loc.count#" index="loc.i">
 										<cfset loc.tran = {}>
 										<cfset loc.tran.prodID = ListLast(loc.dealRec.prices[loc.i]," ")>
@@ -173,8 +174,11 @@
 										<cfset loc.tran.itemClass = loc.data.itemClass>
 										<cfset loc.tran.unitTrade = loc.data.unitTrade>
 										<cfset loc.tran.price = loc.data.unitprice>
-										<cfset loc.tran.prop = loc.tran.price / loc.dealRec.groupRetail>
-
+										<cfset loc.tran.prop = Round((loc.tran.price / loc.dealRec.groupRetail) * 100) / 100>
+										<cfif loc.i gte loc.count>
+											<cfset loc.tran.prop = 1 - loc.totProp> <!--- make total of proportions add up to 1.00 --->
+										</cfif>
+										<cfset loc.totProp += loc.tran.prop>
 										<cfset loc.tran.gross = Round(loc.dealData.edAmount * loc.tran.prop * 100) / 100>
 										<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
 										<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
@@ -187,7 +191,7 @@
 									</cfloop>
 									<cfset loc.dealRec.groupRetail = 0>
 									<cfset loc.start = loc.count + 1>
-								</cfif>									
+								</cfif>								
 							</cfloop>
 							<cfif loc.dealRec.lastQual lt loc.count>
 								<cfloop from="#loc.dealRec.lastQual + 1#" to="#loc.count#" index="loc.i">
@@ -1803,9 +1807,10 @@
 							<cfelse>
 								<cfset loc.sectionData = StructFind(session.basket,"#loc.key#Items")>
 								<cfset loc.data = StructFind(loc.sectionData,loc.item)>
-							</cfif>
+							</cfif>					
+
 							<!---<cfset loc.data.discount = loc.data.discount * loc.data.regMode>--->
-							<cfset loc.totalRetail -= loc.data.retail>
+							<cfset loc.totalRetail -= loc.data.retail>	<!--- crash --->
 							<cfset session.basket.total.balance -= (loc.data.retail + loc.data.discount)>
 							<cfset loc.cashtotal = loc.data.cash * loc.data.qty * loc.data.regMode>
 							<cfset loc.credittotal = loc.data.credit * loc.data.qty * loc.data.regMode>
