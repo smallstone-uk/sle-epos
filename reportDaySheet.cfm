@@ -108,7 +108,7 @@
 <cfif StructKeyExists(form,"reportDate")>
 	<div id="xreading3" class="totalPanel">
 		<div class="header">Shop Daysheet Summary</div>
-		<table width="500" class="tableList" border="1">
+		<table class="tableList" border="1">
 			<tr>
 				<th>Group</th>
 				<th>Title</th>
@@ -200,9 +200,9 @@
 			</tr>
 			</cfloop>
 			<tr>
-				<td><strong>Totals</strong></td>
-				<td align="right"><strong>#DecimalFormat(drTotal)#</strong></td>
-				<td align="right"><strong>#DecimalFormat(crTotal)#</strong></td>
+				<th><strong>Totals</strong></th>
+				<th align="right"><strong>#DecimalFormat(drTotal)#</strong></th>
+				<th align="right"><strong>#DecimalFormat(crTotal)#</strong></th>
 			</tr>
 		</table>
 	</div>
@@ -247,29 +247,50 @@
 				<th align="right">#DecimalFormat(crtotal)#</th>
 			</tr>
 			<tr>
-				<td colspan="3">Cash in Drawer:</td>
-				<td align="right">#GetTotal(epos.accounts,"cashindw")#</td>
+				<th align="right" colspan="3">Transaction Error</th>
+				<th align="right">#DecimalFormat(drtotal - crtotal)#</th>
+			</tr>
+		</table>
+	</div>
+	<div id="xreading7" class="totalPanel">
+		<div class="header">Account Totals</div>
+		<cfset cashTaken = GetTotal(epos.accounts,"cashindw") + GetTotal(epos.accounts,"supplier") + GetTotal(epos.accounts,"float") + val(QCashback.total)>
+		<table class="tableList" border="1">
+			<tr>
+				<td>Healthy Start:</td>
+				<td align="right">#GetTotal(epos.accounts,"healthy")#</td>
 			</tr>
 			<tr>
-				<td colspan="3">Suppliers Paid:</td>
-				<td align="right">#GetTotal(epos.accounts,"supplier")#</td>
+				<td>News Vouchers:</td>
+				<td align="right">#GetTotal(epos.accounts,"voucher")#</td>
 			</tr>
 			<tr>
-				<td colspan="3">Cashback:</td>
-				<td align="right">#DecimalFormat(val(QCashback.total))#</td>
+				<td>Account in Drawer:</td>
+				<td align="right">#GetTotal(epos.accounts,"accindw")#</td>
 			</tr>
 			<tr>
-				<td colspan="3">Card Sales:</td>
+				<td>Cash via Till:</td>
+				<td align="right">#DecimalFormat(cashTaken)#</td>
+			</tr>
+			<tr>
+				<td>Card Payments:</td>
 				<td align="right">#DecimalFormat(epos.accounts.cardindw) - val(QCashback.total)#</td>
 			</tr>
 			<tr>
-				<td colspan="3">Less float:</td>
-				<td align="right">#GetTotal(epos.accounts,"float")#</td>
+				<td>Cheque Account:</td>
+				<td align="right">#GetTotal(epos.accounts,"chqindw")#</td>
 			</tr>
-			<cfset cashTaken = GetTotal(epos.accounts,"cashindw") + GetTotal(epos.accounts,"supplier") + GetTotal(epos.accounts,"float") + val(QCashback.total)>
 			<tr>
-				<td colspan="3"><strong>Cash Taken:</strong></td>
-				<td align="right"><strong>#DecimalFormat(cashTaken)#</strong></td>
+				<td>Supplier COD Payments:</td>
+				<td align="right">#GetTotal(epos.accounts,"supplier")#</td>
+			</tr>
+			<tr>
+				<td>Cashback:</td>
+				<td align="right">#DecimalFormat(val(QCashback.total))#</td>
+			</tr>
+			<tr>
+				<th>Cash in Drawer:</th>
+				<th align="right">#GetTotal(epos.accounts,"cashindw")#</th>
 			</tr>
 		</table>
 	</div>
