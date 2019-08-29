@@ -31,6 +31,7 @@
 <cfset parm = {}>
 <cfset parm.datasource = application.site.datasource1>
 <cfobject component="#application.site.codePath#" name="ecfc">
+<cfobject component="code/epos" name="ep">
 <cfset dates = ecfc.GetDates(parm)>
 <cfif StructKeyExists(session,"till")>
 	<cfset parm.reportDate = session.till.prefs.reportDate>
@@ -70,6 +71,12 @@
 		FROM tblEPOS_Header
 		WHERE DATE( ehTimeStamp ) = '#form.reportDate#'
 	</cfquery>
+	<cfquery name="QDayHeader" datasource="#parm.datasource#">
+		SELECT *
+		FROM tblepos_dayheader
+		WHERE DATE( dhTimeStamp ) = '#form.reportDate#'
+	</cfquery>
+	<cfset today = ep.QueryToStruct(QDayHeader)>	
 </cfif>
 
 	<cffunction name="GetTotal" access="public" returntype="numeric">
@@ -267,6 +274,61 @@
 		</table>
 	</div>
 	</cfif>
+	
+		<cfif !StructIsEmpty(today)>
+			<cfset noteTotal = 0>
+			<cfset coinTotal = 0>
+			<cfset poundArray = [50,20,10,5,2,1]>
+			<div id="xreading6" class="totalPanel">
+				<div class="header">Cash Counted</div>
+				<table class="tableList" border="1">
+					<tr>
+						<th>Denomination</th>
+						<th>Value</th>
+					</tr>
+					<cfloop array="#poundArray#" index="denom">
+						<cfset dataMOD = denom * 100>
+						<cfset poundFld = "dhcid_#NumberFormat(dataMOD,'0000')#">
+						<cfset value = StructFind(today,poundFld)>
+						<cfif denom lt 5>
+							<cfset coinTotal += value>
+						<cfelse>
+							<cfset noteTotal += value>
+						</cfif>
+						<tr>
+							<td>&pound;#denom#</td>
+							<td align="right">#value#</td>
+						</tr>
+					</cfloop>
+					<cfloop array="#poundArray#" index="denom">
+						<cfset penceFld = "dhcid_#NumberFormat(denom,'0000')#">
+						<cfset value = StructFind(today,penceFld)>
+						<cfset coinTotal += value>
+						<tr>
+							<td>#denom#p</td>
+							<td align="right">#value#</td>
+						</tr>
+					</cfloop>
+					<tr>
+						<td>Coin Total</td>
+						<td align="right">#DecimalFormat(coinTotal)#</td>
+					</tr>
+					<tr>
+						<td>Note Total</td>
+						<td align="right">#DecimalFormat(noteTotal)#</td>
+					</tr>
+					<tr>
+						<td>Cash Total</td>
+						<td align="right">#DecimalFormat(noteTotal + coinTotal)#</td>
+					</tr>
+					<tr>
+						<td>Difference</td>
+						<td align="right">#DecimalFormat(noteTotal + coinTotal - GetTotal(epos.accounts,"cashindw"))#</td>
+					</tr>
+				</table>
+			</div>
+		</cfif>
+
 	<div style="clear:both"></div>
 	<div class="totalPanel">
 		<div class="header">Tran Dump</div>
