@@ -207,148 +207,199 @@
 		</table>
 	</div>
 	<cfif NOT StructIsEmpty(epos.accounts)>
-	<div id="xreading5" class="totalPanel">
-		<div class="header">Gross Totals by Group</div>
-		<table class="tableList" border="1">
-			<tr>
-				<th>CODE</th>
-				<th>DESCRIPTION</th>
-				<th width="70" align="right">DR</th>
-				<th width="70" align="right">CR</th>
-			</tr>
-			<cfset drTotal = 0>
-			<cfset crTotal = 0>
-			<cfloop query="QItemSum2">
-				<cfset drValue = 0>
-				<cfset crValue = 0>
-				<cfset gross = net + vat>
-				<cfif Find(eiClass,"supp,pay")>
-					<cfset drValue = gross>
-					<cfset drTotal += gross>
-				<cfelseif Find(eiClass,"sale,item")>
-					<cfif eiType eq 'VOUCHER'>
+		<div id="xreading5" class="totalPanel">
+			<div class="header">Gross Totals by Group</div>
+			<table class="tableList" border="1">
+				<tr>
+					<th>CODE</th>
+					<th>DESCRIPTION</th>
+					<th width="70" align="right">DR</th>
+					<th width="70" align="right">CR</th>
+				</tr>
+				<cfset drTotal = 0>
+				<cfset crTotal = 0>
+				<cfloop query="QItemSum2">
+					<cfset drValue = 0>
+					<cfset crValue = 0>
+					<cfset gross = net + vat>
+					<cfif Find(eiClass,"supp,pay")>
 						<cfset drValue = gross>
 						<cfset drTotal += gross>
-					<cfelse>
-						<cfset crValue = gross>
-						<cfset crTotal -= gross>
+					<cfelseif Find(eiClass,"sale,item")>
+						<cfif eiType eq 'VOUCHER'>
+							<cfset drValue = gross>
+							<cfset drTotal += gross>
+						<cfelse>
+							<cfset crValue = gross>
+							<cfset crTotal -= gross>
+						</cfif>
 					</cfif>
-				</cfif>
+					<tr>
+						<td>#pgNomGroup#</td>
+						<td>#nomTitle#</td>
+						<td align="right"><cfif drValue neq 0>#DecimalFormat(drValue)#</cfif></td>
+						<td align="right"><cfif crValue neq 0>#DecimalFormat(crValue * -1)#</cfif></td>
+					</tr>
+				</cfloop>
 				<tr>
-					<td>#pgNomGroup#</td>
-					<td>#nomTitle#</td>
-					<td align="right"><cfif drValue neq 0>#DecimalFormat(drValue)#</cfif></td>
-					<td align="right"><cfif crValue neq 0>#DecimalFormat(crValue * -1)#</cfif></td>
+					<th align="right" colspan="2">Totals</th>
+					<th align="right">#DecimalFormat(drtotal)#</th>
+					<th align="right">#DecimalFormat(crtotal)#</th>
 				</tr>
-			</cfloop>
-			<tr>
-				<th align="right" colspan="2">Totals</th>
-				<th align="right">#DecimalFormat(drtotal)#</th>
-				<th align="right">#DecimalFormat(crtotal)#</th>
-			</tr>
-			<tr>
-				<th align="right" colspan="3">Transaction Error</th>
-				<th align="right">#DecimalFormat(drtotal - crtotal)#</th>
-			</tr>
-		</table>
-	</div>
-	<div id="xreading7" class="totalPanel">
-		<div class="header">Account Totals</div>
-		<cfset cashTaken = GetTotal(epos.accounts,"cashindw") + GetTotal(epos.accounts,"supplier") + GetTotal(epos.accounts,"float") + val(QCashback.total)>
-		<table class="tableList" border="1">
-			<tr>
-				<td>Healthy Start:</td>
-				<td align="right">#GetTotal(epos.accounts,"healthy")#</td>
-			</tr>
-			<tr>
-				<td>News Vouchers:</td>
-				<td align="right">#GetTotal(epos.accounts,"voucher")#</td>
-			</tr>
-			<tr>
-				<td>Account in Drawer:</td>
-				<td align="right">#GetTotal(epos.accounts,"accindw")#</td>
-			</tr>
-			<tr>
-				<td>Cash via Till:</td>
-				<td align="right">#DecimalFormat(cashTaken)#</td>
-			</tr>
-			<tr>
-				<td>Card Payments:</td>
-				<td align="right">#DecimalFormat(epos.accounts.cardindw) - val(QCashback.total)#</td>
-			</tr>
-			<tr>
-				<td>Cheque Account:</td>
-				<td align="right">#GetTotal(epos.accounts,"chqindw")#</td>
-			</tr>
-			<tr>
-				<td>Supplier COD Payments:</td>
-				<td align="right">#GetTotal(epos.accounts,"supplier")#</td>
-			</tr>
-			<tr>
-				<td>Cashback:</td>
-				<td align="right">#DecimalFormat(val(QCashback.total))#</td>
-			</tr>
-			<tr>
-				<th>Cash in Drawer:</th>
-				<th align="right">#GetTotal(epos.accounts,"cashindw")#</th>
-			</tr>
-		</table>
-	</div>
+				<tr>
+					<th align="right" colspan="3">Transaction Error</th>
+					<th align="right">#DecimalFormat(drtotal - crtotal)#</th>
+				</tr>
+			</table>
+		</div>
+		<div id="xreading7" class="totalPanel">
+			<div class="header">Account Totals</div>
+			<cfset cashTaken = GetTotal(epos.accounts,"cashindw") + GetTotal(epos.accounts,"supplier") + GetTotal(epos.accounts,"float") + val(QCashback.total)>
+			<table class="tableList" border="1">
+				<tr>
+					<td>Healthy Start:</td>
+					<td align="right">#GetTotal(epos.accounts,"healthy")#</td>
+				</tr>
+				<tr>
+					<td>News Vouchers:</td>
+					<td align="right">#GetTotal(epos.accounts,"voucher")#</td>
+				</tr>
+				<tr>
+					<td>Account in Drawer:</td>
+					<td align="right">#GetTotal(epos.accounts,"accindw")#</td>
+				</tr>
+				<tr>
+					<td>Cash via Till:</td>
+					<td align="right">#DecimalFormat(cashTaken)#</td>
+				</tr>
+				<tr>
+					<td>Card Payments:</td>
+					<td align="right">#DecimalFormat(epos.accounts.cardindw) - val(QCashback.total)#</td>
+				</tr>
+				<tr>
+					<td>Cheque Account:</td>
+					<td align="right">#GetTotal(epos.accounts,"chqindw")#</td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td align="right"></td>
+				</tr>
+				<tr>
+					<td>Supplier COD Payments:</td>
+					<td align="right">#GetTotal(epos.accounts,"supplier")#</td>
+				</tr>
+				<tr>
+					<td>Cashback:</td>
+					<td align="right">#DecimalFormat(val(QCashback.total))#</td>
+				</tr>
+				<tr>
+					<th>Cash in Drawer:</th>
+					<th align="right">#GetTotal(epos.accounts,"cashindw")#</th>
+				</tr>
+			</table>
+		</div>
 	</cfif>
 	
-		<cfif !StructIsEmpty(today)>
-			<cfset noteTotal = 0>
-			<cfset coinTotal = 0>
-			<cfset poundArray = [50,20,10,5,2,1]>
-			<div id="xreading6" class="totalPanel">
-				<div class="header">Cash Counted</div>
-				<table class="tableList" border="1">
-					<tr>
-						<th>Denomination</th>
-						<th>Value</th>
-					</tr>
-					<cfloop array="#poundArray#" index="denom">
-						<cfset dataMOD = denom * 100>
-						<cfset poundFld = "dhcid_#NumberFormat(dataMOD,'0000')#">
-						<cfset value = StructFind(today,poundFld)>
-						<cfif denom lt 5>
-							<cfset coinTotal += value>
-						<cfelse>
-							<cfset noteTotal += value>
-						</cfif>
-						<tr>
-							<td>&pound;#denom#</td>
-							<td align="right">#value#</td>
-						</tr>
-					</cfloop>
-					<cfloop array="#poundArray#" index="denom">
-						<cfset penceFld = "dhcid_#NumberFormat(denom,'0000')#">
-						<cfset value = StructFind(today,penceFld)>
+	<cfif !StructIsEmpty(today)>
+		<cfset noteTotal = 0>
+		<cfset coinTotal = 0>
+		<cfset poundArray = [50,20,10,5,2,1]>
+		<div id="xreading6" class="totalPanel">
+			<div class="header">Cash Counted</div>
+			<table class="tableList" border="1">
+				<tr>
+					<th>Denomination</th>
+					<th>Value</th>
+				</tr>
+				<cfloop array="#poundArray#" index="denom">
+					<cfset dataMOD = denom * 100>
+					<cfset poundFld = "dhcid_#NumberFormat(dataMOD,'0000')#">
+					<cfset value = StructFind(today,poundFld)>
+					<cfif denom lt 5>
 						<cfset coinTotal += value>
+					<cfelse>
+						<cfset noteTotal += value>
+					</cfif>
+					<tr>
+						<td>&pound;#denom#</td>
+						<td align="right">#value#</td>
+					</tr>
+				</cfloop>
+				<cfloop array="#poundArray#" index="denom">
+					<cfset penceFld = "dhcid_#NumberFormat(denom,'0000')#">
+					<cfset value = StructFind(today,penceFld)>
+					<cfset coinTotal += value>
+					<tr>
+						<td>#denom#p</td>
+						<td align="right">#value#</td>
+					</tr>
+				</cfloop>
+				<tr>
+					<td>Coin Total</td>
+					<td align="right">#DecimalFormat(coinTotal)#</td>
+				</tr>
+				<tr>
+					<td>Note Total</td>
+					<td align="right">#DecimalFormat(noteTotal)#</td>
+				</tr>
+				<tr>
+					<td>Cash Total</td>
+					<td align="right">#DecimalFormat(noteTotal + coinTotal)#</td>
+				</tr>
+				<tr>
+					<td>Difference</td>
+					<td align="right">#DecimalFormat(noteTotal + coinTotal - GetTotal(epos.accounts,"cashindw"))#</td>
+				</tr>
+			</table>
+		</div>
+		<div id="xreading8" class="totalPanel">
+			<div class="header">Scratch Cards</div>
+				<table border="0">
+					<tr>
+						<th>Game</th>
+						<th>Pack</th>
+						<th>Value</th>
+						<th>Start</th>
+						<th>End</th>
+						<th>Qty</th>
+						<th>Total</th>
+					</tr>
+					<cfset totalSC = 0>
+					<cfset gameValues = [10,5,5,3,2,2,1,1]>
+					<cfset packQtys = [25,50,50,60,90,90,180,180]>
+					<cfloop from="1" to="8" index="game">
+						<cfset gStart = "dhsc_g#game#_start">
+						<cfset gEnd = "dhsc_g#game#_end">
+						<cfset sold = 0>
+						<cfset value = 0>
+						<cfset start = StructFind(today,gStart)>
+						<cfset end = StructFind(today,gEnd)>
+						<cfif end gt 0>
+							<cfset sold = val(end) - val(start)>
+							<cfset value = sold * gameValues[game]>
+						</cfif>
+						<cfset totalSC += value>
+						<cfif end eq 0><cfset end = ""></cfif>
+						<cfif sold eq 0><cfset sold = ""></cfif>
+						<cfif value eq 0><cfset value = "">
+							<cfelse><cfset value = DecimalFormat(value)></cfif>
 						<tr>
-							<td>#denom#p</td>
-							<td align="right">#value#</td>
+							<td>#game# ##</td>
+							<td>#packQtys[game]#</td>
+							<td>&pound;#gameValues[game]#</td>
+							<td>#start#</td>
+							<td>#end#</td>
+							<td>#sold#</td>
 						</tr>
 					</cfloop>
 					<tr>
-						<td>Coin Total</td>
-						<td align="right">#DecimalFormat(coinTotal)#</td>
-					</tr>
-					<tr>
-						<td>Note Total</td>
-						<td align="right">#DecimalFormat(noteTotal)#</td>
-					</tr>
-					<tr>
-						<td>Cash Total</td>
-						<td align="right">#DecimalFormat(noteTotal + coinTotal)#</td>
-					</tr>
-					<tr>
-						<td>Difference</td>
-						<td align="right">#DecimalFormat(noteTotal + coinTotal - GetTotal(epos.accounts,"cashindw"))#</td>
+						<td colspan="6" align="right">Total</td>
+						<td align="right"><input type="text" name="scrTotal" id="scrTotal" class="money" disabled="disabled" value="#DecimalFormat(totalSC)#" /></td>
 					</tr>
 				</table>
 			</div>
-		</cfif>
+		</div>
+	</cfif>
 
 	<div style="clear:both"></div>
 	<div class="totalPanel">

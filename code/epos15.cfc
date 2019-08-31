@@ -587,6 +587,7 @@
 				<cfset loc.rec.itemClass = args.form.itemClass>
 				<cfset loc.rec.qty = 0>
 			</cfif>
+
 			<cfset loc.rec.regMode = (2 * int(session.basket.info.mode eq "reg")) - 1>	<!--- modes: reg = 1 refund = -1 --->
 			<cfset loc.vatRate = 1 + (val(loc.rec.vrate) / 100)>
 			<cfset loc.rec.discountable = StructKeyExists(args.form,"discountable") AND args.form.discountable>
@@ -595,6 +596,8 @@
 			<cfset loc.rec.cash = args.data.cash>
 			<cfset loc.rec.credit = args.data.credit>
 			<cfset loc.rec.unitPrice = loc.rec.cash + loc.rec.credit>
+			<cfif StructKeyExists(args.data,"origprice")><cfset loc.rec.origprice = args.data.origprice></cfif>
+
 			<cfset loc.rec.qty += args.form.qty>		<!--- accumulate qty with any previous value. can be +/- --->
 			<cfset loc.rec.discount = 0>	<!--- reset any previously assigned discount amount for this product --->
 			<cfif loc.rec.qty lte 0>
@@ -656,6 +659,8 @@
 	<cffunction name="AddItem" access="public" returntype="struct">
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
+<cfdump var="#args#" label="AddItem" expand="yes" format="html" 
+	output="#application.site.dir_logs#epos\add-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 		<!--- Store this item as the last added --->
 		<!--- Used in the customer display --->
@@ -705,7 +710,6 @@
 				<cfset args.data.itemID = args.form.prodID>
 				<cfset args.data.unitsize = args.form.unitSize>
 				<cfset args.data.title = args.form.prodTitle>
-				<cfset args.data.unitsize = args.form.unitsize>
 			<cfelseif val(args.form.pubID) gt 0>	<!--- publication passed --->
 				<cfset args.form.prodID = 1>
 				<cfset args.data.itemID = args.form.pubID>
@@ -729,6 +733,8 @@
 			<cfset args.data.credit = abs(val(args.form.credit)) * args.form.prodSign>
 			<cfset args.data.vrate = val(args.form.vrate)>
 			<cfset args.data.vcode = StructFind(session.vat,DecimalFormat(args.form.vrate))>
+
+			<cfif StructKeyExists(args.form,"origPrice")><cfset args.data.origPrice = args.form.origPrice></cfif>
 
 			<cfif args.data.itemClass neq "SUPPLIER" AND ArrayLen(session.basket.supplier) gt 0>
 				<cfset session.basket.info.errMsg = "Cannot start a sales transaction during a supplier transaction.">
@@ -1279,7 +1285,7 @@
 		<cfloop collection="#args#" item="loc.key">
 			<cfset loc.item = StructFind(args, loc.key)>
 			<cfif IsValid("string", loc.item) OR IsValid("boolean", loc.item) OR IsValid("float", loc.item)>
-				<cfset loc.result = loc.result & " data-#LCase(loc.key)#='#loc.item#'">
+				<cfset loc.result = loc.result & ' data-#LCase(loc.key)#="#loc.item#"'>
 			</cfif>
 		</cfloop>
 		<cfreturn loc.result>
@@ -1521,6 +1527,7 @@
 				</cfif>
 
 				<cfloop array="#loc.thisBasket.payments#" index="loc.item">
+
 					<cfset loc.payCount++>
 
 					<cfswitch expression="#loc.item.itemClass#">
@@ -1776,7 +1783,7 @@
 		<cfset var loc = {}>
 
 		<cftry>
-			<cflock scope="session" timeout="15" type="exclusive">
+			<cflock scope="session" timeout="60" type="exclusive">	<!--- was 15sec --->
 				<cfset session.basket.vatAnalysis = {}>
 				<cfoutput>
 					<cfset loc.basketCount = 0>
@@ -1876,7 +1883,7 @@
 							<cfdefaultcase>
 								<cfset loc.payValue = StructFind(session.basket.total,loc.item.itemClass)>
 								<cfset StructUpdate(session.basket.total,loc.item.itemClass,loc.payValue + (loc.item.cash + loc.item.credit))>
-									<!--- TODO may fail if key not found --->
+									<!--- TODO will fail if key not found --->
 								<cfset StructUpdate(session.basket.header,loc.item.itemClass,loc.payValue + (loc.item.cash + loc.item.credit))>
 								<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
 							</cfdefaultcase>
@@ -2415,6 +2422,10 @@
 						<cfset loc.itemStr = "#loc.itemStr#,(#loc.ID#,'#loc.tran.itemType#','#loc.tran.itemClass#',#loc.prodID#,#loc.pubID#,#loc.payID#,
 							#loc.account#,#loc.retail#,#loc.net#,#loc.vat#,#loc.trade#)">
 					</cfloop>
+					<cfif abs(loc.total.gross) gte 0.01>		<!--- dump basket if transaction not balanced --->
+						<cfdump var="#session.basket#" label="basket" expand="yes" format="html"
+							output="#application.site.dir_logs#epos\bskt-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+					</cfif>
 					<cfset loc.itemStr = RemoveChars(loc.itemStr,1,1)>
 						<cfif loc.showInfo>
 						<tr>
@@ -3124,7 +3135,7 @@
 					<cfset loc.net += eiNet>
 					<cfset loc.vat += eiVAT>
 					<tr class="searchrow" data-title="#pcatTitle# #title#" data-prodID="#eiProdID#">
-						<td>#eiParent#</td>
+						<td><a href="reporttransaction.cfm?tranID=#eiParent#" target="trandetail">#eiParent#</a></td>
 						<td>#ehMode#</td>
 						<td>#eiID#</td>
 						<td>#empFirstName#</td>
