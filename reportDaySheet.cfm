@@ -354,7 +354,7 @@
 		</div>
 		<div id="xreading8" class="totalPanel">
 			<div class="header">Scratch Cards</div>
-				<table border="0">
+				<table class="tableList" border="1">
 					<tr>
 						<th>Game</th>
 						<th>Pack</th>
@@ -370,12 +370,14 @@
 					<cfloop from="1" to="8" index="game">
 						<cfset gStart = "dhsc_g#game#_start">
 						<cfset gEnd = "dhsc_g#game#_end">
+						<cfset addPack = 0>
 						<cfset sold = 0>
 						<cfset value = 0>
 						<cfset start = StructFind(today,gStart)>
 						<cfset end = StructFind(today,gEnd)>
 						<cfif end gt 0>
-							<cfset sold = val(end) - val(start)>
+							<cfif end lt start><cfset addPack = packQtys[game]></cfif>
+							<cfset sold = val(end) + addPack - val(start)>
 							<cfset value = sold * gameValues[game]>
 						</cfif>
 						<cfset totalSC += value>
@@ -387,14 +389,15 @@
 							<td>#game# ##</td>
 							<td>#packQtys[game]#</td>
 							<td>&pound;#gameValues[game]#</td>
-							<td>#start#</td>
-							<td>#end#</td>
-							<td>#sold#</td>
+							<td align="right">#start#</td>
+							<td align="right">#end#</td>
+							<td align="right">#sold#</td>
+							<td align="right">#value#</td>
 						</tr>
 					</cfloop>
 					<tr>
-						<td colspan="6" align="right">Total</td>
-						<td align="right"><input type="text" name="scrTotal" id="scrTotal" class="money" disabled="disabled" value="#DecimalFormat(totalSC)#" /></td>
+						<th colspan="6" align="right">Total</th>
+						<th align="right">#DecimalFormat(totalSC)#</th>
 					</tr>
 				</table>
 			</div>
