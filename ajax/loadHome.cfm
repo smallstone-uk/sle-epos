@@ -59,6 +59,7 @@
 							$.virtualNumpad({
 								autolength: 4,
 								wholenumber: true,
+								secret: true,
 								callback: function(pin) {
 									$.ajax({
 										type: "POST",
