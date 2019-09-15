@@ -54,6 +54,8 @@
 		<cfset session.basket.info.mode = "reg">
 		<cfset session.basket.info.type = "SALE">
 		<cfset session.basket.info.bod = "Customer">
+		<cfset session.basket.info.ageCheck = false>
+		<cfset session.basket.info.checkout = false>
 		<cfset session.basket.info.service = 0>
 		<cfset session.basket.info.errMsg = "">
 		<cfset session.basket.info.itemcount = 0>
@@ -82,6 +84,7 @@
 		<cfset session.basket.header.cardsales = 0>
 		<cfset session.basket.header.chqsales = 0>
 		<cfset session.basket.header.accsales = 0>
+		<cfset session.basket.header.WASTEACC = 0>
 		<cfset session.basket.header.discdeal = 0>
 		<cfset session.basket.header.discstaff = 0>
 		<cfset session.basket.header.cashback = 0>
@@ -89,6 +92,7 @@
 
 		<cfset session.basket.total.chqINDW = 0>
 		<cfset session.basket.total.accINDW = 0>
+		<cfset session.basket.total.WASTEACC = 0>
 		<cfset session.basket.total.balance = 0>
 		<cfset session.basket.total.discount = 0>
 		<cfset session.basket.total.discstaff = 0>
@@ -105,7 +109,7 @@
 			<cfloop collection="#session.basket.deals#" item="loc.dealKey">
 				<cfset loc.dealData = StructFind(session.dealData,loc.dealKey)>
 				<cfset loc.dealRec = StructFind(session.basket.deals,loc.dealKey)>
-				<cfset ArraySort(loc.dealRec.prices,"text","ASC")>	<!--- use DESC to optimise for customer --->
+				<cfif ArrayLen(loc.dealRec.prices)><cfset ArraySort(loc.dealRec.prices,"text","ASC")></cfif>	<!--- use DESC to optimise for customer --->
 				<cfset loc.dealRec.VATTable = {}>
 				<cfset loc.dealRec.dealQty = 0>
 				<cfset loc.dealRec.netTotal = 0>
@@ -128,10 +132,10 @@
 								<cfset loc.data.discount = 0>
 								<cfset loc.dealRec.lastQual = loc.count>
 								<cfset loc.dealRec.dealQty++>
-									<cfif session.till.info.staff AND loc.data.discountable>	<!--- staff sale and is a discountable item --->
-										<cfset loc.itemDiscount = round(loc.data.unitPrice * 100 * session.till.prefs.discount) / 100>
-										<cfset loc.data.discount = loc.itemDiscount * loc.data.qty * loc.rec.regMode>
-									</cfif>
+								<cfif session.till.info.staff AND loc.data.discountable>	<!--- staff sale and is a discountable item --->
+									<cfset loc.itemDiscount = int(loc.data.unitPrice * 100 * session.till.prefs.discount) / 100>
+									<cfset loc.data.discount = loc.itemDiscount * loc.data.qty * loc.rec.regMode>
+								</cfif>
 								<cfset loc.tran = {}>
 								<cfset loc.tran.prop = 1>
 								<cfset loc.tran.cashonly = loc.data.cash neq 0>
@@ -141,9 +145,15 @@
 								<cfset loc.tran.price = loc.data.unitPrice>
 								<cfset loc.tran.vrate = loc.data.vrate>
 								<cfset loc.tran.vcode = loc.data.vcode>
-								<cfset loc.tran.gross = Round((loc.tran.price - loc.itemDiscount) * 100) / 100 * loc.tranType * loc.rec.regMode>
-								<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+								<cfset loc.tran.discount = loc.data.discount>
+								<cfset loc.tran.gross = loc.tran.price - loc.itemDiscount>
+								<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
 								<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+
+								<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
+								<cfset loc.tran.net = loc.tran.net * loc.tranType * loc.rec.regMode>
+								<cfset loc.tran.vat = loc.tran.vat * loc.tranType * loc.rec.regMode>
+
 								<cfset ArrayAppend(session.basket.trans,loc.tran)>
 							</cfloop>
 						</cfcase>
@@ -174,7 +184,8 @@
 										<cfset loc.tran.itemClass = loc.data.itemClass>
 										<cfset loc.tran.unitTrade = loc.data.unitTrade>
 										<cfset loc.tran.price = loc.data.unitprice>
-										<cfset loc.tran.prop = Round((loc.tran.price / loc.dealRec.groupRetail) * 100) / 100>
+										<!---<cfset loc.tran.prop = Round((loc.tran.price / loc.dealRec.groupRetail) * 100) / 100>--->
+										<cfset loc.tran.prop = int((loc.tran.price / loc.dealRec.groupRetail) * 1000) / 1000>
 										<cfif loc.i gte loc.count>
 											<cfset loc.tran.prop = 1 - loc.totProp> <!--- make total of proportions add up to 1.00 --->
 										</cfif>
@@ -254,9 +265,14 @@
 										<cfset loc.tran.itemClass = loc.data.itemClass>
 										<cfset loc.tran.unitTrade = loc.data.unitTrade>
 										<cfset loc.tran.prop = 1>
-										<cfset loc.tran.gross = Round(loc.dealData.edAmount * 100) / 100 * loc.tranType * loc.rec.regMode>
+										<cfset loc.tran.gross = Round(loc.dealData.edAmount * 100) / 100>
 										<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
 										<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+
+										<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
+										<cfset loc.tran.net = loc.tran.net * loc.tranType * loc.rec.regMode>
+										<cfset loc.tran.vat = loc.tran.vat * loc.tranType * loc.rec.regMode>
+										
 										<cfset ArrayAppend(session.basket.trans,loc.tran)>
 									</cfloop>
 									<cfset loc.dealRec.groupRetail = 0>
@@ -293,12 +309,17 @@
 										<cfset loc.tran.itemClass = loc.data.itemClass>
 										<cfset loc.tran.unitTrade = loc.data.unitTrade>
 										<cfset loc.tran.prop = 1>
-										<cfset loc.tran.gross = Round((loc.data.unitPrice / 2) * 100) / 100 * loc.tranType * loc.rec.regMode>
+										<cfset loc.tran.gross = int((loc.data.unitPrice) * 100) / 100>
 										<cfif loc.i MOD 2 IS 0>
-											<cfset loc.tran.gross = (loc.data.unitPrice + loc.tran.gross) * loc.tranType * loc.rec.regMode>
+											<cfset loc.tran.gross = 0>
 										</cfif>
-										<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+										<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
 										<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+
+										<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
+										<cfset loc.tran.net = loc.tran.net * loc.tranType * loc.rec.regMode>
+										<cfset loc.tran.vat = loc.tran.vat * loc.tranType * loc.rec.regMode>
+
 										<cfset ArrayAppend(session.basket.trans,loc.tran)>
 									</cfloop>
 									<cfset loc.dealRec.groupRetail = 0>
@@ -323,9 +344,14 @@
 									<cfset loc.tran.vcode = loc.data.vcode>
 									<cfset loc.tran.itemClass = loc.data.itemClass>
 									<cfset loc.tran.unitTrade = loc.data.unitTrade>
-									<cfset loc.tran.gross = Round((loc.tran.price - loc.itemDiscount) * 100) / 100 * loc.tranType * loc.rec.regMode>
-									<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+									<cfset loc.tran.gross = int((loc.tran.price - loc.itemDiscount) * 100) / 100>
+									<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
 									<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+
+									<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
+									<cfset loc.tran.net = loc.tran.net * loc.tranType * loc.rec.regMode>
+									<cfset loc.tran.vat = loc.tran.vat * loc.tranType * loc.rec.regMode>
+
 									<cfset ArrayAppend(session.basket.trans,loc.tran)>
 								</cfloop>
 							</cfif>
@@ -357,9 +383,14 @@
 										<cfset loc.tran.itemClass = loc.data.itemClass>
 										<cfset loc.tran.unitTrade = loc.data.unitTrade>
 										<cfset loc.tran.prop = 1>
-										<cfset loc.tran.gross = Round((loc.data.unitPrice / 2) * 100) / 100 * loc.tranType * loc.rec.regMode>
-										<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+										<cfset loc.tran.gross = Round(int((loc.data.unitPrice / 2) * 100)) / 100>
+										<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
 										<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+
+										<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
+										<cfset loc.tran.net = loc.tran.net * loc.tranType * loc.rec.regMode>
+										<cfset loc.tran.vat = loc.tran.vat * loc.tranType * loc.rec.regMode>
+
 										<cfset ArrayAppend(session.basket.trans,loc.tran)>
 									</cfloop>
 									<cfset loc.dealRec.groupRetail = 0>
@@ -397,14 +428,19 @@
 										<cfset loc.tran.unitTrade = loc.data.unitTrade>
 										<cfset loc.tran.prop = 1>
 										<cfif loc.i MOD 2 eq 0>
-											<cfset loc.tran.gross = Round((loc.data.unitPrice * 0.5) * 100) / 100 * loc.tranType * loc.rec.regMode>
+											<cfset loc.tran.gross = int((loc.data.unitPrice * 0.5) * 100) / 100>
 										<cfelse>
-											<cfset loc.tran.gross = Round(loc.data.unitPrice * 100) / 100 * loc.tranType * loc.rec.regMode>
+											<cfset loc.tran.gross = int(loc.data.unitPrice * 100) / 100>
 										</cfif>
 										<cfset loc.disc += loc.data.unitPrice + loc.tran.gross>
 										<cfset loc.totalGross -= loc.tran.gross>
-										<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+										<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
 										<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+
+										<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
+										<cfset loc.tran.net = loc.tran.net * loc.tranType * loc.rec.regMode>
+										<cfset loc.tran.vat = loc.tran.vat * loc.tranType * loc.rec.regMode>
+
 										<cfset ArrayAppend(session.basket.trans,loc.tran)>
 									</cfloop>
 									<cfset loc.dealRec.groupRetail = 0>
@@ -429,9 +465,14 @@
 									<cfset loc.tran.vcode = loc.data.vcode>
 									<cfset loc.tran.itemClass = loc.data.itemClass>
 									<cfset loc.tran.unitTrade = loc.data.unitTrade>
-									<cfset loc.tran.gross = Round((loc.tran.price - loc.itemDiscount) * 100) / 100 * loc.tranType * loc.rec.regMode>
-									<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+									<cfset loc.tran.gross = int((loc.tran.price - loc.itemDiscount) * 100) / 100>
+									<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
 									<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+
+									<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
+									<cfset loc.tran.net = loc.tran.net * loc.tranType * loc.rec.regMode>
+									<cfset loc.tran.vat = loc.tran.vat * loc.tranType * loc.rec.regMode>
+
 									<cfset ArrayAppend(session.basket.trans,loc.tran)>
 								</cfloop>
 							</cfif>
@@ -478,7 +519,7 @@
 			</cfloop>
 
 			<cfset ProcessDeals()>
-
+			
 			<cfloop collection="#session.basket.mediaItems#" item="loc.key">
 				<cfset loc.media = StructFind(session.basket.mediaItems,loc.key)>
 				<cfset loc.tran = {}>
@@ -489,6 +530,7 @@
 				<cfset loc.tran.gross = loc.media.totalGross>
 				<cfset loc.tran.vrate = loc.media.vrate>
 				<cfset loc.tran.vcode = loc.media.vcode>
+				<cfset loc.tran.unittrade = loc.media.unittrade>
 				<cfset loc.tran.itemClass = loc.media.itemClass>
 				<cfset loc.tran.net = loc.tran.gross / (1 + (loc.tran.vrate / 100))>
 				<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
@@ -580,6 +622,7 @@
 				<cfset loc.rec.itemID = args.data.itemID>
 				<cfset loc.rec.title = args.data.title>
 				<cfset loc.rec.unitsize = args.data.unitsize>
+				<cfset loc.rec.unittrade = args.data.unittrade>
 				<cfset loc.rec.vrate = args.form.vrate>
 				<cfset loc.rec.prodClass = args.data.prodClass>
 				<cfset loc.rec.prodSign = args.data.prodSign>
@@ -592,7 +635,7 @@
 			<cfset loc.vatRate = 1 + (val(loc.rec.vrate) / 100)>
 			<cfset loc.rec.discountable = StructKeyExists(args.form,"discountable") AND args.form.discountable>
 			<cfset loc.rec.cashonly = args.form.cashonly>
-			<cfset loc.rec.unitTrade = args.form.unitTrade>
+			<!---<cfset loc.rec.unitTrade = args.form.unitTrade>--->
 			<cfset loc.rec.cash = args.data.cash>
 			<cfset loc.rec.credit = args.data.credit>
 			<cfset loc.rec.unitPrice = loc.rec.cash + loc.rec.credit>
@@ -611,7 +654,7 @@
 					<cfset loc.rec.dealID = StructFind(session.dealIDs,args.form.prodID)>
 				</cfif>
 
-				<cfset loc.rec.totalNet = Round(loc.rec.totalGross / loc.vatRate * 100) / 100>
+				<cfset loc.rec.totalNet = int(loc.rec.totalGross / loc.vatRate * 100) / 100>
 				<cfset loc.rec.totalVAT = loc.rec.totalGross - loc.rec.totalNet>
 
 				<cfset loc.rec.retail = loc.rec.retail * loc.rec.regMode * loc.tranType>
@@ -646,7 +689,7 @@
 		<cfset args.unitPrice = args.cash + args.credit>
 		<cfset args.retail = args.qty * args.unitPrice>
 		<cfset args.totalGross = args.retail>
-		<cfset args.totalNet = Round(args.totalGross / loc.vatRate * 100) / 100>
+		<cfset args.totalNet = int(args.totalGross / loc.vatRate * 100) / 100>
 		<cfset args.totalVAT = args.totalGross - args.totalNet>
 
 		<cfset args.retail = args.retail * args.regMode * loc.tranType>
@@ -659,8 +702,6 @@
 	<cffunction name="AddItem" access="public" returntype="struct">
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
-<cfdump var="#args#" label="AddItem" expand="yes" format="html" 
-	output="#application.site.dir_logs#epos\add-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 		<!--- Store this item as the last added --->
 		<!--- Used in the customer display --->
@@ -695,6 +736,12 @@
 				<cfset loc.result.err = session.basket.info.errMsg>
 				<cfreturn loc.result>
 			</cfif>
+			<cfif session.basket.info.checkout>
+				<cfset session.basket.info.errMsg = "Are you sure you want to add more items to this basket?.">
+				<cfset loc.result.err = session.basket.info.errMsg>
+				<cfset session.basket.info.checkout = false>
+				<cfreturn loc.result>
+			</cfif>
 			<cfif val(args.form.prodSign) eq 0>
 				<cfset loc.result.err = "Product sign must be 1 or -1. Check product record.">
 				<cfset session.basket.info.errMsg = "Invalid product information supplied to AddItem function.">
@@ -725,9 +772,6 @@
 			<cfset args.data.discount = 0>
 			<cfset args.data.account = val(args.form.account)>
 			<cfset args.data.prodSign = args.form.prodSign>
-			<cfif StructKeyExists(args.data,"unitTrade")>
-				<cfset args.data.unitTrade = args.form.unitTrade>
-			<cfelse><cfset args.data.unitTrade = 0></cfif>
 			<cfset args.data.qty = val(args.form.qty)>
 			<cfset args.data.cash = abs(val(args.form.cash)) * args.form.prodSign>
 			<cfset args.data.credit = abs(val(args.form.credit)) * args.form.prodSign>
@@ -995,6 +1039,9 @@
 									<cfset args.data.cash = args.data.cash * args.form.sign>
 									<cfset args.data.credit = args.data.credit * args.form.sign>
 								</cfif>
+								<cfif StructKeyExists(args.form,"unitTrade") AND args.form.unitTrade neq 0>
+									<cfset args.data.unitTrade = args.form.unitTrade>
+								<cfelse><cfset args.data.unitTrade = (args.data.cash + args.data.credit) * 0.5></cfif>
 								<cfset CalcValues(args.data)>
 								<cfset UpdateBasket(args)>
 							<cfelse>
@@ -1179,6 +1226,28 @@
 						<cfset args.data.class = "pay">
 						<cfset args.data.itemClass = "ACCINDW">
 						<cfset args.data.title = "Payment on Account">
+						<cfset args.data.account = args.form.account>
+						<cfset args.data.prodID = 1>
+						<cfset ArrayAppend(session.basket.payments,args.data)>
+						<cfset loc.addTran = true>
+					</cfif>
+				</cfcase>
+
+				<cfcase value="Waste">
+					<cfif args.data.cash + args.data.credit is 0>
+						<cfset args.data.credit = session.basket.total.balance>
+						<cfset args.data.cash = 0>
+						<cfset this.closeTranNow = true>
+					</cfif>
+					<cfset loc.cashBalance += args.data.cash>
+					<cfif loc.basketItems eq 0>
+						<cfset session.basket.info.errMsg = "Please put an item in the basket before accepting payment.">
+					<cfelseif ArrayLen(session.basket.supplier) gt 0>
+						<cfset session.basket.info.errMsg = "Cannot pay on account during a supplier transaction.">
+					<cfelse>
+						<cfset args.data.class = "pay">
+						<cfset args.data.itemClass = "WASTEACC">
+						<cfset args.data.title = "Waste Account">
 						<cfset args.data.account = args.form.account>
 						<cfset args.data.prodID = 1>
 						<cfset ArrayAppend(session.basket.payments,args.data)>
@@ -1607,7 +1676,25 @@
 								</tr> --->
 							<cfelse>
 								request += builder.createAlignmentElement({position: 'left'});
-								request += builder.createTextElement(styles.normal(align.lr("PAID ON ACCOUNT", "#chr(156)##DecimalFormat(loc.item.cash - loc.item.credit)#")));
+								request += builder.createTextElement(styles.normal(align.lr("PAID ON ACCOUNT", "#chr(156)#
+									#DecimalFormat(loc.item.cash - loc.item.credit)#")));
+								request += builder.createTextElement({data: '\n'});
+							</cfif>
+						</cfcase>
+						<cfcase value="WASTEACC">
+							<cfif arguments.type eq "html">
+								<cfset loc.canClose = true>
+								<div class="btr_item material-ripple ebt_payment" #StructToDataAttributes(loc.item)# data-arrIndex="#loc.payCount#">
+									<span style="width: 70%;">Waste Account</span>
+									<span style="width: 30%;text-align: right;">#DecimalFormat(-loc.item.cash - loc.item.credit)#</span>
+								</div>
+								<!--- <tr class="ebt_payment" #StructToDataAttributes(loc.item)# data-arrIndex="#loc.payCount#">
+									<td colspan="3">Paid on Account</td><td align="right">#DecimalFormat(-loc.item.cash - loc.item.credit)#</td>
+								</tr> --->
+							<cfelse>
+								request += builder.createAlignmentElement({position: 'left'});
+								request += builder.createTextElement(styles.normal(align.lr("WASTE ACCOUNT", "#chr(156)#
+									#DecimalFormat(loc.item.cash - loc.item.credit)#")));
 								request += builder.createTextElement({data: '\n'});
 							</cfif>
 						</cfcase>
@@ -1880,6 +1967,12 @@
 								<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
 								<cfset session.basket.info.canClose = true>
 							</cfcase>
+							<cfcase value="WASTEACC">
+								<cfset session.basket.total.WASTEACC += (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.header.WASTEACC += (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.info.canClose = true>
+							</cfcase>
 							<cfdefaultcase>
 								<cfset loc.payValue = StructFind(session.basket.total,loc.item.itemClass)>
 								<cfset StructUpdate(session.basket.total,loc.item.itemClass,loc.payValue + (loc.item.cash + loc.item.credit))>
@@ -1914,12 +2007,12 @@
 					</cfif>
 				</cfoutput>
 			</cflock>
-			<cfreturn loc>
 		<cfcatch type="any">
-			<cfdump var="#cfcatch#" label="" expand="yes" format="html"
+			<cfdump var="#cfcatch#" label="BuildBasket" expand="yes" format="html"
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
+		<cfreturn loc>
 	</cffunction>
 
 <!--- DATABASE ROUTINES --->
@@ -2022,151 +2115,157 @@
 	<cffunction name="ShowTrans" access="public" returntype="void">
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
-		<cfset loc.total.retail = 0>
-		<cfset loc.total.gross = 0>
-		<cfset loc.total.net = 0>
-		<cfset loc.total.vat = 0>
-		<cfset loc.total.disc = 0>
-		<cfset loc.total.cash = 0>
-		<table class="tableList">
-			<tr>
-				<td>title</td>
-				<td width="50">ProdID</td>
-				<td>CASH</td>
-				<td align="right" width="50">retail</td>
-				<td align="right" width="50">gross</td>
-				<td align="right" width="50">net</td>
-				<td align="right" width="50">vat</td>
-				<td align="right" width="50">rate</td>
-				<td align="right" width="50">disc</td>
-			</tr>
-			<cfoutput>
-			<cfloop array="#args.trans#" index="loc.tran">
-				<cfset loc.disc = 0>
-				<cfset loc.prodID = 1>
-				<cfset loc.pubID = 1>
-				<cfset loc.account = 1>
-				<cfset loc.payID = 1>
-				<cfset loc.retail = 0>
-				<cfset loc.total.cash += (loc.tran.gross * loc.tran.cashOnly)>
-				<cfswitch expression="#loc.tran.itemClass#">
-					<cfcase value="SHOP|MAGS" delimiters="|">
-						<cfset loc.prodKey = "#loc.tran.prodID#-#loc.tran.price#">
-						<cfif StructKeyExists(args.shopItems,loc.prodKey)>
-							<cfset loc.data = StructFind(args.shopItems,loc.prodKey)>
-						<cfelse>
-							<cfset loc.data = StructFind(args.shopItems,loc.tran.prodID)>
-						</cfif>
-						<cfset loc.total.retail += loc.data.unitPrice>
-						<cfset loc.tran.itemType = "sale">
-						<cfset loc.disc = loc.data.unitPrice + loc.tran.gross>
-						<cfset loc.retail = loc.data.unitPrice>
-						<cfset loc.prodID = loc.tran.prodID>
-						<tr>
-							<td>#loc.data.title#</td>
-							<td align="right">#loc.tran.prodID#</td>
-							<td>#loc.tran.cashOnly#</td>
-							<td align="right">#loc.data.unitPrice#</td>
-							<td align="right">#loc.tran.gross#</td>
-							<td align="right">#loc.tran.net#</td>
-							<td align="right">#loc.tran.vat#</td>
-							<td align="right">#loc.tran.vrate#%</td>
-							<td align="right">#loc.disc#</td>
-						</tr>
-					</cfcase>
-					<cfcase value="paystation|NEWS|LOTTERY|SRV|SCRATCHCARD|LPRIZE|SPRIZE" delimiters="|">
-						<cfset loc.total.retail -= loc.tran.gross>
-						<cfset loc.tran.itemType = "item">
-						<cfset loc.prodID = loc.tran.prodID>
-						<cfset loc.retail = loc.tran.gross>
-						<tr>
-							<td>#loc.tran.itemClass#</td>
-							<td align="right">#loc.tran.prodID#</td>
-							<td>#loc.tran.cashOnly#</td>
-							<td align="right">#DecimalFormat(loc.tran.gross)#</td>
-							<td align="right">#DecimalFormat(loc.tran.gross)#</td>
-							<td align="right">#DecimalFormat(loc.tran.net)#</td>
-							<td align="right">#DecimalFormat(loc.tran.vat)#</td>
-							<td align="right">#DecimalFormat(loc.tran.vrate)#%</td>
-							<td align="right"></td>
-						</tr>
-					</cfcase>
-					<cfcase value="ACCPAY">
-						<cfset loc.total.retail += loc.tran.gross>
-						<cfset loc.tran.itemType = "item">
-						<cfset loc.account = loc.tran.account>
-						<cfset loc.retail = loc.tran.gross>
-						<tr>
-							<td>#loc.tran.itemClass#</td>
-							<td>?</td>
-							<td>#loc.tran.cashOnly#</td>
-							<td align="right">#DecimalFormat(loc.tran.gross)#</td>
-							<td align="right">#DecimalFormat(loc.tran.gross)#</td>
-							<td align="right">#DecimalFormat(loc.tran.net)#</td>
-							<td align="right">#DecimalFormat(loc.tran.vat)#</td>
-							<td align="right">#DecimalFormat(loc.tran.vrate)#%</td>
-							<td align="right"></td>
-						</tr>
-					</cfcase>
-					<cfcase value="MEDIA">
-						<cfset loc.pubKey = "#loc.tran.pubID#-#loc.tran.price#">
-						<cfif StructKeyExists(args.mediaItems,loc.pubKey)>
-							<cfset loc.data = StructFind(args.mediaItems,loc.pubKey)>
-						<cfelse>
-							<cfset loc.data = StructFind(args.mediaItems,loc.tran.pubID)>
-						</cfif>
-						<cfset loc.total.retail += loc.data.unitPrice>
-						<cfset loc.disc = loc.data.unitPrice + loc.tran.gross>
-						<cfset loc.retail = loc.data.unitPrice>
-						<cfset loc.tran.itemType = "sale">
-						<cfset loc.pubID = loc.tran.pubID>
-						<tr>
-							<td>#loc.data.title#</td>
-							<td align="right">#loc.tran.pubID#</td>
-							<td>#loc.tran.cashOnly#</td>
-							<td align="right">#loc.data.unitPrice#</td>
-							<td align="right">#DecimalFormat(loc.tran.gross)#</td>
-							<td align="right">#DecimalFormat(loc.tran.net)#</td>
-							<td align="right">#DecimalFormat(loc.tran.vat)#</td>
-							<td align="right">#DecimalFormat(loc.tran.vrate)#%</td>
-							<td align="right">#DecimalFormat(loc.disc)#</td>
-						</tr>
-					</cfcase>
-					<cfcase value="CASHINDW|CARDINDW|CHQINDW|CPN|Healthy|ACCINDW" delimiters="|">
-						<cfset loc.tran.itemType = "pay">
-						<cfset loc.payID = loc.tran.payID>
-						<cfset loc.retail = loc.tran.gross>
-						<tr>
-							<td>#loc.tran.itemClass#</td>
-							<td></td>
-							<td>#loc.tran.cashOnly#</td>
-							<td></td>
-							<td align="right">#DecimalFormat(loc.tran.gross)#</td>
-							<td align="right">#DecimalFormat(loc.tran.net)#</td>
-							<td align="right">#DecimalFormat(loc.tran.vat)#</td>
-							<td align="right"></td>
-							<td align="right"></td>
-						</tr>
-					</cfcase>
-				</cfswitch>
-				<cfset loc.total.gross -= loc.tran.gross>
-				<cfset loc.total.net -= loc.tran.net>
-				<cfset loc.total.vat -= loc.tran.vat>
-				<cfset loc.total.disc += loc.disc>
-			</cfloop>
-			<tr>
-				<th>Totals</th>
-				<th></th>
-				<th>#loc.total.cash#</th>
-				<th align="right">#loc.total.retail#</th>
-				<th align="right">#DecimalFormat(loc.total.gross)#</th>
-				<th align="right">#DecimalFormat(loc.total.net)#</th>
-				<th align="right">#DecimalFormat(loc.total.vat)#</th>
-				<th align="right"></th>
-				<th align="right">#DecimalFormat(loc.total.disc)#</th>
-			</tr>
-			</cfoutput>
-		</table>
+		<cftry>
+			<cfset loc.total.retail = 0>
+			<cfset loc.total.gross = 0>
+			<cfset loc.total.net = 0>
+			<cfset loc.total.vat = 0>
+			<cfset loc.total.disc = 0>
+			<cfset loc.total.cash = 0>
+			<table class="tableList">
+				<tr>
+					<td>title</td>
+					<td width="50">ProdID</td>
+					<td>CASH</td>
+					<td align="right" width="50">retail</td>
+					<td align="right" width="50">gross</td>
+					<td align="right" width="50">net</td>
+					<td align="right" width="50">vat</td>
+					<td align="right" width="50">rate</td>
+					<td align="right" width="50">disc</td>
+				</tr>
+				<cfoutput>
+				<cfloop array="#args.trans#" index="loc.tran">
+					<cfset loc.disc = 0>
+					<cfset loc.prodID = 1>
+					<cfset loc.pubID = 1>
+					<cfset loc.account = 1>
+					<cfset loc.payID = 1>
+					<cfset loc.retail = 0>
+					<cfset loc.total.cash += (loc.tran.gross * loc.tran.cashOnly)>
+					<cfswitch expression="#loc.tran.itemClass#">
+						<cfcase value="SHOP|MAGS" delimiters="|">
+							<cfset loc.prodKey = "#loc.tran.prodID#-#loc.tran.price#">
+							<cfif StructKeyExists(args.shopItems,loc.prodKey)>
+								<cfset loc.data = StructFind(args.shopItems,loc.prodKey)>
+							<cfelse>
+								<cfset loc.data = StructFind(args.shopItems,loc.tran.prodID)>
+							</cfif>
+							<cfset loc.total.retail += loc.data.unitPrice>
+							<cfset loc.tran.itemType = "sale">
+							<cfset loc.disc = loc.data.unitPrice + loc.tran.gross>
+							<cfset loc.retail = loc.data.unitPrice>
+							<cfset loc.prodID = loc.tran.prodID>
+							<tr>
+								<td>#loc.data.title#</td>
+								<td align="right">#loc.tran.prodID#</td>
+								<td>#loc.tran.cashOnly#</td>
+								<td align="right">#loc.data.unitPrice#</td>
+								<td align="right">#loc.tran.gross#</td>
+								<td align="right">#loc.tran.net#</td>
+								<td align="right">#loc.tran.vat#</td>
+								<td align="right">#loc.tran.vrate#%</td>
+								<td align="right">#loc.disc#</td>
+							</tr>
+						</cfcase>
+						<cfcase value="paystation|NEWS|LOTTERY|SRV|SCRATCHCARD|LPRIZE|SPRIZE" delimiters="|">
+							<cfset loc.total.retail -= loc.tran.gross>
+							<cfset loc.tran.itemType = "item">
+							<cfset loc.prodID = loc.tran.prodID>
+							<cfset loc.retail = loc.tran.gross>
+							<tr>
+								<td>#loc.tran.itemClass#</td>
+								<td align="right">#loc.tran.prodID#</td>
+								<td>#loc.tran.cashOnly#</td>
+								<td align="right">#DecimalFormat(loc.tran.gross)#</td>
+								<td align="right">#DecimalFormat(loc.tran.gross)#</td>
+								<td align="right">#DecimalFormat(loc.tran.net)#</td>
+								<td align="right">#DecimalFormat(loc.tran.vat)#</td>
+								<td align="right">#DecimalFormat(loc.tran.vrate)#%</td>
+								<td align="right"></td>
+							</tr>
+						</cfcase>
+						<cfcase value="ACCPAY">
+							<cfset loc.total.retail += loc.tran.gross>
+							<cfset loc.tran.itemType = "item">
+							<cfset loc.account = loc.tran.account>
+							<cfset loc.retail = loc.tran.gross>
+							<tr>
+								<td>#loc.tran.itemClass#</td>
+								<td>?</td>
+								<td>#loc.tran.cashOnly#</td>
+								<td align="right">#DecimalFormat(loc.tran.gross)#</td>
+								<td align="right">#DecimalFormat(loc.tran.gross)#</td>
+								<td align="right">#DecimalFormat(loc.tran.net)#</td>
+								<td align="right">#DecimalFormat(loc.tran.vat)#</td>
+								<td align="right">#DecimalFormat(loc.tran.vrate)#%</td>
+								<td align="right"></td>
+							</tr>
+						</cfcase>
+						<cfcase value="MEDIA">
+							<cfset loc.pubKey = "#loc.tran.pubID#-#loc.tran.price#">
+							<cfif StructKeyExists(args.mediaItems,loc.pubKey)>
+								<cfset loc.data = StructFind(args.mediaItems,loc.pubKey)>
+							<cfelse>
+								<cfset loc.data = StructFind(args.mediaItems,loc.tran.pubID)>
+							</cfif>
+							<cfset loc.total.retail += loc.data.unitPrice>
+							<cfset loc.disc = loc.data.unitPrice + loc.tran.gross>
+							<cfset loc.retail = loc.data.unitPrice>
+							<cfset loc.tran.itemType = "sale">
+							<cfset loc.pubID = loc.tran.pubID>
+							<tr>
+								<td>#loc.data.title#</td>
+								<td align="right">#loc.tran.pubID#</td>
+								<td>#loc.tran.cashOnly#</td>
+								<td align="right">#loc.data.unitPrice#</td>
+								<td align="right">#DecimalFormat(loc.tran.gross)#</td>
+								<td align="right">#DecimalFormat(loc.tran.net)#</td>
+								<td align="right">#DecimalFormat(loc.tran.vat)#</td>
+								<td align="right">#DecimalFormat(loc.tran.vrate)#%</td>
+								<td align="right">#DecimalFormat(loc.disc)#</td>
+							</tr>
+						</cfcase>
+						<cfcase value="CASHINDW|CARDINDW|CHQINDW|CPN|Healthy|ACCINDW|WASTEACC" delimiters="|">
+							<cfset loc.tran.itemType = "pay">
+							<cfset loc.payID = loc.tran.payID>
+							<cfset loc.retail = loc.tran.gross>
+							<tr>
+								<td>#loc.tran.itemClass#</td>
+								<td></td>
+								<td>#loc.tran.cashOnly#</td>
+								<td></td>
+								<td align="right">#DecimalFormat(loc.tran.gross)#</td>
+								<td align="right">#DecimalFormat(loc.tran.net)#</td>
+								<td align="right">#DecimalFormat(loc.tran.vat)#</td>
+								<td align="right"></td>
+								<td align="right"></td>
+							</tr>
+						</cfcase>
+					</cfswitch>
+					<cfset loc.total.gross -= loc.tran.gross>
+					<cfset loc.total.net -= loc.tran.net>
+					<cfset loc.total.vat -= loc.tran.vat>
+					<cfset loc.total.disc += loc.disc>
+				</cfloop>
+				<tr>
+					<th>Totals</th>
+					<th></th>
+					<th>#loc.total.cash#</th>
+					<th align="right">#loc.total.retail#</th>
+					<th align="right">#DecimalFormat(loc.total.gross)#</th>
+					<th align="right">#DecimalFormat(loc.total.net)#</th>
+					<th align="right">#DecimalFormat(loc.total.vat)#</th>
+					<th align="right"></th>
+					<th align="right">#DecimalFormat(loc.total.disc)#</th>
+				</tr>
+				</cfoutput>
+			</table>
+			<cfcatch type="any">
+				<cfdump var="#cfcatch#" label="ShowTrans" expand="yes" format="html"
+					output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+			</cfcatch>
+		</cftry>
 	</cffunction>
 
 	<cffunction name="WriteTransaction" access="public" returntype="struct">
@@ -2185,7 +2284,7 @@
 							ehMode,
 							ehCashback
 						) VALUES (
-							#session.user.ID#,	<!--- TODO check user ID --->
+							#session.user.ID#,
 							'#session.basket.info.mode#',
 							#session.basket.header.cashback#
 						)
@@ -2199,12 +2298,13 @@
 					<cfset loc.total.disc = 0>
 					<cfset loc.itemStr = "">
 					<cfif loc.showInfo>
-					<table class="tableList">
+					<table class="tableList" border="1">
 						<tr>
 							<td>title</td>
 							<td width="50">ProdID</td>
 							<td align="right" width="50">retail</td>
 							<td align="right" width="50">gross</td>
+							<td align="right" width="50">trade</td>
 							<td align="right" width="50">net</td>
 							<td align="right" width="50">vat</td>
 							<td align="right" width="50">rate</td>
@@ -2238,6 +2338,7 @@
 									<td>#loc.tran.prodID#</td>
 									<td align="right">#loc.data.unitPrice#</td>
 									<td align="right">#loc.tran.gross#</td>
+									<td align="right">#loc.tran.unittrade#</td>
 									<td align="right">#loc.tran.net#</td>
 									<td align="right">#loc.tran.vat#</td>
 									<td align="right">#loc.tran.vrate#%</td>
@@ -2265,6 +2366,7 @@
 									<td>#loc.tran.prodID#</td>
 									<td align="right">#loc.data.unitPrice#</td>
 									<td align="right">#loc.tran.gross#</td>
+									<td align="right">##</td>
 									<td align="right">#loc.tran.net#</td>
 									<td align="right">#loc.tran.vat#</td>
 									<td align="right">#loc.tran.vrate#%</td>
@@ -2296,6 +2398,7 @@
 									<td>#loc.tran.prodID#</td>
 									<td align="right">#DecimalFormat(loc.tran.gross)#</td>
 									<td align="right">#DecimalFormat(loc.tran.gross)#</td>
+									<td align="right">##</td>
 									<td align="right">#DecimalFormat(loc.tran.net)#</td>
 									<td align="right">#DecimalFormat(loc.tran.vat)#</td>
 									<td align="right">#DecimalFormat(loc.tran.vrate)#%</td>
@@ -2314,6 +2417,7 @@
 									<td>?</td>
 									<td align="right">#DecimalFormat(loc.tran.gross)#</td>
 									<td align="right">#DecimalFormat(loc.tran.gross)#</td>
+									<td align="right">#loc.tran.unittrade#</td>
 									<td align="right">#DecimalFormat(loc.tran.net)#</td>
 									<td align="right">#DecimalFormat(loc.tran.vat)#</td>
 									<td align="right">#DecimalFormat(loc.tran.vrate)#%</td>
@@ -2340,6 +2444,7 @@
 									<td>#loc.tran.pubID#</td>
 									<td align="right">#loc.data.unitPrice#</td>
 									<td align="right">#DecimalFormat(loc.tran.gross)#</td>
+									<td align="right">#loc.tran.unittrade#</td>
 									<td align="right">#DecimalFormat(loc.tran.net)#</td>
 									<td align="right">#DecimalFormat(loc.tran.vat)#</td>
 									<td align="right">#DecimalFormat(loc.tran.vrate)#%</td>
@@ -2347,7 +2452,7 @@
 								</tr>
 								</cfif>
 							</cfcase>
-							<cfcase value="CASHINDW|CARDINDW|CHQINDW|ACCINDW|CPN|HEALTHY" delimiters="|">
+							<cfcase value="CASHINDW|CARDINDW|CHQINDW|ACCINDW|WASTEACC|CPN|HEALTHY" delimiters="|">
 								<cfswitch expression="#loc.tran.itemClass#">
 									<cfcase value="CARDINDW">
 										<cfset loc.prodID = 2>
@@ -2360,6 +2465,9 @@
 									</cfcase>
 									<cfcase value="ACCINDW">
 										<cfset loc.prodID = 7>
+									</cfcase>
+									<cfcase value="WASTEACC">
+										<cfset loc.prodID = 13>
 									</cfcase>
 									<cfcase value="HEALTHY">
 										<cfset loc.prodID = 8>
@@ -2381,6 +2489,7 @@
 									<td></td>
 									<td></td>
 									<td align="right">#DecimalFormat(loc.tran.gross)#</td>
+									<td align="right"></td>
 									<td align="right">#DecimalFormat(loc.tran.net)#</td>
 									<td align="right">#DecimalFormat(loc.tran.vat)#</td>
 									<td align="right"></td>
@@ -2398,6 +2507,7 @@
 									<td></td>
 									<td></td>
 									<td align="right">#DecimalFormat(loc.tran.gross)#</td>
+									<td align="right">##</td>
 									<td align="right">#DecimalFormat(loc.tran.net)#</td>
 									<td align="right">#DecimalFormat(loc.tran.vat)#</td>
 									<td align="right"></td>
@@ -2414,8 +2524,8 @@
 						<cfset loc.total.net -= loc.tran.net>
 						<cfset loc.total.vat -= loc.tran.vat>
 						<cfset loc.total.disc += loc.disc>
-						<cfset loc.net = DecimalFormat(loc.tran.net)>
-						<cfset loc.vat = DecimalFormat(loc.tran.vat)>
+						<cfset loc.net = loc.tran.net>
+						<cfset loc.vat = loc.tran.vat>
 						<cfif StructKeyExists(loc.tran,"unitTrade")>
 							<cfset loc.trade = val(loc.tran.unitTrade)>
 						<cfelse><cfset loc.trade = 0></cfif>
@@ -2433,6 +2543,7 @@
 							<td></td>
 							<td align="right">#loc.total.retail#</td>
 							<td align="right">#DecimalFormat(loc.total.gross)#</td>
+							<td align="right">##</td>
 							<td align="right">#DecimalFormat(loc.total.net)#</td>
 							<td align="right">#DecimalFormat(loc.total.vat)#</td>
 							<td align="right"></td>
@@ -3036,30 +3147,15 @@
 		</cfcatch>
 		</cftry>
 	</cffunction>
-<!---
-				SELECT tblEPOS_Items.*,ehMode, empFirstName,
-				IF (eiClass='DISC',
-					(SELECT edTitle FROM tblEPOS_Deals WHERE edID=eiDealID),
-					IF (eiType='MEDIA',
-						(SELECT pubTitle FROM tblPublication WHERE pubID=eiPubID),
-						IF (eiClass='pay',
-							(SELECT eaTitle FROM tblEPOS_Account WHERE eaID=eiPayID),
-								(SELECT prodTitle FROM tblProducts WHERE prodID=eiProdID)
-						)
-					)
-				) title
-				FROM tblEPOS_Items
-				INNER JOIN tblEPOS_Header ON ehID = eiParent
-				INNER JOIN tblemployee ON empID = ehEmployee
-				WHERE DATE(ehTimeStamp) = '#args.reportDate#'
---->
+
 	<cffunction name="DumpTrans" access="public" returntype="struct">
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
+		<cfset var Qtrans = "">
 
 		<cftry>
-			<cfquery name="loc.QTrans" datasource="#GetDataSource()#" result="loc.qtrandump">
+			<cfquery name="QTrans" datasource="#GetDataSource()#">
 				SELECT tblEPOS_Items.*,ehMode, empFirstName,
 				IF (eiClass='DISC',
 					(SELECT edTitle FROM tblEPOS_Deals WHERE edID=eiDealID),
@@ -3079,22 +3175,25 @@
 				INNER JOIN tblproductcats ON prodCatID=pcatID
 				WHERE 1
 				<cfif len(args.reportDate)>AND DATE(ehTimeStamp) = '#args.reportDate#' </cfif>
-				<cfif StructKeyExists(args,"accountID")>
-					AND eiParent IN (#args.aIDs#)
-				</cfif>
+				<cfif StructKeyExists(args,"accountID")>AND eiParent IN (#args.aIDs#)</cfif>
 			</cfquery>
-			<!---<cfdump var="#loc.QTrans#" label="QTrans" expand="false">--->
-			<cfset loc.result.QTrans = loc.QTrans>
-			<cfset loc.net = 0>
-			<cfset loc.vat = 0>
-			<cfset loc.profit = 0>
-			<cfset loc.cr = 0>
-			<cfset loc.dr = 0>
+			<!---<cfdump var="#loc.QTrans#" label="QTrans" expand="false">
+			<cfset loc.result.QTrans = loc.QTrans>--->
+			<cfset loc.grandNet = 0>
+			<cfset loc.grandVAT = 0>
+			<cfset loc.grandCR = 0>
+			<cfset loc.grandDR = 0>
+			<cfset loc.grandTrade = 0>
+			<cfset loc.grandRetail = 0>
+			<cfset loc.grandProfit = 0>
 			<cfset loc.tran = 0>
 			<cfoutput>
 			<table class="tableList">
 				<tr>
-					<th align="left" colspan="18"><input type="text" id="quicksearch" value="" placeholder="Search list"></th>
+					<th align="left" colspan="15"><input type="text" id="quicksearch" value="" placeholder="Search list"></th>
+					<th align="right">Net</th>
+					<th align="right">Gross</th>
+					<th></th>
 				</tr>
 				<tr>
 					<th>Tran</th>
@@ -3108,32 +3207,48 @@
 					<th>Qty</th>
 					<th width="120">Category</th>
 					<th>Description</th>
-					<th align="right">Net</th>
-					<th align="right">VAT</th>
-					<th align="right">DR</th>
-					<th align="right">CR</th>
-					<th align="right">Trade</th>
-					<th align="right">Retail</th>
-					<th align="right">Profit</th>
+					<th align="right" width="60">Net</th>
+					<th align="right" width="60">VAT</th>
+					<th align="right" width="60">DR</th>
+					<th align="right" width="60">CR</th>
+					<th align="right" width="60">Trade</th>
+					<th align="right" width="60">Retail</th>
+					<th align="right" width="60">Profit</th>
 				</tr>
 				<cfset loc.balance = 0>
-				<cfloop query="loc.QTrans">
+				<cfset loc.totTrade = 0>
+				<cfset loc.totRetail = 0>
+				<cfset loc.totProfit = 0>				
+				<cfloop query="QTrans">
+					<cfset loc.mode = 2 * int(ehMode eq 'reg') - 1>
 					<cfif loc.tran gt 0 AND loc.tran neq eiParent>
 						<cfif abs(loc.balance) gt 0.001>
 							<tr class="searchrow" data-title="#title#" data-prodID="#eiProdID#">
-								<td colspan="15" align="right" class="balError">#DecimalFormat(loc.balance)#</td>
-								<td colspan="3" class="balError"></td>
+								<td colspan="14" class="balError">&nbsp;</td>
+								<td align="right" class="balError">#DecimalFormat(loc.balance)#</td>
+								<th align="right">#DecimalFormat(loc.totTrade)#</th>
+								<th align="right">#DecimalFormat(loc.totRetail)#</th>
+								<th align="right">#DecimalFormat(loc.totProfit)#</th>
 							</tr>
 						<cfelse>
 							<tr class="searchrow" data-title="#title#" data-prodID="#eiProdID#">
-								<td colspan="18">&nbsp;</td>
+								<th colspan="15">&nbsp;</th>
+								<th align="right">#DecimalFormat(loc.totTrade)#</th>
+								<th align="right">#DecimalFormat(loc.totRetail)#</th>
+								<th align="right">#DecimalFormat(loc.totProfit)#</th>
 							</tr>
 						</cfif>
-						<cfset loc.balance = 0>
+<!---						<tr class="searchrow" data-title="#title#" data-prodID="#eiProdID#">
+							<td colspan="18">&nbsp;</td>
+						</tr>
+--->						<cfset loc.balance = 0>
+						<cfset loc.totTrade = 0>
+						<cfset loc.totRetail = 0>
+						<cfset loc.totProfit = 0>				
 					</cfif>
 					<cfset loc.gross = eiNet + eiVAT>
-					<cfset loc.net += eiNet>
-					<cfset loc.vat += eiVAT>
+					<cfset loc.grandNet += eiNet>
+					<cfset loc.grandVAT += eiVAT>
 					<tr class="searchrow" data-title="#pcatTitle# #title#" data-prodID="#eiProdID#">
 						<td><a href="reporttransaction.cfm?tranID=#eiParent#" target="trandetail">#eiParent#</a></td>
 						<td>#ehMode#</td>
@@ -3144,48 +3259,80 @@
 						<td>#eiType#</td>
 						<td>#eiPayType#</td>
 						<td align="center">#eiQty#</td>
-						<td><span title="#pcatTitle#">#Left(pcatTitle,20)#</span></td>
+						<td width="200"><span title="#pcatTitle#">#Left(pcatTitle,20)#</span></td>
 						<td>#title#</td>
 						<td align="right">#eiNet#</td>
-						<td align="right">#eiVAT#</td>
+						<td align="right" class="rhborder">#eiVAT#</td>
 						<cfif loc.gross gt 0>
-							<cfset loc.dr += loc.gross>
+							<cfset loc.grandDR += loc.gross>
 							<td align="right">#DecimalFormat(loc.gross)#</td>
-							<td align="right"></td>
+							<td align="right" class="rhborder"></td>
 						<cfelse>
-							<cfset loc.cr -= loc.gross>
+							<cfset loc.grandCR -= loc.gross>
 							<td align="right"></td>
-							<td align="right">#DecimalFormat(-loc.gross)#</td>
+							<td align="right" class="rhborder">#DecimalFormat(-loc.gross)#</td>
 						</cfif>
-						<td align="right"><cfif eiTrade neq 0>#eiTrade#</cfif></td>
-						<td align="right"><cfif eiRetail neq 0>#eiRetail#</cfif></td>
-						<td align="right"><cfif eiClass eq 'sale'>#DecimalFormat(eiNet+eiTrade)#</cfif></td>
+						
+						<cfset loc.profit = 0>
+						<cfset loc.trade = 0>
+						<cfset loc.retail = 0>						
+						<cfif eiClass eq 'sale'>
+							<cfif eiTrade neq 0>
+								<cfset loc.trade = eiTrade * loc.mode>
+							<cfelse>
+								<cfset loc.trade = eiRetail * 0.5 * loc.mode>
+							</cfif>
+							<cfset loc.retail = eiRetail * loc.mode>
+							<cfset loc.totTrade += loc.trade>
+							<cfset loc.totRetail += loc.retail>
+							<cfset loc.grandTrade += loc.trade>
+							<cfset loc.grandRetail += loc.retail>
+							<td align="right"><cfif loc.trade neq 0>#DecimalFormat(loc.trade)#</cfif></td>
+							<td align="right"><cfif loc.retail neq 0>#DecimalFormat(loc.retail)#</cfif></td>
+							
+							<cfif eiNet lt 0 OR ehMode eq 'wst'>	<!--- normal sale --->
+								<cfset loc.profit = -(eiNet + loc.trade)><!---<td align="right">a #eiNet# + #loc.trade# = #loc.profit#</td>--->
+							<cfelse>	<!--- bogof (zero net) --->
+								<cfset loc.profit = eiNet - loc.trade><!---<td align="right">c #eiNet# - #loc.trade# = #loc.profit#</td>--->
+							</cfif>
+							<td align="right" class="rhborder">#DecimalFormat(loc.profit)#</td>
+						<cfelse>
+							<td colspan="3" align="right"></td>
+						</cfif>
 					</tr>
-					<cfif eiClass eq 'sale'>
-						<cfset loc.profit += (eiNet+eiTrade)>
-					</cfif>
 					<cfset loc.tran = eiParent>
 					<cfset loc.balance += loc.gross>
+					<cfset loc.totProfit += loc.profit>		
+					<cfset loc.grandProfit += loc.profit>		
 				</cfloop>
+				<cfif abs(loc.balance) gt 0.001>
+					<tr>
+						<th colspan="14" class="balError">&nbsp;</th>
+						<td align="right" class="balError">#DecimalFormat(loc.balance)#</td>
+						<th align="right">#DecimalFormat(loc.totTrade)#</th>
+						<th align="right">#DecimalFormat(loc.totRetail)#</th>
+						<th align="right">#DecimalFormat(loc.totProfit)#</th>
+					</tr>
+				<cfelse>
+					<tr>
+						<th colspan="15">&nbsp;</th>
+						<th align="right">#DecimalFormat(loc.totTrade)#</th>
+						<th align="right">#DecimalFormat(loc.totRetail)#</th>
+						<th align="right">#DecimalFormat(loc.totProfit)#</th>
+					</tr>
+				</cfif>
+				<tr>
+					<td colspan="18">&nbsp;</td>
+				</tr>
 				<tr id="pagetotals">
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th align="right">#DecimalFormat(loc.net)#</th>
-					<th align="right">#DecimalFormat(loc.vat)#</th>
-					<th align="right">#DecimalFormat(loc.dr)#</th>
-					<th align="right">#DecimalFormat(loc.cr)#</th>
-					<th></th>
-					<th></th>
-					<th align="right">#DecimalFormat(loc.profit)#</th>
+					<th colspan="11">Grand Total</th>
+					<th align="right">#DecimalFormat(loc.grandNet)#</th>
+					<th align="right">#DecimalFormat(loc.grandVAT)#</th>
+					<th align="right">#DecimalFormat(loc.grandDR)#</th>
+					<th align="right">#DecimalFormat(loc.grandCR)#</th>
+					<th align="right">#DecimalFormat(loc.grandTrade)#</th>
+					<th align="right">#DecimalFormat(loc.grandRetail)#</th>
+					<th align="right">#DecimalFormat(loc.grandProfit)#</th>
 				</tr>
 			</table>
 			</cfoutput>
