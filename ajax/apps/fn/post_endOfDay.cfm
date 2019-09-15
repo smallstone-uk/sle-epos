@@ -18,7 +18,7 @@
         }
 		
         yesterday = new App.DayHeader().yesterday();
-        if (structIsEmpty(today)) {
+        if (structIsEmpty(yesterday)) {
 			writeDumpToFile("unable to load previous day data");
         }
 		writeDumpToFile(yesterday);
@@ -42,7 +42,7 @@
 	Nothing to show yet.
 	<cfexit>
 </cfif>
-
+<cfset loc = {}>
 <cfset lottoTotal = epos.accounts.lottery + epos.accounts.scratchcard + epos.accounts.lprize + epos.accounts.sprize>
 <cfif lottoTotal lt 0>
 	<cfset lottoCoins = (((lottoTotal * 100) MOD 500) / 100) * -1>
@@ -117,24 +117,34 @@
 			<td>PayStation Coins</td>
 			<td align="right">#DecimalFormat(psCoins)#</td>
 		</tr>
-		<cfset remCoins = coinTotal - lottoCoins - psCoins>
+		<cfset loc.remCoins = coinTotal - lottoCoins - psCoins>
+		<cfif loc.remCoins gt floatCoinLimit>
+			<cfset loc.floatcoins = floatCoinLimit>
+			<cfset loc.bankCoins = loc.remCoins - floatCoinLimit>
+		<cfelse>
+			<cfset loc.floatcoins = int((loc.remCoins*100)/500) * 5>
+			<cfset loc.bankCoins = loc.remCoins - loc.floatcoins>
+		</cfif>
+
+<!---
 		<cfset bankCoins = ((remCoins * 100) MOD 500) / 100>
 		<cfset floatcoins = remCoins - bankCoins>
 		<cfif floatcoins gt floatCoinLimit>
 			<cfset floatcoins = floatCoinLimit>
 			<cfset bankCoins = remCoins - floatcoins>
 		</cfif>
+--->
 		<tr>
 			<td>Sub Total</td>
-			<td align="right">#DecimalFormat(remCoins)#</td>
+			<td align="right">#DecimalFormat(loc.remCoins)#</td>
 		</tr>
 		<tr>
 			<td>Bank Coins</td>
-			<td align="right">#bankCoins#</td>
+			<td align="right">#loc.bankCoins#</td>
 		</tr>
 		<tr>
 			<td>Float Coins</td>
-			<td align="right">#DecimalFormat(floatcoins)#</td>
+			<td align="right">#DecimalFormat(loc.floatcoins)#</td>
 		</tr>
 	</table>
 	<table>
@@ -155,7 +165,6 @@
 			<td align="right">TBA</td>
 		</tr>
 	</table>
-
     <!--- Summary View
     <cfset writeDump(dayHeader)> --->
 </cfoutput>
