@@ -2813,6 +2813,18 @@ select:focus {
 	border-radius: 4px;
 }
 
+.lottoCheck	{
+	float: left;
+	width: 100%;
+	background:#C66;
+	color: #FFF;
+	padding: 10px;
+	font-size: 24px;
+	text-align: center;
+	margin-bottom: 2px;
+	border-radius: 4px;
+}
+
 .msgContent {
 	margin: 20px;
 	padding: 20px;

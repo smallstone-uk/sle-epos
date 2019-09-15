@@ -749,7 +749,7 @@
 					$('.bdp_days').css("top", newTop);
 
 					$('.bdp_days').find('li').each(function(i, e) {
-						console.log($(e).offset().top);
+					//	console.log($(e).offset().top);
 						if ( $(e).offset().top <= 0 ) {
 							$(e).appendTo($('.bdp_days'));
 						} else if ( $(e).offset().top >= winHeight ) {
@@ -930,7 +930,7 @@
 		if (this == "true" || this == "false") return true; else return false;
 	}
 	String.prototype.isEncoded = function() {
-		console.log(decodeURIComponent(this));
+	//	console.log(decodeURIComponent(this));
 		return decodeURIComponent(this) !== this;
 	}
 	String.prototype.toJava = function() {
@@ -1081,6 +1081,7 @@
 							cashonly: result.PRODCASHONLY,
 							cash: (result.PRODCASHONLY == 1) ? price : 0,
 							credit: (result.PRODCASHONLY == 1) ? 0 : price,
+							origvalue: price,
 							unitTrade: result.SIUNITTRADE
 						}, callback);
 					}
@@ -1107,11 +1108,11 @@
 	$.scanner = function(a, b) {
 		try {
 			if (a.keyCode == 13) {
-				console.log(window.barcode);
+			//	console.log(window.barcode);
 				if (window.barcode.length >= 8 && window.barcode.length <= 14) {
 					if (typeof b == "function") b(window.barcode);
 				} else {
-					console.log("else: " + window.barcode);
+				//	console.log("else: " + window.barcode);
 				}
 				window.barcode = "";
 			} else if (a.charCode != 0) {
@@ -1501,7 +1502,7 @@
 				var me = $(this);
 				me.addClass("active");
 				var attributes = getDataAttributes(me, "plain");
-				console.log(attributes);
+			//	console.log(attributes);
 				window.touchtime = setTimeout(function() {
 					window.touchhold = true;
 					window.touchHoldAction = function(index) {
@@ -1512,6 +1513,10 @@
 					var listStr = "";
 					for (var i = 0; i < a.length; i++) {
 						var b = a[i];
+						var condition = b.hasOwnProperty('condition') ? b.condition : true;
+						var passedCondition = typeof condition == 'function' ? condition(me) : condition;
+						console.log(passedCondition);
+						if (!passedCondition) { continue; }
 						a[i].index = i;
 						if (typeof b.action == "function")
 							listStr += "<li onclick='javascript:window.touchHoldAction(" + i + ");'>" + b.text + "</li>";
