@@ -4,8 +4,8 @@
 <cfset parm.datasource = application.site.datasource1>
 <cfset parm.url = application.site.normal>
 <cfset payments = epos.LoadPayments(parm)>
-<cfset cardOKCheck = session.basket.header.bcredit + session.basket.header.discstaff + session.till.prefs.mincard>
-
+<cfset notEnoughCredit = session.basket.header.bcredit + session.basket.header.discdeal + session.basket.header.discstaff + session.till.prefs.mincard>
+<cfset session.basket.info.checkout = true>
 <cfoutput>
 	<script>
 		$(document).ready(function(e) {
@@ -221,6 +221,22 @@
 						    }
 						});
 						break;
+					case "waste":
+						$.addPayment({
+							account: id,
+							addtobasket: true,
+							btnsend: "waste",
+							cash: "",
+							cashonly: "",
+							credit: "",
+							prodid: "",
+							prodtitle: "",
+							qty: 1,
+							type: "",
+							vrate: "",
+							payID: id
+						}, callback);
+						break;
 					default:
 						$.addPayment({
 							account: obj.data("accid"),
@@ -245,65 +261,95 @@
 	</script>
 
 	<cfset supplier = lCase(session.basket.info.bod) eq "supplier">
+	<cfset waste = lCase(session.basket.info.mode) eq "wst">
 
 	<ul class="payment_list">
 		<cfset counter = 0>
-		<cfloop array="#payments#" index="item">
-			<cfswitch expression="#LCase(item.eaTitle)#">
-				<cfcase value="cash">
-					<cfif not supplier>
-						<li class="payment_item material-ripple" data-method="partcash" data-id="#item.eaID#">
-							<span>Part Cash</span>
-						</li>
-					</cfif>
-
-					<li class="payment_item material-ripple" data-method="fastcash" data-id="#item.eaID#">
-						<span>Fast Cash</span>
-					</li>
-				</cfcase>
-
-				<cfcase value="card">
-					<cfif not supplier>
-						<li class="payment_item material-ripple" data-method="partcard" data-id="#item.eaID#">
-							<span>Part Card</span>
-						</li>
-
-						<li class="payment_item material-ripple" data-method="fastcard" data-id="#item.eaID#">
-							<span>Fast Card</span>
-						</li>
-					</cfif>
-				</cfcase>
-
-				<cfcase value="account">
-					<cfif not supplier>
-						<li class="payment_item material-ripple" data-method="account" data-id="#item.eaID#">
-							<span>Account</span>
-						</li>
-					</cfif>
-				</cfcase>
-
-				<cfdefaultcase>
-					<cfif not supplier>
-						<li class="payment_item material-ripple" data-method="#LCase(item.eaCode)#" data-accid="#item.eaID#" data-id="#item.eaID#">
-							<span>#item.eaTitle#</span>
-						</li>
-					</cfif>
-				</cfdefaultcase>
-			</cfswitch>
-			<cfset counter++>
-		</cfloop>
-	</ul>
-	<cfif session.basket.header.balance neq 0 AND session.basket.info.type neq 'purch'>
-		<cfif cardOKCheck gt 0>
-			<script>sound('error')</script>
-			<div class="payWarning">
-				Cash only please!<br />
-				Spend another &pound;#DecimalFormat(cardOKCheck)# to pay on card.
-			</div>
+		<cfif waste>
+			<li class="payment_item material-ripple" data-method="waste" data-id="13">
+				<span>Waste Account</span>
+			</li>
 		<cfelse>
-			<div class="payOK">
-				Card payment acceptable.
-			</div>
+		
+			<cfloop array="#payments#" index="item">
+				<cfswitch expression="#LCase(item.eaTitle)#">
+					<cfcase value="cash">
+						<cfif not supplier>
+							<li class="payment_item material-ripple" data-method="partcash" data-id="#item.eaID#">
+								<span>Part Cash</span>
+							</li>
+						</cfif>
+	
+						<li class="payment_item material-ripple" data-method="fastcash" data-id="#item.eaID#">
+							<span>Fast Cash</span>
+						</li>
+					</cfcase>
+	
+					<cfcase value="card">
+						<cfif not supplier>
+							<li class="payment_item material-ripple" data-method="partcard" data-id="#item.eaID#">
+								<span>Part Card</span>
+							</li>
+	
+							<li class="payment_item material-ripple" data-method="fastcard" data-id="#item.eaID#">
+								<span>Fast Card</span>
+							</li>
+						</cfif>
+					</cfcase>
+	
+					<cfcase value="account">
+						<cfif not supplier>
+							<li class="payment_item material-ripple" data-method="account" data-id="#item.eaID#">
+								<span>Account</span>
+							</li>
+						</cfif>
+					</cfcase>
+	
+					<cfdefaultcase>
+						<cfif not supplier>
+							<li class="payment_item material-ripple" data-method="#LCase(item.eaCode)#" data-accid="#item.eaID#" data-id="#item.eaID#">
+								<span>#item.eaTitle#</span>
+							</li>
+						</cfif>
+					</cfdefaultcase>
+				</cfswitch>
+				<cfset counter++>
+			</cfloop>
+		</cfif>
+	</ul>
+	
+	<cfif !waste>
+		<div class="lottoCheck">
+			On this transaction...<br />
+			<cfif session.basket.total.scratchcard neq 0>
+				Check scratchcards total: &pound;#DecimalFormat(-session.basket.total.scratchcard)#<br />
+			<cfelse>
+				No scratch cards were sold.<br />
+			</cfif>
+			<cfif session.basket.total.lottery neq 0>
+				Check lottery tickets total: &pound;#DecimalFormat(-session.basket.total.lottery)#<br />
+			<cfelse>
+				No lottery tickets were sold.<br />
+			</cfif>
+			<cfif session.basket.total.sprize + session.basket.total.lprize neq 0>
+				Check prizes total: &pound;#DecimalFormat(session.basket.total.lprize + session.basket.total.sprize)#<br />
+			<cfelse>
+				No prizes were redeemed.<br />
+			</cfif>
+		</div>
+		
+		<cfif session.basket.header.balance gt 0 AND session.basket.info.type neq 'purch'>
+			<cfif notEnoughCredit gt 0 OR session.basket.header.balance LT session.till.prefs.mincard>
+				<script>sound('error')</script>
+				<div class="payWarning">
+					Cash only please!<br />
+					Spend another &pound;#DecimalFormat(notEnoughCredit)# to pay on card.
+				</div>
+			<cfelse>
+				<div class="payOK">
+					Card payment acceptable.
+				</div>
+			</cfif>
 		</cfif>
 	</cfif>
 </cfoutput>
