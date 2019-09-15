@@ -79,6 +79,34 @@
 							});
 						});
 						break;
+					case "waste":
+						$.confirmation("Are you sure you want to enter waste mode?", function() {
+							$.ajax({
+								type: "POST",
+								url: "ajax/switchMode.cfm",
+								data: {"mode": "wst"},
+								success: function(data) {
+									if (data.trim() == "true") {
+										sound('added');
+										$('.backoffice').hide();
+										$.loadBasket();
+										$.msgBox("You are now in waste mode!");
+										activeTab(obj);
+										$.ajax({
+											type: "GET",
+											url: "ajax/getStyleOveride.cfm",
+											success: function(data) {
+												$('.style_overide').html(data);
+											}
+										});
+									} else {
+										sound('error');
+										$.msgBox("You cannot switch modes during a transaction.");
+									}
+								}
+							});
+						});
+						break;
 					case "register":
 						$.ajax({
 							type: "POST",
@@ -219,6 +247,7 @@
 			<ul class="header_tabs">
 				<li <cfif session.basket.info.mode eq "reg">class="active"</cfif> data-page="register" data-mode="reg">Register</li>
 				<li <cfif session.basket.info.mode eq "rfd">class="active"</cfif> data-page="refund" data-mode="rfd">Refund</li>
+				<li <cfif session.basket.info.mode eq "wst">class="active"</cfif> data-page="waste" data-mode="wst">Waste</li>
 				<li <cfif session.till.info.staff>class="active"</cfif> data-page="staff" data-mode="staff">Staff</li>
 				<!---<li data-page="help">Help</li>--->
 			</ul>
