@@ -14,7 +14,8 @@
 					id = $(this).data("id"),
 					title = $(this).data("title"),
 					cashonly = $(this).data("cashonly"),
-					type = $(this).data("type");
+					type = $(this).data("type"),
+					tradeprice = $(this).data("tradeprice");
 					
 				if (price > 0) {
 					$.addToBasket({
@@ -33,7 +34,7 @@
 						prodid: 0,
 						account: 1,
 						itemclass: "MEDIA",
-						unitTrade: 0
+						unitTrade: tradeprice
 					});
 				} else {
 					$.virtualNumpad({
@@ -58,7 +59,8 @@
 	<div class="products">
 		<ul class="products_list">
 			<cfloop array="#publications#" index="item">
-				<li class="products_item scalebtn" data-id="#item.id#" data-title="#item.title#" data-price="#item.price#" data-tradePrice="#item.tradePrice#" data-type="publication" data-cashonly="0">
+				<li class="products_item scalebtn" data-id="#item.id#" data-title="#item.title#" data-price="#item.price#" 
+					data-tradePrice="#item.tradeprice#" data-type="publication" data-cashonly="0">
 					<span><strong>#item.title#</strong></span>
 					<span>
 						<cfif item.price gt 0>
