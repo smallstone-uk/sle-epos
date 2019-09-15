@@ -164,9 +164,9 @@
 				<th align="right">#DecimalFormat(-crtotal)#</th>
 				<th align="right">#countTotal#</th>
 			</tr>
-			<cfif abs(drtotal + crtotal) gt 0.001>
+			<cfif abs(drtotal + crtotal) gt 0.01>
 				<tr>
-					<th align="right" colspan="4">Error</th>
+					<th align="right" colspan="4">Difference</th>
 					<th></th>
 					<th align="right">#DecimalFormat(drtotal + crtotal)#</th>
 					<th></th>
@@ -246,16 +246,22 @@
 					<th align="right">#DecimalFormat(drtotal)#</th>
 					<th align="right">#DecimalFormat(crtotal)#</th>
 				</tr>
+				<cfif abs(drtotal - crtotal) gt 0.01>
 				<tr>
-					<th align="right" colspan="3">Transaction Error</th>
+					<th align="right" colspan="3">Difference</th>
 					<th align="right">#DecimalFormat(drtotal - crtotal)#</th>
 				</tr>
+				</cfif>
 			</table>
 		</div>
 		<div id="xreading7" class="totalPanel">
 			<div class="header">Account Totals</div>
 			<cfset cashTaken = GetTotal(epos.accounts,"cashindw") + GetTotal(epos.accounts,"supplier") + GetTotal(epos.accounts,"float") + val(QCashback.total)>
 			<table class="tableList" border="1">
+				<tr>
+					<th>Description</th>
+					<th width="70" align="right">Value</th>
+				</tr>
 				<tr>
 					<td>Healthy Start:</td>
 					<td align="right">#GetTotal(epos.accounts,"healthy")#</td>
@@ -274,7 +280,7 @@
 				</tr>
 				<tr>
 					<td>Card Payments:</td>
-					<td align="right">#DecimalFormat(epos.accounts.cardindw) - val(QCashback.total)#</td>
+					<td align="right">#DecimalFormat(epos.accounts.cardindw - val(QCashback.total))#</td>
 				</tr>
 				<tr>
 					<td>Cheque Account:</td>
@@ -335,20 +341,20 @@
 					</tr>
 				</cfloop>
 				<tr>
-					<td>Coin Total</td>
-					<td align="right">#DecimalFormat(coinTotal)#</td>
+					<th>Coin Total</th>
+					<th align="right">#DecimalFormat(coinTotal)#</th>
 				</tr>
 				<tr>
-					<td>Note Total</td>
-					<td align="right">#DecimalFormat(noteTotal)#</td>
+					<th>Note Total</th>
+					<th align="right">#DecimalFormat(noteTotal)#</th>
 				</tr>
 				<tr>
-					<td>Cash Total</td>
-					<td align="right">#DecimalFormat(noteTotal + coinTotal)#</td>
+					<th>Cash Total</th>
+					<th align="right">#DecimalFormat(noteTotal + coinTotal)#</th>
 				</tr>
 				<tr>
-					<td>Difference</td>
-					<td align="right">#DecimalFormat(noteTotal + coinTotal - GetTotal(epos.accounts,"cashindw"))#</td>
+					<th>Difference</th>
+					<th align="right">#DecimalFormat(noteTotal + coinTotal - GetTotal(epos.accounts,"cashindw"))#</th>
 				</tr>
 			</table>
 		</div>

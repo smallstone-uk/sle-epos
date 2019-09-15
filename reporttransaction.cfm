@@ -24,9 +24,12 @@
 	INNER JOIN tblemployee ON empID = ehEmployee
 	INNER JOIN tblProducts ON prodID=eiProdID
 	INNER JOIN tblproductcats ON prodCatID=pcatID
-	WHERE eiParent=#tranID#
+	WHERE eiParent=#val(tranID)#
 </cfquery>
-
+<cfif QTran.recordcount eq 0>
+	No record found.
+	<cfexit>
+</cfif>
 <body>
 	<table class="tableList">
 	<cfoutput>
@@ -84,7 +87,7 @@
 			<th>#DecimalFormat(totDR)#</th>
 			<th>#DecimalFormat(totCR)#</th>
 		</tr>
-		<cfif totDR neq totCR>
+		<cfif abs(totDR - totCR) gt 0.01>
 			<tr>
 				<th colspan="8" align="right">Error: </th>
 				<th>#DecimalFormat(totDR - totCR)#</th>
