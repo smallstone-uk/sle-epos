@@ -238,7 +238,7 @@
 	<cfif session.user.loggedin>
 		<div class="header_brand">
 			<span class="header_brand_title">
-				<strong>#application.company.name#</strong><br />
+				<strong>#application.company.name#</strong>
 				#LSDateFormat(Now(), "ddd dd mmm yyyy")#&nbsp;&nbsp;
 				<span class="header_time">#LSTimeFormat(Now(), "HH:mm")#</span>
 			</span>

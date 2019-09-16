@@ -11,7 +11,7 @@ component extends = "Framework.Model"
     public array function getPayableAccounts()
     {
         var result = [];
-        var accounts = this.where('eaMenu', 'Yes').get();
+        var accounts = this.where('eaMenu', 'Yes').orderBy("eaTitle", "asc").get();
 
         for (account in accounts) {
             var id = account.eaID;

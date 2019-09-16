@@ -72,38 +72,42 @@
 					case "partcard":
 						// sometimes shows values from previous transactions 	01/08/2017 (fixed)
 						var cashTotal = Number("0"); // session.basket.header.bcash included prize money as cashback so set to zero 
-						var creditTotal = Number("#-session.basket.header.bcash - session.basket.header.bcredit - session.basket.header.discdeal - session.basket.header.chqsales - session.basket.header.discStaff - session.basket.header.cashtaken - session.basket.header.healthy - session.basket.header.cpn#");
-					//	var creditTotal = Number("#session.basket.header.balance#");
-						$.virtualNumpad({
-							fields: [
-								{
-									name: "cashbackAmount",
-									label: "Cashback Amount",
-									value: nf(cashTotal, "str")
-								},
-								{
-									name: "saleAmount",
-									label: "Sale Amount",
-									value: nf(creditTotal, "str")
-								}
-							],
-							callback: function(data) {
-								$.addPayment({
-									account: "",
-									addtobasket: true,
-									btnsend: "Card",
-									cash: data.cashbackAmount,
-									cashonly: "",
-									credit: data.saleAmount,
-									prodid: "",
-									prodtitle: "",
-									qty: 1,
-									type: "",
-									vrate: "",
-									payID: id
-								}, callback);
-							},
-							cancel: cancel
+						$.ajax({
+						    type: 'GET',
+						    url: "#getUrl('ajax/getRemainingBalance.cfm')#",
+						    success: function(data) {
+						    	$.virtualNumpad({
+									fields: [
+										{
+											name: "cashbackAmount",
+											label: "Cashback Amount",
+											value: nf(cashTotal, "str")
+										},
+										{
+											name: "saleAmount",
+											label: "Sale Amount",
+											value: nf(data, "str")
+										}
+									],
+									callback: function(data) {
+										$.addPayment({
+											account: "",
+											addtobasket: true,
+											btnsend: "Card",
+											cash: data.cashbackAmount,
+											cashonly: "",
+											credit: data.saleAmount,
+											prodid: "",
+											prodtitle: "",
+											qty: 1,
+											type: "",
+											vrate: "",
+											payID: id
+										}, callback);
+									},
+									cancel: cancel
+								});
+						    }
 						});
 						break;
 					case "fastcard":
