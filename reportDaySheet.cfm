@@ -43,7 +43,7 @@
 	<cfset epos = ecfc.LoadEPOSTotals(parm)>
 	<!---<cfdump var="#epos#" label="epos" expand="true">--->
 	<cfquery name="QItemSum2" datasource="#parm.datasource#">
-		SELECT pcatGroup, prodCatID,prodEposCatID, eiClass, eiType, pgTitle, pgNomGroup, nomTitle, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
+		SELECT pcatGroup, prodCatID,prodEposCatID, eiClass,eiType, pgTitle,pgNomGroup, nomTitle, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
 		FROM `tblEPOS_Items`
 		INNER JOIN tblEPOS_Header ON ehID = eiParent
 		INNER JOIN tblProducts ON prodID = eiProdID
@@ -53,10 +53,10 @@
 		WHERE DATE( ehTimeStamp ) = '#form.reportDate#'
 		GROUP by pgNomGroup
 	</cfquery>
-	<!---<cfdump var="#QItemSum2#" label="QItemSum2" expand="false">--->
+	<cfdump var="#QItemSum2#" label="QItemSum2" expand="false">
 	
 	<cfquery name="QItemSummary" datasource="#parm.datasource#">
-		SELECT pcatGroup, prodCatID,prodEposCatID, eiClass, eiType, pgTitle, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
+		SELECT pcatGroup, prodTitle,prodID,prodCatID,prodEposCatID, eiClass, eiType, pgTitle, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
 		FROM `tblEPOS_Items`
 		INNER JOIN tblEPOS_Header ON ehID = eiParent
 		INNER JOIN tblProducts ON prodID = eiProdID
@@ -111,9 +111,10 @@
 		<table class="tableList" border="1">
 			<tr>
 				<th>Group</th>
-				<th>Title</th>
+				<th>Category</th>
 				<th>Class</th>
 				<th>Type</th>
+				<th>Title</th>
 				<th align="right">DR</th>
 				<th align="right">CR</th>
 				<th align="right">Count</th>
@@ -133,9 +134,10 @@
 				</cfif>
 				<tr>
 					<td>#pcatGroup#</td>
-					<td>#pgTitle#</td>
+					<td>#prodEposCatID#</td>
 					<td>#eiClass#</td>
 					<td>#eiType#</td>
+					<td>#pgTitle#</td>
 					<td align="right"><cfif gross gt 0>
 							#DecimalFormat(net)#
 						</cfif></td>
@@ -146,6 +148,7 @@
 				</tr>
 			</cfloop>
 			<tr>
+				<td></td>
 				<td></td>
 				<td>SALES VAT TOTAL</td>
 				<td></td>
@@ -159,7 +162,7 @@
 				<td></td>
 			</tr>
 			<tr>
-				<th align="right" colspan="4">Totals</th>
+				<th align="right" colspan="5">Totals</th>
 				<th align="right">#DecimalFormat(drtotal)#</th>
 				<th align="right">#DecimalFormat(-crtotal)#</th>
 				<th align="right">#countTotal#</th>
