@@ -163,7 +163,9 @@
 								condition: function (item) {
 									// item is the selected basket item
 									// console.log(item.data('discountable'));
-									return String(item.data('discountable')).toLowerCase() == 'yes'
+									// return String(item.data('discountable')).toLowerCase() == 'yes'
+									var discText = String(item.data('discountable')).toLowerCase();
+									return discText == 'yes' || discText == 'true';
 								},
 								action: function(a, e) {
 									if (typeof a.origprice !== 'undefined') {
