@@ -53,7 +53,7 @@
 		WHERE DATE( ehTimeStamp ) = '#form.reportDate#'
 		GROUP by pgNomGroup
 	</cfquery>
-	<cfdump var="#QItemSum2#" label="QItemSum2" expand="false">
+	<!---<cfdump var="#QItemSum2#" label="QItemSum2" expand="false">--->
 	
 	<cfquery name="QItemSummary" datasource="#parm.datasource#">
 		SELECT pcatGroup, prodTitle,prodID,prodCatID,prodEposCatID, eiClass, eiType, pgTitle, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
@@ -226,8 +226,13 @@
 					<cfset crValue = 0>
 					<cfset gross = net + vat>
 					<cfif Find(eiClass,"supp,pay")>
-						<cfset drValue = gross>
-						<cfset drTotal += gross>
+						<cfif eiType neq 'WASTEACC'>
+							<cfset drValue = gross>
+							<cfset drTotal += gross>
+						<cfelse>
+							<cfset crValue = gross>
+							<cfset crTotal -= gross>
+						</cfif>
 					<cfelseif Find(eiClass,"sale,item")>
 						<cfif eiType eq 'VOUCHER'>
 							<cfset drValue = gross>

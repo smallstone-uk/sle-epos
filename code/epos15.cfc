@@ -34,69 +34,72 @@
 	</cffunction>
 
 	<cffunction name="ClearBasket" access="public" returntype="void" hint="clear current transaction without affecting till totals.">
-		<cfif StructKeyExists(session,"basket")>
-			<cfset StructDelete(session,"basket",false)>
-		</cfif>
-		<cfset session.basket = {}>
-		<cfset session.basket.deals = {}>
-		<cfset session.basket.header = {}>
-		<cfset session.basket.total = {}>
-		<cfset session.basket.info = {}>
-      	<cfset session.basket.shopItems = {}>
-      	<cfset session.basket.mediaItems = {}>
-      	<cfset session.basket.magsItems = {}>
-      	<cfset session.basket.voucherItems = {}>
-		<cfset session.basket.trans = []>
-		<cfset session.basket.tranID = 0>
-		<cfset session.basket.lastItemAdded = {}>
-		<cfset LoadCatKeys()>
-
-		<cfset session.basket.info.mode = "reg">
-		<cfset session.basket.info.type = "SALE">
-		<cfset session.basket.info.bod = "Customer">
-		<cfset session.basket.info.ageCheck = false>
-		<cfset session.basket.info.checkout = false>
-		<cfset session.basket.info.service = 0>
-		<cfset session.basket.info.errMsg = "">
-		<cfset session.basket.info.itemcount = 0>
-		<cfset session.basket.info.totaldue = 0>
-		<cfset session.basket.info.canClose = false>
-		<cfset session.till.info.staff = false>
-
-		<cfset session.basket.payments = []>
-		<cfset session.basket.news = []>
-		<cfset session.basket.lottery = []>
-		<cfset session.basket.scratchcard = []>
-		<cfset session.basket.lprize = []>
-		<cfset session.basket.sprize = []>
-		<cfset session.basket.voucher = []>
-		<cfset session.basket.vatAnalysis = {}>
-
-		<cfset session.basket.header.bCash = 0>
-		<cfset session.basket.header.bCredit = 0>
-		<cfset session.basket.header.LPrize = 0>
-		<cfset session.basket.header.SPrize = 0>
-		<cfset session.basket.header.voucher = 0>
-		<cfset session.basket.header.cpn = 0>
-		<cfset session.basket.header.healthy = 0>
-
-		<cfset session.basket.header.cashtaken = 0>
-		<cfset session.basket.header.cardsales = 0>
-		<cfset session.basket.header.chqsales = 0>
-		<cfset session.basket.header.accsales = 0>
-		<cfset session.basket.header.WASTEACC = 0>
-		<cfset session.basket.header.discdeal = 0>
-		<cfset session.basket.header.discstaff = 0>
-		<cfset session.basket.header.cashback = 0>
-		<cfset session.basket.header.balance = 0>
-
-		<cfset session.basket.total.chqINDW = 0>
-		<cfset session.basket.total.accINDW = 0>
-		<cfset session.basket.total.WASTEACC = 0>
-		<cfset session.basket.total.balance = 0>
-		<cfset session.basket.total.discount = 0>
-		<cfset session.basket.total.discstaff = 0>
-		<cfset this.closeTranNow = false>
+		<cflock scope="session" timeout="60" type="exclusive" throwontimeout="yes">
+			<cfif StructKeyExists(session,"basket")>
+				<cfset StructDelete(session,"basket",false)>
+			</cfif>
+			<cfset session.basket = {}>
+			<cfset session.basket.deals = {}>
+			<cfset session.basket.header = {}>
+			<cfset session.basket.total = {}>
+			<cfset session.basket.info = {}>
+			<cfset session.basket.shopItems = {}>
+			<cfset session.basket.mediaItems = {}>
+			<cfset session.basket.magsItems = {}>
+			<cfset session.basket.voucherItems = {}>
+			<cfset session.basket.trans = []>
+			<cfset session.basket.tranID = 0>
+			<cfset session.basket.lastItemAdded = {}>
+			<cfset LoadCatKeys()>
+	
+			<cfset session.basket.info.mode = "reg">
+			<cfset session.basket.info.type = "SALE">
+			<cfset session.basket.info.bod = "Customer">
+			<cfset session.basket.info.ageCheck = false>
+			<cfset session.basket.info.checkout = false>
+			<cfset session.basket.info.service = 0>
+			<cfset session.basket.info.errMsg = "">
+			<cfset session.basket.info.itemcount = 0>
+			<cfset session.basket.info.totaldue = 0>
+			<cfset session.basket.info.canClose = false>
+			<cfset session.basket.info.busy = false>
+			<cfset session.till.info.staff = false>
+	
+			<cfset session.basket.payments = []>
+			<cfset session.basket.news = []>
+			<cfset session.basket.lottery = []>
+			<cfset session.basket.scratchcard = []>
+			<cfset session.basket.lprize = []>
+			<cfset session.basket.sprize = []>
+			<cfset session.basket.voucher = []>
+			<cfset session.basket.vatAnalysis = {}>
+	
+			<cfset session.basket.header.bCash = 0>
+			<cfset session.basket.header.bCredit = 0>
+			<cfset session.basket.header.LPrize = 0>
+			<cfset session.basket.header.SPrize = 0>
+			<cfset session.basket.header.voucher = 0>
+			<cfset session.basket.header.cpn = 0>
+			<cfset session.basket.header.healthy = 0>
+	
+			<cfset session.basket.header.cashtaken = 0>
+			<cfset session.basket.header.cardsales = 0>
+			<cfset session.basket.header.chqsales = 0>
+			<cfset session.basket.header.accsales = 0>
+			<cfset session.basket.header.WASTEACC = 0>
+			<cfset session.basket.header.discdeal = 0>
+			<cfset session.basket.header.discstaff = 0>
+			<cfset session.basket.header.cashback = 0>
+			<cfset session.basket.header.balance = 0>
+	
+			<cfset session.basket.total.chqINDW = 0>
+			<cfset session.basket.total.accINDW = 0>
+			<cfset session.basket.total.WASTEACC = 0>
+			<cfset session.basket.total.balance = 0>
+			<cfset session.basket.total.discount = 0>
+			<cfset session.basket.total.discstaff = 0>
+			<cfset this.closeTranNow = false>
+		</cflock>
 	</cffunction>
 
 	<cffunction name="ProcessDeals" access="public" returntype="void">
@@ -165,6 +168,7 @@
 								<cfset loc.prodID = ListLast(loc.priceKey," ")>
 								<cfset loc.dealRec.groupRetail += loc.price>
 								<cfset loc.dealRec.remQty = loc.count MOD loc.dealData.edQty>
+
 								<cfif loc.dealRec.remQty eq 0>
 									<cfset loc.totalGross = 0>
 									<cfset loc.dealRec.lastQual = loc.count>
@@ -188,10 +192,13 @@
 										<cfset loc.tran.prop = int((loc.tran.price / loc.dealRec.groupRetail) * 1000) / 1000>
 										<cfif loc.i gte loc.count>
 											<cfset loc.tran.prop = 1 - loc.totProp> <!--- make total of proportions add up to 1.00 --->
+											<cfset loc.tran.gross = loc.dealData.edAmount - loc.totalGross>
+										<cfelse>
+											<cfset loc.tran.gross = Round(loc.dealData.edAmount * loc.tran.prop * 100) / 100>										
 										</cfif>
+										<cfset loc.totalGross += loc.tran.gross>
 										<cfset loc.totProp += loc.tran.prop>
-										<cfset loc.tran.gross = Round(loc.dealData.edAmount * loc.tran.prop * 100) / 100>
-										<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+										<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
 										<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
 
 										<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
@@ -226,8 +233,8 @@
 									<cfset loc.tran.itemClass = loc.data.itemClass>
 									<cfset loc.tran.unitTrade = loc.data.unitTrade>
 									<cfset loc.tran.price = loc.data.unitPrice>
-									<cfset loc.tran.gross = Round((loc.tran.price - loc.itemDiscount) * 100) / 100>
-									<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+									<cfset loc.tran.gross = int((loc.tran.price - loc.itemDiscount) * 100) / 100>
+									<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
 									<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
 
 									<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
@@ -594,6 +601,8 @@
 		<cfcatch type="any">
 			<cfdump var="#cfcatch#" label="CheckDeals" expand="yes" format="html"
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+			<cfdump var="#loc#" label="CheckDeals" expand="yes" format="html"
+				output="#application.site.dir_logs#epos\errdeal-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
 	</cffunction>
@@ -702,7 +711,8 @@
 	<cffunction name="AddItem" access="public" returntype="struct">
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
-
+		
+		<cflock scope="session" timeout="60" type="exclusive" throwontimeout="yes">
 		<!--- Store this item as the last added --->
 		<!--- Used in the customer display --->
 		<cfset session.basket.lastItemAdded = args>
@@ -730,16 +740,32 @@
 
 		<cfset loc.result = {}>
 		<cfset loc.result.err = "">
+		<cfif session.basket.info.busy>
+			<cfset loc.result.err = "System busy...">
+			<cfset session.basket.info.errMsg = loc.result.err>
+			<cfreturn loc.result>
+			<cfexit>
+		</cfif>
+		<cfset session.basket.info.busy = false>	<!--- was true --->
+		
+<!---<cfdump var="#args#" label="AddItem" expand="yes" format="html" 
+	output="#application.site.dir_logs#epos\slow-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+
+<cfdump var="#session#" label="AddItem" expand="yes" format="html" 
+	output="#application.site.dir_logs#epos\slow-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+--->		
 		<cftry>
 			<cfif session.user.id eq 0>
 				<cfset session.basket.info.errMsg = "Session timed out. Please log-in to the till before serving.">
 				<cfset loc.result.err = session.basket.info.errMsg>
+				<cfset session.basket.info.busy = false>
 				<cfreturn loc.result>
 			</cfif>
 			<cfif session.basket.info.checkout>
 				<cfset session.basket.info.errMsg = "Are you sure you want to add more items to this basket?.">
 				<cfset loc.result.err = session.basket.info.errMsg>
 				<cfset session.basket.info.checkout = false>
+				<cfset session.basket.info.busy = false>
 				<cfreturn loc.result>
 			</cfif>
 			<cfif val(args.form.prodSign) eq 0>
@@ -747,6 +773,7 @@
 				<cfset session.basket.info.errMsg = "Invalid product information supplied to AddItem function.">
 				<cfdump var="#args#" label="Invalid AddItem" expand="yes" format="html"
 					output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+				<cfset session.basket.info.busy = false>
 				<cfreturn loc.result>
 			</cfif>
 			<cfset session.till.isTranOpen = true>
@@ -1055,13 +1082,17 @@
 					</cfdefaultcase>
 				</cfswitch>
 			</cfif>
-
 		<cfcatch type="any">
 			<cfset loc.result.err = cfcatch.Message>
 			<cfdump var="#cfcatch#" label="" expand="yes" format="html"
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
+		<cfset session.basket.info.busy = false>
+<!---<cfdump var="#session.basket#" label="AddItem" expand="yes" format="html" 
+	output="#application.site.dir_logs#epos\slow-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+--->
+		</cflock>
 		<cfreturn loc.result>
 	</cffunction>
 
@@ -1081,6 +1112,13 @@
 		<cfset loc.addTran = false>
 
 		<cftry>
+			<cfif session.basket.info.busy>
+				<cfset loc.result.err = "System busy...">
+				<cfreturn loc.result>
+				<cfexit>
+			</cfif>
+			
+			<cfset session.basket.info.busy = false>	<!--- was true --->
 			<cfset session.till.isTranOpen = true>
 			<cfset loc.regMode = (2 * int(session.basket.info.mode eq "reg")) - 1>	<!--- modes: reg = 1 refund = -1 --->
 			<cfset loc.tranType = 1>
@@ -1338,11 +1376,14 @@
 				<cfset loc.tran.vat = 0>
 				<cfset ArrayAppend(session.basket.trans,loc.tran)>
 			</cfif>
+
+			
 		<cfcatch type="any">
 			<cfdump var="#cfcatch#" label="AddPayment" expand="yes" format="html"
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
+		<cfset session.basket.info.busy = false>
 		<cfreturn loc.result>
 	</cffunction>
 
@@ -1364,6 +1405,8 @@
 		<cfargument name="type" type="string" required="no" default="html">
 		<cfset var loc = {}>
 		<cftry>
+			<!---<cfif session.basket.info.busy><cfexit></cfif>--->
+			<cfset session.basket.info.busy = false>	<!--- was true --->
 			<cfset loc = BuildBasket()>
 			<cfset loc.thisBasket = (arguments.type eq "html") ? session.basket : session.till.prevtran>
 			<cfset loc.totalRetail = 0>
@@ -1859,18 +1902,20 @@
 					</cfif>
 				</cfif>
 			</cfoutput>
+			
 		<cfcatch type="any">
 			<cfdump var="#cfcatch#" label="" expand="yes" format="html"
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
+		<cfset session.basket.info.busy = false>
 	</cffunction>
 
 	<cffunction name="BuildBasket" access="public" returntype="struct">
 		<cfset var loc = {}>
 
 		<cftry>
-			<cflock scope="session" timeout="60" type="exclusive">	<!--- was 15sec --->
+			<cflock scope="session" timeout="60" type="exclusive" throwontimeout="yes">	<!--- was 15sec --->
 				<cfset session.basket.vatAnalysis = {}>
 				<cfoutput>
 					<cfset loc.basketCount = 0>
@@ -2010,6 +2055,8 @@
 		<cfcatch type="any">
 			<cfdump var="#cfcatch#" label="BuildBasket" expand="yes" format="html"
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+			<cfdump var="#loc#" label="BuildBasket" expand="yes" format="html"
+				output="#application.site.dir_logs#epos\errbuild-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
 		<cfreturn loc>

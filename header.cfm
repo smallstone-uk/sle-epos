@@ -8,17 +8,38 @@
 <cfoutput>
 	<script>
 		$(document).ready(function(e) {
+			
 			$('.header_exit').click(function(event) {
 				$.confirmation("Are you sure you want to exit to the start screen?", function() {
-					$('.content').fadeOut(500, function() {
-						$('.content').html("");
-					});
+					$.ajax({
+						type: "POST",
+						url: "ajax/exitToHome.cfm",
+						data: {},
+						success: function(data) {
+							if (data.trim() == "false") {
+								sound('error');
+								$.msgBox("You cannot exit during a transaction. Please finish the transaction first.");
+							} else {
+								$('.content').fadeOut(500, function() {
+									$('.content').html("");
+								});
+			
+								$.get("ajax/loadHomeScreen.cfm", function(data) {
+									$('.home_screen_content').html(data);
+								});
+							}
+						}
 
-					$.get("ajax/loadHomeScreen.cfm", function(data) {
-						$('.home_screen_content').html(data);
+//			$('.header_exit').click(function(event) {
+//				$.confirmation("Are you sure you want to exit to the start screen?", function() {
+//					$('.content').fadeOut(500, function() {
+//						$('.content').html("");
+//					});
+//
+//					$.get("ajax/loadHomeScreen.cfm", function(data) {
+//						$('.home_screen_content').html(data);
 					});
 				});
-
 				event.preventDefault();
 			});
 			
