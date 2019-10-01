@@ -20,7 +20,8 @@
 	<cfquery name="QItemAnalysis" datasource="#parm.datasource#">
 		SELECT prodID,prodCatID,prodEposCatID,prodTitle, siUnitSize, eiClass,eiType,eiNet,eiVAT, 
 			ehID, ehTimeStamp, DATE(ehTimeStamp) AS yymmdd, HOUR(ehTimeStamp) AS hh, COUNT(*) AS recCount,
-            (SELECT pcatTitle FROM tblProductCats WHERE pcatID = prodCatID) AS catTitle
+            (SELECT pcatTitle FROM tblProductCats WHERE pcatID = prodCatID) AS catTitle,
+            (SELECT pgTitle FROM tblProductGroups INNER JOIN tblProductCats on pcatGroup=pgID WHERE pcatID = prodCatID) AS groupTitle
 		FROM tblEPOS_Items
 		INNER JOIN tblEPOS_Header ON ehID = eiParent
 		INNER JOIN tblProducts ON prodID = eiProdID
@@ -33,7 +34,7 @@
 		WHERE DATE(ehTimeStamp) >= '#parm.reportDateFrom#'
 		AND DATE(ehTimeStamp) <= '#parm.reportDateTo#'
 		AND eiClass = 'sale'
-        GROUP BY catTitle, prodTitle, siUnitSize, hh
+        GROUP BY groupTitle, catTitle, prodTitle, siUnitSize, hh
 	</cfquery>
 </cfif>
 <body>
@@ -63,11 +64,35 @@
 	<cfif StructKeyExists(variables,"QItemAnalysis")>
 		<cfoutput>
 			<cfset DayRange = reportDateTo - reportDateFrom + 1>
+			<cfset currProd = 0>
+			<cfset totCount = 0>
+			<cfset products = {}>
+			<cfset productArray = []>
+			<cfset block = {}>
+			<cfset totals = {}>
+			<cfloop query="QItemAnalysis">
+				<cfset block = {}>
+				<cfset block.groupTitle = groupTitle>
+				<cfset block.catTitle = catTitle>
+				<cfset block.prodTitle = prodTitle>
+				<cfset block.siUnitSize = siUnitSize>
+				
+				<cfif !StructKeyExists(products,prodID)>
+					<cfset StructInsert(products,prodID,block)>
+					<cfset ArrayAppend(productArray,prodID)>
+				</cfif>
+				<cfset theProduct = StructFind(products,prodID)>
+				<cfif !StructKeyExists(theProduct,hh)>
+					<cfset StructInsert(theProduct,hh,recCount)>
+				</cfif>
+			</cfloop>
+			
 			<table class="tableList" border="1">
 				<tr>
 					<th colspan="28">From: #DateFormat(reportDateFrom,"ddd dd-mmm-yy")# To: #DateFormat(reportDateTo,"ddd dd-mmm-yy")# #DayRange# Days</th>
 				</tr>
 				<tr>
+					<th>Group</th>
 					<th>Category</th>
 					<th>Product</th>
 					<th>Size</th>
@@ -76,42 +101,37 @@
 					</cfloop>
 					<th>Total</th>
 				</tr>
-				<cfset currProd = 0>
-				<cfset totCount = 0>
-				<cfset block = {}>
-				<cfset totals = {}>
-				<cfloop query="QItemAnalysis">
-					<cfif currProd neq 0 AND currProd neq prodID>
-						<tr>
-							<td>#catTitle#</td>
-							<td>#prodTitle#</td>
-							<td>#siUnitSize#</td>
-							<cfloop from="#startHour#" to="#endHour#" index="i">
-								<cfif StructKeyExists(block,i)>
-									<cfset theValue = StructFind(block,i)>
+				
+				<cfloop array="#productArray#" index="prodrec">
+					<cfset theProduct = StructFind(products,prodrec)>
+					<tr>
+						<td>#theProduct.groupTitle#</td>
+						<td>#theProduct.catTitle#</td>
+						<td>#theProduct.prodTitle#</td>
+						<td>#theProduct.siUnitSize#</td>
+						<cfset lineTotal = 0>
+						<cfloop from="#startHour#" to="#endHour#" index="i">
+							<cfif StructKeyExists(theProduct,i)>
+								<cfset theValue = StructFind(theProduct,i)>
+								<cfset lineTotal += theValue>
 									<cfif StructKeyExists(totals,i)>
 										<cfset oldValue = StructFind(totals,i)>
 										<cfset StructUpdate(totals,i,oldValue + theValue)>
 									<cfelse>
 										<cfset StructInsert(totals,i,theValue)>
 									</cfif>
-									<td align="center">#theValue#</td>
-								<cfelse>
-									<td></td>
-								</cfif>
-							</cfloop>
-							<td align="center">#totCount#</td>
-						</tr>
-						<cfset block = {}>
-						<cfset totCount = 0>
-					</cfif>
-					<cfset currProd = prodID>
-					<cfset totCount += recCount>
-					<cfset StructInsert(block,hh,recCount)>
+								<td align="center">#theValue#</td>
+							<cfelse>
+								<td></td>
+							</cfif>
+						</cfloop>
+						<td align="center">#lineTotal#</td>
+					</tr>
 				</cfloop>
+
 				<cfset grandTotal = 0>
 				<tr>
-					<th colspan="3">Totals</th>
+					<th colspan="4">Totals</th>
 					<cfloop from="#startHour#" to="#endHour#" index="i">
 						<cfif StructKeyExists(totals,i)>
 							<cfset hourTotal = StructFind(totals,i)>
@@ -123,6 +143,7 @@
 					</cfloop>
 					<th>#grandTotal#</th>
 				</tr>
+
 			</table>
 		</cfoutput>
 	</cfif>
