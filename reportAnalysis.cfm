@@ -14,9 +14,11 @@
 <cfset parm = {}>
 <cfset parm.datasource = application.site.datasource1>
 <cfset dates = ecfc.GetDates(parm)>
-<cfif StructKeyExists(form,"reportDateFrom")>
+
+<cfif StructKeyExists(form,"reportDateFrom") AND len(form.reportDateFrom) gt 0>
 	<cfset parm.reportDateFrom = form.reportDateFrom>
 	<cfset parm.reportDateTo = form.reportDateTo>
+	<cfif len(form.reportDateTo) IS 0><cfset parm.reportDateTo = form.reportDateFrom></cfif>
 	<cfquery name="QItemAnalysis" datasource="#parm.datasource#">
 		SELECT prodID,prodCatID,prodEposCatID,prodTitle, siUnitSize, eiClass,eiType,eiNet,eiVAT, 
 			ehID, ehTimeStamp, DATE(ehTimeStamp) AS yymmdd, HOUR(ehTimeStamp) AS hh, COUNT(*) AS recCount,
@@ -36,6 +38,8 @@
 		AND eiClass = 'sale'
         GROUP BY groupTitle, catTitle, prodTitle, siUnitSize, hh
 	</cfquery>
+<cfelse>
+	<p>Please select start date.</p>
 </cfif>
 <body>
 	<div>
@@ -63,7 +67,7 @@
 	</div>
 	<cfif StructKeyExists(variables,"QItemAnalysis")>
 		<cfoutput>
-			<cfset DayRange = reportDateTo - reportDateFrom + 1>
+			<cfset DayRange = parm.reportDateTo - parm.reportDateFrom + 1>
 			<cfset currProd = 0>
 			<cfset totCount = 0>
 			<cfset products = {}>
@@ -89,7 +93,7 @@
 			
 			<table class="tableList" border="1">
 				<tr>
-					<th colspan="29">From: #DateFormat(reportDateFrom,"ddd dd-mmm-yy")# To: #DateFormat(reportDateTo,"ddd dd-mmm-yy")# #DayRange# Days</th>
+					<th colspan="29">From: #DateFormat(parm.reportDateFrom,"ddd dd-mmm-yy")# To: #DateFormat(parm.reportDateTo,"ddd dd-mmm-yy")# #DayRange# Days</th>
 				</tr>
 				<tr>
 					<th>Group</th>
