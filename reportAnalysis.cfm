@@ -89,7 +89,7 @@
 			
 			<table class="tableList" border="1">
 				<tr>
-					<th colspan="28">From: #DateFormat(reportDateFrom,"ddd dd-mmm-yy")# To: #DateFormat(reportDateTo,"ddd dd-mmm-yy")# #DayRange# Days</th>
+					<th colspan="29">From: #DateFormat(reportDateFrom,"ddd dd-mmm-yy")# To: #DateFormat(reportDateTo,"ddd dd-mmm-yy")# #DayRange# Days</th>
 				</tr>
 				<tr>
 					<th>Group</th>
@@ -100,6 +100,7 @@
 						<th width="20" align="center">#i#</th>
 					</cfloop>
 					<th>Total</th>
+					<th>Avg/<br />Week</th>
 				</tr>
 				
 				<cfloop array="#productArray#" index="prodrec">
@@ -125,7 +126,10 @@
 								<td></td>
 							</cfif>
 						</cfloop>
+						<cfset avg = (lineTotal / DayRange) * 7>
+						<cfif avg lt 1><cfset avgText = "&lt;1"><cfelse><cfset avgText = DecimalFormat(avg)></cfif>
 						<td align="center">#lineTotal#</td>
+						<td>#avgText#</td>
 					</tr>
 				</cfloop>
 
@@ -142,6 +146,7 @@
 						</cfif>
 					</cfloop>
 					<th>#grandTotal#</th>
+					<th></th>
 				</tr>
 
 			</table>
