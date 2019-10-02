@@ -46,14 +46,14 @@
 				<select name="reportDateFrom" id="reportDateFrom">
 					<option value="">Select date...</option>
 					<cfloop array="#dates.recs#" index="item">
-					<option value="#item.value#" <cfif reportDateFrom eq item.value> selected</cfif>>#item.title#</option>
+					<option value="#item.value#" <cfif reportDateFrom eq item.value> selected</cfif>>#DateFormat(item.value,'ddd dd-mmm-yy')#</option>
 					</cfloop>
 				</select>
 				Report To:
 				<select name="reportDateTo" id="reportDateTo">
 					<option value="">Select date...</option>
 					<cfloop array="#dates.recs#" index="item">
-					<option value="#item.value#" <cfif reportDateTo eq item.value> selected</cfif>>#item.title#</option>
+					<option value="#item.value#" <cfif reportDateTo eq item.value> selected</cfif>>#DateFormat(item.value,'ddd dd-mmm-yy')#</option>
 					</cfloop>
 				</select>
 				<input type="submit" name="btnGo" value="Go">
@@ -126,7 +126,8 @@
 								<td></td>
 							</cfif>
 						</cfloop>
-						<cfset avg = (lineTotal / DayRange) * 7>
+						<cfif DayRange gt 6><cfset perWeek = 7><cfelse><cfset perWeek = 1></cfif>
+						<cfset avg = (lineTotal / DayRange) * perWeek>
 						<cfif avg lt 1><cfset avgText = "&lt;1"><cfelse><cfset avgText = DecimalFormat(avg)></cfif>
 						<td align="center">#lineTotal#</td>
 						<td>#avgText#</td>
