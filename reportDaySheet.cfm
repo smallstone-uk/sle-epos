@@ -389,11 +389,9 @@
 						<cfset value = 0>
 						<cfset start = StructFind(today,gStart)>
 						<cfset end = StructFind(today,gEnd)>
-						<cfif end gt 0>
-							<cfif end lt start><cfset addPack = packQtys[game]></cfif>
-							<cfset sold = val(end) + addPack - val(start)>
-							<cfset value = sold * gameValues[game]>
-						</cfif>
+						<cfif end lt start><cfset addPack = packQtys[game]></cfif>
+						<cfset sold = val(end) + addPack - val(start)>
+						<cfset value = sold * gameValues[game]>
 						<cfset totalSC += value>
 						<cfif end eq 0><cfset end = ""></cfif>
 						<cfif sold eq 0><cfset sold = ""></cfif>
