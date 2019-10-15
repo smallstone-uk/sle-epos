@@ -63,6 +63,7 @@
 			<cfset session.basket.info.totaldue = 0>
 			<cfset session.basket.info.canClose = false>
 			<cfset session.basket.info.busy = false>
+			<cfset session.basket.info.showTotal = false>
 			<cfset session.till.info.staff = false>
 	
 			<cfset session.basket.payments = []>
@@ -233,7 +234,9 @@
 									<cfset loc.tran.itemClass = loc.data.itemClass>
 									<cfset loc.tran.unitTrade = loc.data.unitTrade>
 									<cfset loc.tran.price = loc.data.unitPrice>
-									<cfset loc.tran.gross = int((loc.tran.price - loc.itemDiscount) * 100) / 100>
+									<cfif loc.itemDiscount neq 0>
+										<cfset loc.tran.gross = int((loc.tran.price - loc.itemDiscount) * 100) / 100>
+									<cfelse><cfset loc.tran.gross = loc.tran.price></cfif>
 									<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
 									<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
 
