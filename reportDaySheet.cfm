@@ -167,7 +167,7 @@
 				<th align="right">#DecimalFormat(-crtotal)#</th>
 				<th align="right">#countTotal#</th>
 			</tr>
-			<cfif abs(drtotal + crtotal) gt 0.01>
+			<cfif abs(drtotal + crtotal) gt 0>
 				<tr>
 					<th align="right" colspan="4">Difference</th>
 					<th></th>
