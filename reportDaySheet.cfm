@@ -380,7 +380,7 @@
 					</tr>
 					<cfset totalSC = 0>
 					<cfset gameValues = [5,5,3,3,2,2,1,1]>
-					<cfset packQtys = [50,50,60,60,90,90,180,180]>
+					<cfset packQtys = [50,50,60,60,120,120,180,180]>
 					<cfloop from="1" to="8" index="game">
 						<cfset gStart = "dhsc_g#game#_start">
 						<cfset gEnd = "dhsc_g#game#_end">
