@@ -1227,7 +1227,7 @@
 					<cfif args.data.cash + args.data.credit is 0>
 						<cfset args.data.credit = session.basket.total.balance>
 						<cfset args.data.cash = 0>
-					<cfelseif args.data.cash gt 0>
+					<cfelseif args.data.cash neq 0>
 						<cfset args.data.credit = args.data.cash>
 						<cfset args.data.cash = 0>
 					</cfif>
