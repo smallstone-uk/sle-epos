@@ -4,11 +4,12 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>Report Analysis</title>
 	<link rel="stylesheet" type="text/css" href="css/tillshell.css">
-	<script src="ajax/js/jquery-1.11.1.min.js"></script>
+	<script src="js/jquery-1.11.1.min.js"></script>
 </head>
 <cfobject component="#application.site.codePath#" name="ecfc">
 <cfparam name="reportDateFrom" default="#Now()#">
 <cfparam name="reportDateTo" default="#Now()#">
+<cfparam name="reportMode" default="">
 <cfset startHour = 6>
 <cfset endHour = 19>
 <cfset parm = {}>
@@ -36,6 +37,7 @@
 		WHERE DATE(ehTimeStamp) >= '#parm.reportDateFrom#'
 		AND DATE(ehTimeStamp) <= '#parm.reportDateTo#'
 		AND eiClass = 'sale'
+		<cfif len(reportMode)>AND ehMode = '#reportMode#'</cfif>
         GROUP BY groupTitle, catTitle, prodTitle, siUnitSize, hh
 	</cfquery>
 <cfelse>
@@ -59,6 +61,11 @@
 					<cfloop array="#dates.recs#" index="item">
 					<option value="#item.value#" <cfif reportDateTo eq item.value> selected</cfif>>#DateFormat(item.value,'ddd dd-mmm-yy')#</option>
 					</cfloop>
+				</select>
+				<select name="reportMode" id="reportMode">
+					<option value="reg">Reg Mode</option>
+					<option value="rfd">Refund Mode</option>
+					<option value="wst">Waste Mode</option>
 				</select>
 				<input type="submit" name="btnGo" value="Go">
 			</form>
@@ -112,7 +119,7 @@
 					<tr>
 						<td>#theProduct.groupTitle#</td>
 						<td>#theProduct.catTitle#</td>
-						<td>#theProduct.prodTitle#</td>
+						<td><a href="http://tweb.sle-admin.co.uk/productStock6.cfm?product=#prodrec#" target="_blank">#theProduct.prodTitle#</a></td>
 						<td>#theProduct.siUnitSize#</td>
 						<cfset lineTotal = 0>
 						<cfloop from="#startHour#" to="#endHour#" index="i">

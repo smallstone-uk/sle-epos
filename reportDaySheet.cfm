@@ -107,7 +107,7 @@
 </div>
 <cfif StructKeyExists(form,"reportDate")>
 	<div id="xreading3" class="totalPanel">
-		<div class="header">Shop Daysheet Summary</div>
+		<div class="header">Shop Daysheet Summary &nbsp; &nbsp; #LSDateFormat(form.reportDate,'ddd dd-mmm-yyyy')# &nbsp; &nbsp; #LSTimeFormat(Now())#</div>
 		<table class="tableList" border="1">
 			<tr>
 				<th>Group</th>
