@@ -166,7 +166,7 @@ header a {text-decoration: none;color: inherit;font-size: 17px;}
 
 .close-button {font-size: 1.5em;width: 1em;height: 1em;position: absolute;top: .75em;right: .75em;cursor: pointer;line-height: .8em;text-align: center;background-color: #000 !important;z-index: 9999;}
 
-.tile {float: left;margin: 0 auto 1%;color: white;font-size: 1.3em;text-align: center;height: 6em;font-weight: 300;overflow: hidden;cursor: pointer;position: relative;background-color: #fff;color: #333;position: relative;-webkit-transition: background-color 0.2s ease-out;transition: background-color 0.2s ease-out;margin: 1% 1% 0 1%;}
+.tile {float: left;margin: 0 auto 1%;color: white;font-size: 1.3em;text-align: center;height: 5em;font-weight: 300;overflow: hidden;cursor: pointer;position: relative;background-color: #fff;color: #333;position: relative;-webkit-transition: background-color 0.2s ease-out;transition: background-color 0.2s ease-out;margin: 1% 1% 0 1%;}
 
 .tile-2xbig {height: 16.15em;width: 100%;}
 
