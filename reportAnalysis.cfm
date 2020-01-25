@@ -21,7 +21,7 @@
 	<cfset parm.reportDateTo = form.reportDateTo>
 	<cfif len(form.reportDateTo) IS 0><cfset parm.reportDateTo = form.reportDateFrom></cfif>
 	<cfquery name="QItemAnalysis" datasource="#parm.datasource#">
-		SELECT prodID,prodCatID,prodEposCatID,prodTitle, siUnitSize, eiClass,eiType,eiNet,eiVAT, 
+		SELECT prodID,prodCatID,prodEposCatID,prodTitle,prodOurPrice, siUnitSize,siOurPrice, eiClass,eiType,eiNet,eiVAT,
 			ehID, ehTimeStamp, DATE(ehTimeStamp) AS yymmdd, HOUR(ehTimeStamp) AS hh, COUNT(*) AS recCount,
             (SELECT pcatTitle FROM tblProductCats WHERE pcatID = prodCatID) AS catTitle,
             (SELECT pgTitle FROM tblProductGroups INNER JOIN tblProductCats on pcatGroup=pgID WHERE pcatID = prodCatID) AS groupTitle
@@ -36,13 +36,14 @@
 						AND siStatus NOT IN ("returned","inactive") )
 		WHERE DATE(ehTimeStamp) >= '#parm.reportDateFrom#'
 		AND DATE(ehTimeStamp) <= '#parm.reportDateTo#'
-		AND eiClass = 'sale'
-		<cfif len(reportMode)>AND ehMode = '#reportMode#'</cfif>
+		AND eiClass LIKE 'sale'
+		<cfif len(reportMode)>AND ehMode LIKE '#reportMode#'</cfif>
         GROUP BY groupTitle, catTitle, prodTitle, siUnitSize, hh
 	</cfquery>
 <cfelse>
 	<p>Please select start date.</p>
 </cfif>
+
 <body>
 	<div>
 		<cfoutput>
@@ -63,9 +64,9 @@
 					</cfloop>
 				</select>
 				<select name="reportMode" id="reportMode">
-					<option value="reg">Reg Mode</option>
-					<option value="rfd">Refund Mode</option>
-					<option value="wst">Waste Mode</option>
+					<option value="reg" <cfif reportMode eq "reg"> selected</cfif>>Reg Mode</option>
+					<option value="rfd" <cfif reportMode eq "rfd"> selected</cfif>>Refund Mode</option>
+					<option value="wst" <cfif reportMode eq "wst"> selected</cfif>>Waste Mode</option>
 				</select>
 				<input type="submit" name="btnGo" value="Go">
 			</form>
@@ -77,6 +78,7 @@
 			<cfset DayRange = parm.reportDateTo - parm.reportDateFrom + 1>
 			<cfset currProd = 0>
 			<cfset totCount = 0>
+			<cfset totValue = 0>
 			<cfset products = {}>
 			<cfset productArray = []>
 			<cfset block = {}>
@@ -87,6 +89,7 @@
 				<cfset block.catTitle = catTitle>
 				<cfset block.prodTitle = prodTitle>
 				<cfset block.siUnitSize = siUnitSize>
+				<cfset block.OurPrice = siOurPrice neq 0 ? siOurPrice : prodOurPrice>
 				
 				<cfif !StructKeyExists(products,prodID)>
 					<cfset StructInsert(products,prodID,block)>
@@ -107,11 +110,13 @@
 					<th>Category</th>
 					<th>Product</th>
 					<th>Size</th>
+					<th>Price</th>
 					<cfloop from="#startHour#" to="#endHour#" index="i">
 						<th width="20" align="center">#i#</th>
 					</cfloop>
 					<th>Total</th>
 					<th>Avg/<br />Week</th>
+					<th>Value</th>
 				</tr>
 				
 				<cfloop array="#productArray#" index="prodrec">
@@ -121,17 +126,18 @@
 						<td>#theProduct.catTitle#</td>
 						<td><a href="http://tweb.sle-admin.co.uk/productStock6.cfm?product=#prodrec#" target="_blank">#theProduct.prodTitle#</a></td>
 						<td>#theProduct.siUnitSize#</td>
+						<td>&pound;#theProduct.OurPrice#</td>
 						<cfset lineTotal = 0>
 						<cfloop from="#startHour#" to="#endHour#" index="i">
 							<cfif StructKeyExists(theProduct,i)>
 								<cfset theValue = StructFind(theProduct,i)>
 								<cfset lineTotal += theValue>
-									<cfif StructKeyExists(totals,i)>
-										<cfset oldValue = StructFind(totals,i)>
-										<cfset StructUpdate(totals,i,oldValue + theValue)>
-									<cfelse>
-										<cfset StructInsert(totals,i,theValue)>
-									</cfif>
+								<cfif StructKeyExists(totals,i)>
+									<cfset oldValue = StructFind(totals,i)>
+									<cfset StructUpdate(totals,i,oldValue + theValue)>
+								<cfelse>
+									<cfset StructInsert(totals,i,theValue)>
+								</cfif>
 								<td align="center">#theValue#</td>
 							<cfelse>
 								<td></td>
@@ -140,14 +146,17 @@
 						<cfif DayRange gt 6><cfset perWeek = 7><cfelse><cfset perWeek = 1></cfif>
 						<cfset avg = (lineTotal / DayRange) * perWeek>
 						<cfif avg lt 1><cfset avgText = "&lt;1"><cfelse><cfset avgText = DecimalFormat(avg)></cfif>
+						<cfset lineValue = lineTotal * val(theProduct.OurPrice)>
+						<cfset totValue += lineValue>
 						<td align="center">#lineTotal#</td>
 						<td>#avgText#</td>
+						<td align="right">&pound;#DecimalFormat(lineValue)#</td>
 					</tr>
 				</cfloop>
 
 				<cfset grandTotal = 0>
 				<tr>
-					<th colspan="4">Totals</th>
+					<th colspan="5">Totals</th>
 					<cfloop from="#startHour#" to="#endHour#" index="i">
 						<cfif StructKeyExists(totals,i)>
 							<cfset hourTotal = StructFind(totals,i)>
@@ -159,6 +168,7 @@
 					</cfloop>
 					<th>#grandTotal#</th>
 					<th></th>
+					<th>&pound;#DecimalFormat(totValue)#</th>
 				</tr>
 
 			</table>
