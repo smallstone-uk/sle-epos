@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//Dth XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -20,8 +20,8 @@
 	<cfset parm.reportDateFrom = form.reportDateFrom>
 	<cfset parm.reportDateTo = form.reportDateTo>
 	<cfif len(form.reportDateTo) IS 0><cfset parm.reportDateTo = form.reportDateFrom></cfif>
-	<cfquery name="QItemAnalysis" datasource="#parm.datasource#">
-		SELECT prodID,prodCatID,prodEposCatID,prodTitle,prodOurPrice, siUnitSize,siOurPrice, eiClass,eiType,eiNet,eiVAT,
+	<cfquery name="QItemAnalysis" datasource="#parm.datasource#" result="QItemAnalysisResult">
+		SELECT prodID,prodCatID,prodEposCatID,prodTitle, siUnitSize, eiClass,eiType,eiNet,eiVAT,
 			ehID, ehTimeStamp, DATE(ehTimeStamp) AS yymmdd, HOUR(ehTimeStamp) AS hh, COUNT(*) AS recCount,
             (SELECT pcatTitle FROM tblProductCats WHERE pcatID = prodCatID) AS catTitle,
             (SELECT pgTitle FROM tblProductGroups INNER JOIN tblProductCats on pcatGroup=pgID WHERE pcatID = prodCatID) AS groupTitle
@@ -40,10 +40,10 @@
 		<cfif len(reportMode)>AND ehMode LIKE '#reportMode#'</cfif>
         GROUP BY groupTitle, catTitle, prodTitle, siUnitSize, hh
 	</cfquery>
+	<!---<cfdump var="#QItemAnalysis#" label="QItemAnalysis" expand="false">--->
 <cfelse>
 	<p>Please select start date.</p>
 </cfif>
-
 <body>
 	<div>
 		<cfoutput>
@@ -89,7 +89,7 @@
 				<cfset block.catTitle = catTitle>
 				<cfset block.prodTitle = prodTitle>
 				<cfset block.siUnitSize = siUnitSize>
-				<cfset block.OurPrice = siOurPrice neq 0 ? siOurPrice : prodOurPrice>
+				<cfset block.net = -eiNet>
 				
 				<cfif !StructKeyExists(products,prodID)>
 					<cfset StructInsert(products,prodID,block)>
@@ -116,7 +116,7 @@
 					</cfloop>
 					<th>Total</th>
 					<th>Avg/<br />Week</th>
-					<th>Value</th>
+					<th>Net</th>
 				</tr>
 				
 				<cfloop array="#productArray#" index="prodrec">
@@ -126,7 +126,7 @@
 						<td>#theProduct.catTitle#</td>
 						<td><a href="http://tweb.sle-admin.co.uk/productStock6.cfm?product=#prodrec#" target="_blank">#theProduct.prodTitle#</a></td>
 						<td>#theProduct.siUnitSize#</td>
-						<td>&pound;#theProduct.OurPrice#</td>
+						<td align="right">&pound;#DecimalFormat(theProduct.net)#</td>
 						<cfset lineTotal = 0>
 						<cfloop from="#startHour#" to="#endHour#" index="i">
 							<cfif StructKeyExists(theProduct,i)>
@@ -146,7 +146,7 @@
 						<cfif DayRange gt 6><cfset perWeek = 7><cfelse><cfset perWeek = 1></cfif>
 						<cfset avg = (lineTotal / DayRange) * perWeek>
 						<cfif avg lt 1><cfset avgText = "&lt;1"><cfelse><cfset avgText = DecimalFormat(avg)></cfif>
-						<cfset lineValue = lineTotal * val(theProduct.OurPrice)>
+						<cfset lineValue = lineTotal * val(theProduct.net)>
 						<cfset totValue += lineValue>
 						<td align="center">#lineTotal#</td>
 						<td>#avgText#</td>
@@ -170,7 +170,10 @@
 					<th></th>
 					<th>&pound;#DecimalFormat(totValue)#</th>
 				</tr>
-
+				<tr>
+					<th colspan="21" align="right">Average per day </th>
+					<th align="right">&pound;#DecimalFormat(totValue / dayRange)#</th>
+				</tr>
 			</table>
 		</cfoutput>
 	</cfif>
