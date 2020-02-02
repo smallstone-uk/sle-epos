@@ -92,7 +92,7 @@
 
         <div class="grid gap-1 row-size-3">
             <div class="grid-item">
-                <button class="button is-primary" :disabled="notValid" @click.prevent="complete">Complete</button>
+                <button class="button is-primary" :disabled="notValid" @click.prevent="complete">Pay Selected Account...</button>
             </div>
         </div>
     </div>
