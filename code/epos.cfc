@@ -3104,7 +3104,7 @@
 					SELECT MAX( siID )
 					FROM tblStockItem
 					WHERE prodID = siProduct 
-					AND siStatus NOT IN ('returned','inactive','promo'))
+					AND siStatus NOT IN ('returned','inactive'))<!--- whats wrong with promos ,'promo'--->
 				INNER JOIN tblEPOS_Cats ON prodEposCatID=epcID
 				INNER JOIN tblStockOrder ON siOrder=soID
 				WHERE prodTitle LIKE '%#args.form.title#%'
