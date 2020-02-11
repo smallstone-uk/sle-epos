@@ -2595,8 +2595,11 @@
 						<cfif StructKeyExists(loc.tran,"unitTrade")>
 							<cfset loc.trade = val(loc.tran.unitTrade)>
 						<cfelse><cfset loc.trade = 0></cfif>
+						<cfif StructKeyExists(loc.tran,"qty")>
+							<cfset loc.qty = val(loc.tran.qty)>
+						<cfelse><cfset loc.qty = 1></cfif>
 						<cfset loc.itemStr = "#loc.itemStr#,(#loc.ID#,'#loc.tran.itemType#','#loc.tran.itemClass#',#loc.prodID#,#loc.pubID#,#loc.payID#,
-							#loc.account#,#loc.retail#,#loc.net#,#loc.vat#,#loc.trade#,#loc.tran.qty#)">
+							#loc.account#,#loc.retail#,#loc.net#,#loc.vat#,#loc.trade#,#loc.qty#)">
 					</cfloop>
 					<cfif abs(loc.total.gross) gte 0.01>		<!--- dump basket if transaction not balanced --->
 						<cfdump var="#session.basket#" label="basket" expand="yes" format="html"
@@ -2657,6 +2660,8 @@
 			<cfset session.basket.info.errMsg = "AN ERROR OCCURRED WRITING THE TRAN">
 			<cfdump var="#cfcatch#" label="" expand="yes" format="html"
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+			<cfdump var="#session#" label="session" expand="yes" format="html"
+				output="#application.site.dir_logs#epos\bask-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
 		<cfreturn loc.result>
