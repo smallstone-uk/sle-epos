@@ -36,7 +36,7 @@
 		<cfloop query="QTran">
 			<cfif currentRow eq 1>
 				<tr>
-					<td colspan="9">
+					<td colspan="10">
 						<table width="100%" class="tableList">
 							<th align="right">Transaction ID: </th><th align="left">#eiParent#</th>
 							<th align="right">Mode: </th><th align="left">#ehMode#</th>
@@ -52,6 +52,7 @@
 					<th>Pay Type</th>
 					<th>Qty</th>
 					<th>Category</th>
+					<th>ProdID</th>
 					<th>Description</th>
 					<th>DR</th>
 					<th>CR</th>
@@ -75,6 +76,11 @@
 				<td>#eiPayType#</td>
 				<td>#eiQty#</td>
 				<td>#pcatTitle#</td>
+				<td>
+					<cfif eiType eq 'shop'>
+						<a href="http://dev.sle-admin.lan/productStock6.cfm?product=#eiProdID#" target="_new">#eiProdID#</a>
+					</cfif>
+				</td>
 				<td>#title#</td>
 				<td align="right"><cfif lineGross gt 0><cfset totDR += eiNet + eiVAT>#DecimalFormat(eiNet + eiVAT)#</cfif></td>
 				<td align="right"><cfif lineGross lt 0><cfset totCR -= eiNet + eiVAT> #DecimalFormat(-eiNet + -eiVAT)#</cfif></td>
@@ -83,13 +89,13 @@
 		<tr>
 			<th colspan="2">Net: #DecimalFormat(totNet)#</th>
 			<th colspan="2">VAT: #DecimalFormat(totVAT)#</th>
-			<th colspan="3"></th>
+			<th colspan="4"></th>
 			<th>#DecimalFormat(totDR)#</th>
 			<th>#DecimalFormat(totCR)#</th>
 		</tr>
 		<cfif abs(totDR - totCR) gt 0.01>
 			<tr>
-				<th colspan="8" align="right">Error: </th>
+				<th colspan="9" align="right">Error: </th>
 				<th>#DecimalFormat(totDR - totCR)#</th>
 			</tr>
 		</cfif>

@@ -38,7 +38,7 @@
 		AND DATE(ehTimeStamp) <= '#parm.reportDateTo#'
 		AND eiClass LIKE 'sale'
 		<cfif len(reportMode)>AND ehMode LIKE '#reportMode#'</cfif>
-        GROUP BY groupTitle, catTitle, prodTitle, siUnitSize, hh
+        GROUP BY groupTitle, catTitle, prodTitle, siUnitSize, eiNet, hh
 	</cfquery>
 	<!---<cfdump var="#QItemAnalysis#" label="QItemAnalysis" expand="false">--->
 <cfelse>
@@ -90,6 +90,7 @@
 				<cfset block.prodTitle = prodTitle>
 				<cfset block.siUnitSize = siUnitSize>
 				<cfset block.net = -eiNet>
+				<cfset block.gross = -(eiNet + eiVAT)>
 				
 				<cfif !StructKeyExists(products,prodID)>
 					<cfset StructInsert(products,prodID,block)>
@@ -114,9 +115,9 @@
 					<cfloop from="#startHour#" to="#endHour#" index="i">
 						<th width="20" align="center">#i#</th>
 					</cfloop>
-					<th>Total</th>
+					<th>Total<br />Qty</th>
 					<th>Avg/<br />Week</th>
-					<th>Net</th>
+					<th>Total</th>
 				</tr>
 				
 				<cfloop array="#productArray#" index="prodrec">
@@ -126,7 +127,7 @@
 						<td>#theProduct.catTitle#</td>
 						<td><a href="http://tweb.sle-admin.co.uk/productStock6.cfm?product=#prodrec#" target="_blank">#theProduct.prodTitle#</a></td>
 						<td>#theProduct.siUnitSize#</td>
-						<td align="right">&pound;#DecimalFormat(theProduct.net)#</td>
+						<td align="right">&pound;#DecimalFormat(theProduct.gross)#</td>
 						<cfset lineTotal = 0>
 						<cfloop from="#startHour#" to="#endHour#" index="i">
 							<cfif StructKeyExists(theProduct,i)>
@@ -146,7 +147,7 @@
 						<cfif DayRange gt 6><cfset perWeek = 7><cfelse><cfset perWeek = 1></cfif>
 						<cfset avg = (lineTotal / DayRange) * perWeek>
 						<cfif avg lt 1><cfset avgText = "&lt;1"><cfelse><cfset avgText = DecimalFormat(avg)></cfif>
-						<cfset lineValue = lineTotal * val(theProduct.net)>
+						<cfset lineValue = lineTotal * val(theProduct.gross)>
 						<cfset totValue += lineValue>
 						<td align="center">#lineTotal#</td>
 						<td>#avgText#</td>
