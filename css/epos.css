@@ -1261,18 +1261,21 @@ button[disabled] {
 }
 
 .popup_box {
-    background: #fff;
+    background: #eee;
     z-index: 99999999999999999;
     padding: 30px;
     transform: scale3d(0, 0, 0);
     min-width: 500px;
     min-height: 300px;
+	height:500px;
     opacity: 0;
     color: #000;
     transform-origin: center;
     border-radius: 4px;
     box-shadow: 0 7px 14px 0 rgba(50,50,93,.1), 0 3px 6px 0 rgba(0,0,0,.07);
     font-weight: 400;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .fullscreen_popup_box {
@@ -2860,4 +2863,14 @@ select:focus {
 .msgBlock {
 	margin: 20px;
 	padding: 20px;
+}
+
+.account-list {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.account-title {
+	font-size:18px;
+	font-weight:bold;
+	line-height: 40px;
 }

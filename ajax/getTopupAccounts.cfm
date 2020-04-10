@@ -85,7 +85,9 @@
             <div v-for="(account, index) in accounts" :class="getAccountClasses(account)" @click.prevent="selectAccount(account)">
                 <span style="padding: 0 1rem">
                     <span class="pull-left text-left">{{ account.eatitle }}</span>
-                    <span class="pull-right text-right">{{ account.balance | currency }}</span>
+                    <span class="pull-right text-right">
+							{{ account.balance | currency }}
+					</span>
                 </span>
             </div>
         </div>
