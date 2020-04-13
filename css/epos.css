@@ -1261,7 +1261,7 @@ button[disabled] {
 }
 
 .popup_box {
-    background: #ccc;
+    background: #999;
     z-index: 99999999999999999;
     padding: 30px;
     transform: scale3d(0, 0, 0);
