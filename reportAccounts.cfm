@@ -84,6 +84,7 @@
 				<tr>
 					<th>ID</th>
 					<th>Mode</th>
+					<th>Type</th>
 					<th>Date</th>
 					<th>Amount</th>
 				</tr>
@@ -92,15 +93,23 @@
 					<tr>
 						<td>#ehID#</td>
 						<td>#ehMode#</td>
+						<td>#eiType#</td>
 						<td align="right">#DateFormat(ehTimeStamp)#</td>
 						<td align="right">#DecimalFormat(eiNet + eiVAT)#</td>
 					</tr>
 					<cfset balance += (eiNet + eiVAT)>
 				</cfloop>
-				<tr>
-					<th colspan="2">Balance</th>
-					<th colspan="2" align="right">#DecimalFormat(balance)#</th>
-				</tr>
+				<cfif balance lt 0>
+					<tr>
+						<th colspan="3">Account in Credit</th>
+						<th align="right">#DecimalFormat(balance)#</th>
+					</tr>
+				<cfelse>
+					<tr>
+						<th colspan="3">Balance Outstanding</th>
+						<th align="right">#DecimalFormat(balance)#</th>
+					</tr>
+				</cfif>
 			</table>
 			<!---<cfdump var="#QAccountPayments#" label="QAccountPayments" expand="false">--->
 		</cfif>
