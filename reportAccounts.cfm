@@ -54,8 +54,10 @@
 	<cfquery name="QAccountPayments" datasource="#parm.datasource#">
 		SELECT *
 		FROM `tblepos_items`
-		WHERE eiType = 'ACCPAY'
+		INNER JOIN tblepos_header ON ehID = eiParent
+		WHERE eiType IN ('ACCPAY','ACCINDW')
 		AND `eiAccID` = #parm.accountID#
+		ORDER BY ehTimeStamp
 	</cfquery>
 </cfif>
 
@@ -77,7 +79,31 @@
 			<cfset ecfc.DumpTrans(parm)>
 		</div>
 		<div style="clear:both"></div>
-		<cfif parm.accountID gt 0><cfdump var="#QAccountPayments#" label="QAccountPayments" expand="false"></cfif>
+		<cfif parm.accountID gt 0>
+			<table class="tableList">
+				<tr>
+					<th>ID</th>
+					<th>Mode</th>
+					<th>Date</th>
+					<th>Amount</th>
+				</tr>
+				<cfset balance = 0>
+				<cfloop query="QAccountPayments">
+					<tr>
+						<td>#ehID#</td>
+						<td>#ehMode#</td>
+						<td align="right">#DateFormat(ehTimeStamp)#</td>
+						<td align="right">#DecimalFormat(eiNet + eiVAT)#</td>
+					</tr>
+					<cfset balance += (eiNet + eiVAT)>
+				</cfloop>
+				<tr>
+					<th colspan="2">Balance</th>
+					<th colspan="2" align="right">#DecimalFormat(balance)#</th>
+				</tr>
+			</table>
+			<!---<cfdump var="#QAccountPayments#" label="QAccountPayments" expand="false">--->
+		</cfif>
 	</cfoutput>
 </body>
 </html>
