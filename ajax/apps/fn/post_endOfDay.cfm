@@ -87,10 +87,12 @@
 			<td>Coupons</td>
 			<td align="right">#epos.accounts.cpn#</td>
 		</tr>
+<!---
 		<tr>
 			<td>HS Coupons</td>
-			<td align="right">#epos.accounts.Healthy#</td>
+			<td align="right">#epos.accounts.hsv#</td>
 		</tr>
+--->
 		<tr>
 			<td>Cash Total</td>
 			<td align="right">#DecimalFormat(noteTotal + coinTotal)#</td>
@@ -148,6 +150,17 @@
 		</tr>
 	</table>
 	<table>
+		<cfloop collection="#epos.accounts#" item="key">
+			<cfset value = StructFind(epos.accounts,key)>
+			<cfif value neq 0>
+				<tr>
+					<td>#key#</td>
+					<td align="right">#value#</td>
+				</tr>
+			</cfif>
+		</cfloop>
+		
+<!---
 		<tr>
 			<td>Cheques Received</td>
 			<td align="right">#epos.accounts.chqINDW#</td>
@@ -164,7 +177,7 @@
 			<td>TOTAL RECEIPTS</td>
 			<td align="right">TBA</td>
 		</tr>
-	</table>
+--->	</table>
     <!--- Summary View
     <cfset writeDump(dayHeader)> --->
 </cfoutput>

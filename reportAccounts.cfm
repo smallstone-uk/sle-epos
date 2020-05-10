@@ -101,12 +101,12 @@
 				</cfloop>
 				<cfif balance lt 0>
 					<tr>
-						<th colspan="3">Account in Credit</th>
+						<th colspan="4">Account in Credit</th>
 						<th align="right">#DecimalFormat(balance)#</th>
 					</tr>
 				<cfelse>
 					<tr>
-						<th colspan="3">Balance Outstanding</th>
+						<th colspan="4">Balance Outstanding</th>
 						<th align="right">#DecimalFormat(balance)#</th>
 					</tr>
 				</cfif>

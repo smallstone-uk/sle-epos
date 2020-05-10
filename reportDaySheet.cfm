@@ -226,7 +226,7 @@
 					<cfset crValue = 0>
 					<cfset gross = net + vat>
 					<cfif Find(eiClass,"supp,pay")>
-						<cfif eiType neq 'WASTEACC'>
+						<cfif eiType neq 'WASTE'>
 							<cfset drValue = gross>
 							<cfset drTotal += gross>
 						<cfelse>
@@ -270,6 +270,15 @@
 					<th>Description</th>
 					<th width="70" align="right">Value</th>
 				</tr>
+		<cfloop collection="#epos.accounts#" item="key">
+			<cfset value = StructFind(epos.accounts,key)>
+			<cfif value neq 0>
+				<tr>
+					<td>#key#</td>
+					<td align="right">#value#</td>
+				</tr>
+			</cfif>
+		</cfloop>
 				<tr>
 					<td>Healthy Start:</td>
 					<td align="right">#GetTotal(epos.accounts,"healthy")#</td>

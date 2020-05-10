@@ -858,13 +858,13 @@ button[disabled] {
 .payment_item_special {
     float: left;
     background: #5094CB;
-    line-height: 100px;
+    line-height: 80px;
     text-align: center;
     font-size: 18px;
     cursor: pointer;
     width: calc(50% - 8px);
     margin: 4px;
-    height: 100px;
+    height: 80px;
     color: #FFF;
     padding: 0;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
@@ -1267,7 +1267,7 @@ button[disabled] {
     transform: scale3d(0, 0, 0);
     min-width: 500px;
     min-height: 300px;
-	height:500px;
+	height:560px;
     opacity: 0;
     color: #000;
     transform-origin: center;
@@ -2811,7 +2811,7 @@ select:focus {
 	background:#F33;
 	color: #FFF;
 	padding: 10px;
-	font-size: 24px;
+	font-size: 18px;
 	text-align: center;
 	margin-bottom: 2px;
 	border-radius: 4px;
@@ -2823,7 +2823,7 @@ select:focus {
 	background:#093;
 	color: #FFF;
 	padding: 10px;
-	font-size: 24px;
+	font-size: 18px;
 	text-align: center;
 	margin-bottom: 2px;
 	border-radius: 4px;
@@ -2835,7 +2835,7 @@ select:focus {
 	background:#C66;
 	color: #FFF;
 	padding: 10px;
-	font-size: 24px;
+	font-size: 18px;
 	text-align: center;
 	margin-bottom: 2px;
 	border-radius: 4px;
@@ -2873,4 +2873,10 @@ select:focus {
 	font-size:18px;
 	font-weight:bold;
 	line-height: 40px;
+}
+.topup-account {
+	height:440px;
+    overflow-x: hidden;
+    overflow-y: auto;
+	margin-bottom:10px;
 }

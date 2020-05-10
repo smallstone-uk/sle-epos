@@ -891,6 +891,16 @@
 			}
 		});
 	}
+	$.fn.loadBalance = function() {
+		var caller = $(this);
+		$.ajax({
+			type: "GET",
+			url: "ajax/loadBalance.cfm",
+			success: function(data) {
+				caller.html(data);
+			}
+		});
+	}
 	$.fn.buttonSelect = function(a) {
 		var caller = $(this);
 		caller.find('li').each(function(i, e) {

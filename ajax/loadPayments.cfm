@@ -6,6 +6,7 @@
 <cfset payments = epos.LoadPayments(parm)>
 <cfset notEnoughCredit = session.basket.header.bcredit + session.basket.header.discdeal + session.basket.header.discstaff + session.till.prefs.mincard>
 <cfset session.basket.info.checkout = true>
+<cfset session.basket.info.showTotal = true>
 <cfoutput>
 	<script>
 		$(document).ready(function(e) {
@@ -29,7 +30,7 @@
 				var type = $(this).data("method");
 				var id = $(this).data("id");
 				var balance = Number("#session.basket.total.balance#");
-
+				// console.log(type);
 				switch (type) {
 					case "partcash":
 						$.virtualNumpad({
@@ -130,7 +131,39 @@
 							$.msgBox("You cannot fast card when you have cash only items in the basket. Use part card instead.", "error");
 						}
 						break;
-					case "cheque":
+					case "bt":
+						$.addPayment({
+							account: "",
+							addtobasket: true,
+							btnsend: "BT",
+							cash: "",
+							cashonly: "",
+							credit: "",
+							prodid: "",
+							prodtitle: "",
+							qty: 1,
+							type: "",
+							vrate: "",
+							payID: id
+						}, callback);
+						break;
+					case "online":
+						$.addPayment({
+							account: "",
+							addtobasket: true,
+							btnsend: "ONLINE",
+							cash: "",
+							cashonly: "",
+							credit: "",
+							prodid: "",
+							prodtitle: "",
+							qty: 1,
+							type: "",
+							vrate: "",
+							payID: id
+						}, callback);
+						break;
+					case "chqs":
 						$.virtualNumpad({
 							hint: "Enter the cheque value",
 							cancel: cancel,
@@ -138,7 +171,7 @@
 								$.addPayment({
 									account: "",
 									addtobasket: true,
-									btnsend: "Cheque",
+									btnsend: "chqs",
 									cash: value,
 									cashonly: "",
 									credit: "",
@@ -152,28 +185,7 @@
 							}
 						});
 						break;
-					case "voucher":
-						$.virtualNumpad({
-							hint: "Enter the voucher amount",
-							cancel: cancel,
-							callback: function(value) {
-								$.addPayment({
-									account: "",
-									addtobasket: true,
-									btnsend: "Voucher",
-									cash: value,
-									cashonly: 1,
-									credit: "",
-									prodtitle: "Voucher",
-									qty: 1,
-									type: "VOUCHER",
-									vrate: "",
-									payID: id
-								}, callback);
-							}
-						});
-						break;
-					case "coupon":
+					case "cpn":
 						$.virtualNumpad({
 							hint: "Enter the coupon amount",
 							cancel: cancel,
@@ -181,7 +193,7 @@
 								$.addPayment({
 									account: "",
 									addtobasket: true,
-									btnsend: "Coupon",
+									btnsend: "cpn",
 									cash: value,
 									cashonly: 1,
 									credit: "",
@@ -194,7 +206,7 @@
 							}
 						});
 						break;
-					case "healthy":
+					case "hsv":
 						$.virtualNumpad({
 							hint: "Enter the Healthy Start coupon amount",
 							cancel: cancel,
@@ -202,20 +214,20 @@
 								$.addPayment({
 									account: "",
 									addtobasket: true,
-									btnsend: "Healthy",
+									btnsend: "hsv",
 									cash: value,
 									cashonly: 1,
 									credit: "",
 									prodtitle: "Healthy",
 									qty: 1,
-									type: "Healthy",
+									type: "hsv",
 									vrate: "",
 									payID: id
 								}, callback);
 							}
 						});
 						break;
-					case "account":
+					case "acc":
 						$.ajax({
 						    type: 'GET',
 						    url: "#getUrl('ajax/getPayableAccounts.cfm')#",
@@ -234,7 +246,7 @@
 							cashonly: "",
 							credit: "",
 							prodid: "",
-							prodtitle: "",
+							prodtitle: "Waste Account",
 							qty: 1,
 							type: "",
 							vrate: "",
@@ -250,7 +262,7 @@
 							cashonly: 0,
 							credit: "",
 							prodid: "",
-							prodtitle: "",
+							prodtitle: "General Account",
 							qty: 1,
 							type: "",
 							vrate: "",
@@ -276,7 +288,7 @@
 		<cfelse>
 		
 			<cfloop array="#payments#" index="item">
-				<cfswitch expression="#LCase(item.eaTitle)#">
+				<cfswitch expression="#LCase(item.eaCode)#">
 					<cfcase value="cash">
 						<cfif not supplier>
 							<li class="payment_item material-ripple" data-method="partcash" data-id="#item.eaID#">
@@ -292,11 +304,11 @@
 					<cfcase value="card">
 						<cfif not supplier>
 							<li class="payment_item material-ripple" data-method="partcard" data-id="#item.eaID#">
-								<span>Part Card</span>
+								<span>Part Chip &amp; Pin</span>
 							</li>
 	
 							<li class="payment_item material-ripple" data-method="fastcard" data-id="#item.eaID#">
-								<span>Fast Card</span>
+								<span>Fast Chip &amp; Pin</span>
 							</li>
 						</cfif>
 					</cfcase>

@@ -81,13 +81,17 @@
 			<cfset session.basket.header.SPrize = 0>
 			<cfset session.basket.header.voucher = 0>
 			<cfset session.basket.header.cpn = 0>
-			<cfset session.basket.header.healthy = 0>
+			<cfset session.basket.header.hsv = 0>
 	
 			<cfset session.basket.header.cashtaken = 0>
 			<cfset session.basket.header.cardsales = 0>
 			<cfset session.basket.header.chqsales = 0>
 			<cfset session.basket.header.accsales = 0>
-			<cfset session.basket.header.WASTEACC = 0>
+			<cfset session.basket.header.BANKXFR = 0>
+			<cfset session.basket.header.BANKXFRsales = 0>
+			<cfset session.basket.header.ONLINE = 0>
+			<cfset session.basket.header.ONLINEsales = 0>
+			<cfset session.basket.header.WASTE = 0>
 			<cfset session.basket.header.discdeal = 0>
 			<cfset session.basket.header.discstaff = 0>
 			<cfset session.basket.header.cashback = 0>
@@ -95,7 +99,9 @@
 	
 			<cfset session.basket.total.chqINDW = 0>
 			<cfset session.basket.total.accINDW = 0>
-			<cfset session.basket.total.WASTEACC = 0>
+			<cfset session.basket.total.BANKXFR = 0>
+			<cfset session.basket.total.ONLINE = 0>
+			<cfset session.basket.total.WASTE = 0>
 			<cfset session.basket.total.balance = 0>
 			<cfset session.basket.total.discount = 0>
 			<cfset session.basket.total.discstaff = 0>
@@ -151,8 +157,13 @@
 								<cfset loc.tran.vcode = loc.data.vcode>
 								<cfset loc.tran.discount = loc.data.discount>
 								<cfset loc.tran.gross = loc.tran.price - loc.itemDiscount>
-								<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
-								<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+								<cfif loc.tran.vrate neq 0>
+									<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+									<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+								<cfelse>
+									<cfset loc.tran.net = loc.tran.gross>
+									<cfset loc.tran.vat = 0>								
+								</cfif>
 								<cfset loc.tran.qty = 1 * loc.rec.regMode>
 
 								<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
@@ -200,8 +211,14 @@
 										</cfif>
 										<cfset loc.totalGross += loc.tran.gross>
 										<cfset loc.totProp += loc.tran.prop>
-										<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
-										<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+										<cfif loc.tran.vrate neq 0>
+											<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+											<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+										<cfelse>
+											<cfset loc.tran.net = loc.tran.gross>
+											<cfset loc.tran.vat = 0>								
+										</cfif>
+
 										<cfset loc.tran.qty = 1 * loc.rec.regMode>
 
 										<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
@@ -239,8 +256,14 @@
 									<cfif loc.itemDiscount neq 0>
 										<cfset loc.tran.gross = int((loc.tran.price - loc.itemDiscount) * 100) / 100>
 									<cfelse><cfset loc.tran.gross = loc.tran.price></cfif>
-									<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
-									<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+									<cfif loc.tran.vrate neq 0>
+										<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+										<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+									<cfelse>
+										<cfset loc.tran.net = loc.tran.gross>
+										<cfset loc.tran.vat = 0>								
+									</cfif>
+
 									<cfset loc.tran.qty = 1 * loc.rec.regMode>
 									
 									<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
@@ -279,8 +302,13 @@
 										<cfset loc.tran.unitTrade = loc.data.unitTrade>
 										<cfset loc.tran.prop = 1>
 										<cfset loc.tran.gross = Round(loc.dealData.edAmount * 100) / 100>
-										<cfset loc.tran.net = Round(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
-										<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+										<cfif loc.tran.vrate neq 0>
+											<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+											<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+										<cfelse>
+											<cfset loc.tran.net = loc.tran.gross>
+											<cfset loc.tran.vat = 0>								
+										</cfif>
 										<cfset loc.tran.qty = 1 * loc.rec.regMode>
 
 										<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
@@ -327,8 +355,13 @@
 										<cfif loc.i MOD 2 IS 0>
 											<cfset loc.tran.gross = 0>
 										</cfif>
-										<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
-										<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+										<cfif loc.tran.vrate neq 0>
+											<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+											<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+										<cfelse>
+											<cfset loc.tran.net = loc.tran.gross>
+											<cfset loc.tran.vat = 0>								
+										</cfif>
 										<cfset loc.tran.qty = 1 * loc.rec.regMode>
 
 										<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
@@ -360,8 +393,13 @@
 									<cfset loc.tran.itemClass = loc.data.itemClass>
 									<cfset loc.tran.unitTrade = loc.data.unitTrade>
 									<cfset loc.tran.gross = int((loc.tran.price - loc.itemDiscount) * 100) / 100>
-									<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
-									<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+									<cfif loc.tran.vrate neq 0>
+										<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+										<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+									<cfelse>
+										<cfset loc.tran.net = loc.tran.gross>
+										<cfset loc.tran.vat = 0>								
+									</cfif>
 									<cfset loc.tran.qty = 1 * loc.rec.regMode>
 
 									<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
@@ -400,8 +438,13 @@
 										<cfset loc.tran.unitTrade = loc.data.unitTrade>
 										<cfset loc.tran.prop = 1>
 										<cfset loc.tran.gross = Round(int((loc.data.unitPrice / 2) * 100)) / 100>
-										<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
-										<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+										<cfif loc.tran.vrate neq 0>
+											<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+											<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+										<cfelse>
+											<cfset loc.tran.net = loc.tran.gross>
+											<cfset loc.tran.vat = 0>								
+										</cfif>
 										<cfset loc.tran.qty = 1 * loc.rec.regMode>
 
 										<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
@@ -451,8 +494,13 @@
 										</cfif>
 										<cfset loc.disc += loc.data.unitPrice + loc.tran.gross>
 										<cfset loc.totalGross -= loc.tran.gross>
-										<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
-										<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+										<cfif loc.tran.vrate neq 0>
+											<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+											<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+										<cfelse>
+											<cfset loc.tran.net = loc.tran.gross>
+											<cfset loc.tran.vat = 0>								
+										</cfif>
 										<cfset loc.tran.qty = 1 * loc.rec.regMode>
 
 										<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
@@ -484,8 +532,13 @@
 									<cfset loc.tran.itemClass = loc.data.itemClass>
 									<cfset loc.tran.unitTrade = loc.data.unitTrade>
 									<cfset loc.tran.gross = int((loc.tran.price - loc.itemDiscount) * 100) / 100>
-									<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
-									<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+									<cfif loc.tran.vrate neq 0>
+										<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+										<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+									<cfelse>
+										<cfset loc.tran.net = loc.tran.gross>
+										<cfset loc.tran.vat = 0>								
+									</cfif>
 									<cfset loc.tran.qty = 1 * loc.rec.regMode>
 
 									<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
@@ -552,8 +605,13 @@
 				<cfset loc.tran.vcode = loc.media.vcode>
 				<cfset loc.tran.unittrade = loc.media.unittrade>
 				<cfset loc.tran.itemClass = loc.media.itemClass>
-				<cfset loc.tran.net = loc.tran.gross / (1 + (loc.tran.vrate / 100))>
-				<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+				<cfif loc.tran.vrate neq 0>
+					<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+					<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+				<cfelse>
+					<cfset loc.tran.net = loc.tran.gross>
+					<cfset loc.tran.vat = 0>								
+				</cfif>
 				<cfset loc.tran.qty = 1 * loc.rec.regMode>
 				<cfset ArrayAppend(session.basket.trans,loc.tran)>
 			</cfloop>
@@ -569,8 +627,13 @@
 				<cfset loc.tran.vrate = loc.mags.vrate>
 				<cfset loc.tran.vcode = loc.mags.vcode>
 				<cfset loc.tran.itemClass = loc.mags.itemClass>
-				<cfset loc.tran.net = loc.tran.gross / (1 + (loc.tran.vrate / 100))>
-				<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+				<cfif loc.tran.vrate neq 0>
+					<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+					<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+				<cfelse>
+					<cfset loc.tran.net = loc.tran.gross>
+					<cfset loc.tran.vat = 0>								
+				</cfif>
 				<cfset loc.tran.qty = 1 * loc.rec.regMode>
 				<cfset ArrayAppend(session.basket.trans,loc.tran)>
 			</cfloop>
@@ -586,8 +649,13 @@
 				<cfset loc.tran.vrate = loc.vch.vrate>
 				<cfset loc.tran.vcode = loc.vch.vcode>
 				<cfset loc.tran.itemClass = loc.vch.itemClass>
-				<cfset loc.tran.net = loc.tran.gross / (1 + (loc.tran.vrate / 100))>
-				<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+				<cfif loc.tran.vrate neq 0>
+					<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+					<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+				<cfelse>
+					<cfset loc.tran.net = loc.tran.gross>
+					<cfset loc.tran.vat = 0>								
+				</cfif>
 				<cfset loc.tran.qty = 1 * loc.rec.regMode>
 				<cfset ArrayAppend(session.basket.trans,loc.tran)>
 			</cfloop>
@@ -607,8 +675,13 @@
 						<cfset loc.tran.gross = loc.data.totalGross>
 						<cfset loc.tran.vrate = loc.data.vrate>
 						<cfset loc.tran.vcode = loc.data.vcode>
-						<cfset loc.tran.net = loc.tran.gross / (1 + (loc.tran.vrate / 100))>
-						<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+						<cfif loc.tran.vrate neq 0>
+							<cfset loc.tran.net = int(loc.tran.gross / (1 + (loc.tran.vrate / 100)) * 100) / 100>
+							<cfset loc.tran.vat = loc.tran.gross - loc.tran.net>
+						<cfelse>
+							<cfset loc.tran.net = loc.tran.gross>
+							<cfset loc.tran.vat = 0>								
+						</cfif>
 						<cfset loc.tran.qty = 1 * loc.rec.regMode>
 						<cfset ArrayAppend(session.basket.trans,loc.tran)>
 					</cfif>
@@ -1106,9 +1179,6 @@
 		</cfcatch>
 		</cftry>
 		<cfset session.basket.info.busy = false>
-<!---<cfdump var="#session.basket#" label="AddItem" expand="yes" format="html" 
-	output="#application.site.dir_logs#epos\slow-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
---->
 		</cflock>
 		<cfreturn loc.result>
 	</cffunction>
@@ -1157,7 +1227,7 @@
 
 			<!--- difference between cash sales and cash received... --->
 			<cfset loc.cashBalance = session.basket.header.bCash + session.basket.header.cashTaken
-				+ session.basket.header.cashback + session.basket.header.LPrize + session.basket.header.SPrize + session.basket.header.cpn + session.basket.header.Healthy>
+				+ session.basket.header.cashback + session.basket.header.LPrize + session.basket.header.SPrize + session.basket.header.cpn + session.basket.header.hsv>
 
 			<!--- payment methods --->
 			<cfswitch expression="#args.form.btnSend#">
@@ -1198,6 +1268,7 @@
 						<cfset args.data.cash = 0>
 					</cfif>
 					<cfset loc.cashBalance += args.data.cash>
+					<cfset loc.mincard =  session.till.prefs.mincard - abs(args.data.credit)>
 					<cfif loc.basketItems eq 0>
 						<cfset session.basket.info.errMsg = "Please put an item in the basket before accepting payment.">
 					<cfelseif ArrayLen(session.basket.supplier) gt 0>
@@ -1218,9 +1289,10 @@
 						<cfset session.basket.info.errMsg = "Please enter the sale amount from the PayStation receipt.">
 					<cfelseif session.basket.info.mode eq "reg"
 						AND session.basket.info.service eq 0
-						AND abs(args.data.credit) lt session.till.prefs.mincard
-						AND abs(args.data.credit) neq session.till.prefs.service>
+						AND loc.mincard gt 0.001
+						<!---AND abs(args.data.credit) neq session.till.prefs.service--->>
 							<cfset session.basket.info.errMsg = "Minimum sale amount allowed on card is &pound;#session.till.prefs.mincard#.">
+
 					<cfelse>
 						<cfif loc.regMode eq 1>	<!--- open draw in reg mode --->
 							<cfset this.closeTranNow = args.data.credit + args.data.cash gte session.basket.total.balance>
@@ -1237,7 +1309,7 @@
 					</cfif>
 				</cfcase>
 
-				<cfcase value="Cheque">
+				<cfcase value="CHQS">
 					<cfif args.data.cash + args.data.credit is 0>
 						<cfset args.data.credit = session.basket.total.balance>
 						<cfset args.data.cash = 0>
@@ -1246,12 +1318,12 @@
 						<cfset args.data.cash = 0>
 					</cfif>
 					<cfif loc.basketItems eq 0>
-						<cfset session.basket.info.errMsg = "Please put a news account item in the basket before accepting payment.">
-					<cfelseif ArrayLen(session.basket.news) eq 0>
-						<cfset session.basket.info.errMsg = "Cheques can only be accepted for News Account Payments.">
+						<cfset session.basket.info.errMsg = "Please put an item in the basket before accepting payment.">
+					<cfelseif ArrayLen(session.basket.news) + ArrayLen(session.basket.accpay) eq 0>
+						<cfset session.basket.info.errMsg = "Cheques can only be accepted for News & Customer Account Payments.">
 					<cfelse>
-						<cfif abs(session.basket.total.news) neq abs(args.data.credit)>
-							<cfset session.basket.info.errMsg = "Cheque amount must equal the News Account Payment.">
+						<cfif abs(session.basket.total.news) neq abs(args.data.credit) AND (abs(session.basket.total.accpay) neq abs(args.data.credit))>
+							<cfset session.basket.info.errMsg = "Cheque amount must equal the Account Payment.">
 						<cfelse>
 							<cfset args.data.class = "pay">
 							<cfset args.data.itemClass = "CHQINDW">
@@ -1261,6 +1333,50 @@
 							<cfset ArrayAppend(session.basket.payments,args.data)>
 							<cfset loc.addTran = true>
 						</cfif>
+					</cfif>
+				</cfcase>
+
+				<cfcase value="BT">
+					<cfif args.data.cash + args.data.credit is 0>
+						<cfset args.data.credit = session.basket.total.balance>
+						<cfset args.data.cash = 0>
+						<cfset this.closeTranNow = true>
+					</cfif>
+					<cfset loc.cashBalance += args.data.cash>
+					<cfif loc.basketItems eq 0>
+						<cfset session.basket.info.errMsg = "Please put an item in the basket before accepting payment.">
+					<cfelseif ArrayLen(session.basket.supplier) gt 0>
+						<cfset session.basket.info.errMsg = "Cannot pay on account during a supplier transaction.">
+					<cfelse>
+						<cfset args.data.class = "pay">
+						<cfset args.data.itemClass = "BANKXFR">
+						<cfset args.data.title = "Bank Transfer">
+						<cfset args.data.account = args.form.payID>
+						<cfset args.data.prodID = 1>
+						<cfset ArrayAppend(session.basket.payments,args.data)>
+						<cfset loc.addTran = true>
+					</cfif>
+				</cfcase>
+
+				<cfcase value="ONLINE">
+					<cfif args.data.cash + args.data.credit is 0>
+						<cfset args.data.credit = session.basket.total.balance>
+						<cfset args.data.cash = 0>
+						<cfset this.closeTranNow = true>
+					</cfif>
+					<cfset loc.cashBalance += args.data.cash>
+					<cfif loc.basketItems eq 0>
+						<cfset session.basket.info.errMsg = "Please put an item in the basket before accepting payment.">
+					<cfelseif ArrayLen(session.basket.supplier) gt 0>
+						<cfset session.basket.info.errMsg = "Cannot pay on account during a supplier transaction.">
+					<cfelse>
+						<cfset args.data.class = "pay">
+						<cfset args.data.itemClass = "ONLINE">
+						<cfset args.data.title = "Card Online">
+						<cfset args.data.account = args.form.payID>
+						<cfset args.data.prodID = 1>
+						<cfset ArrayAppend(session.basket.payments,args.data)>
+						<cfset loc.addTran = true>
 					</cfif>
 				</cfcase>
 
@@ -1288,7 +1404,7 @@
 					</cfif>
 				</cfcase>
 
-				<cfcase value="Waste">
+				<cfcase value="WASTE">
 					<cfif args.data.cash + args.data.credit is 0>
 						<cfset args.data.credit = session.basket.total.balance>
 						<cfset args.data.cash = 0>
@@ -1301,7 +1417,7 @@
 						<cfset session.basket.info.errMsg = "Cannot pay on account during a supplier transaction.">
 					<cfelse>
 						<cfset args.data.class = "pay">
-						<cfset args.data.itemClass = "WASTEACC">
+						<cfset args.data.itemClass = "WASTE">
 						<cfset args.data.title = "Waste Account">
 						<cfset args.data.account = args.form.account>
 						<cfset args.data.prodID = 1>
@@ -1309,28 +1425,8 @@
 						<cfset loc.addTran = true>
 					</cfif>
 				</cfcase>
-<!---
-				<cfcase value="Voucher">
-					<cfif ArrayLen(session.basket.media) eq 0>
-						<cfset session.basket.info.errMsg = "Please put a news item in the basket before accepting a voucher.">
-					<cfelse>
-						<cfset args.data.cash = args.data.cash + args.data.credit>
-						<cfset args.data.credit = 0>
-						<cfif args.data.cash is 0>
-							<cfset session.basket.info.errMsg = "Please enter the voucher value.">
-						<cfelseif (args.data.cash + session.basket.total.voucher) gt abs(session.basket.total.media)>
-							<cfset session.basket.info.errMsg = "Voucher total cannot exceed newspaper total.">
-						<cfelse>
-							<cfset args.data.class = "pay">
-							<cfset args.data.itemClass = "VOUCHER">
-							<cfset args.data.title = "News Voucher">
-							<cfset ArrayAppend(session.basket.payments,args.data)>
-							<cfset loc.addTran = true>
-						</cfif>
-					</cfif>
-				</cfcase>
---->
-				<cfcase value="Coupon">
+
+				<cfcase value="CPN">
 					<cfif ArrayLen(session.basket.paystation) eq 0>
 						<cfset session.basket.info.errMsg = "Please put a PayStation item in the basket before accepting a coupon.">
 					<cfelse>
@@ -1352,7 +1448,7 @@
 					</cfif>
 				</cfcase>
 
-				<cfcase value="Healthy">
+				<cfcase value="HSV">
 					<cfif 1 eq 2>	<!--- ignore this --->
 						<cfset session.basket.info.errMsg = "Please...">
 					<cfelse>
@@ -1365,7 +1461,7 @@
 							<cfset session.basket.info.errMsg = "Coupon value cannot exceed basket total.">
 						<cfelse>
 							<cfset args.data.class = "pay">
-							<cfset args.data.itemClass = "Healthy">
+							<cfset args.data.itemClass = "HSV">
 							<cfset args.data.title = "Healthy Start">
 							<cfset args.data.account = 1>
 							<cfset args.data.prodID = 1>
@@ -1375,7 +1471,7 @@
 					</cfif>
 				</cfcase>
 
-				<cfdefaultcase>
+				<cfdefaultcase>	<!--- unhandled --->
 					<cfdump var="#args#" label="unknown case #args.form.btnSend#" expand="yes" format="html"
 						output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 				</cfdefaultcase>
@@ -1743,7 +1839,35 @@
 								request += builder.createTextElement({data: '\n'});
 							</cfif>
 						</cfcase>
-						<cfcase value="WASTEACC">
+						<cfcase value="BANKXFR">
+							<cfif arguments.type eq "html">
+								<cfset loc.canClose = true>
+								<div class="btr_item material-ripple ebt_payment" #StructToDataAttributes(loc.item)# data-arrIndex="#loc.payCount#">
+									<span style="width: 70%;">Bank Transfer</span>
+									<span style="width: 30%;text-align: right;">#DecimalFormat(-loc.item.cash - loc.item.credit)#</span>
+								</div>
+							<cfelse>
+								request += builder.createAlignmentElement({position: 'left'});
+								request += builder.createTextElement(styles.normal(align.lr("Bank Transfer", "#chr(156)#
+									#DecimalFormat(loc.item.cash - loc.item.credit)#")));
+								request += builder.createTextElement({data: '\n'});
+							</cfif>
+						</cfcase>
+						<cfcase value="ONLINE">
+							<cfif arguments.type eq "html">
+								<cfset loc.canClose = true>
+								<div class="btr_item material-ripple ebt_payment" #StructToDataAttributes(loc.item)# data-arrIndex="#loc.payCount#">
+									<span style="width: 70%;">Card Online</span>
+									<span style="width: 30%;text-align: right;">#DecimalFormat(-loc.item.cash - loc.item.credit)#</span>
+								</div>
+							<cfelse>
+								request += builder.createAlignmentElement({position: 'left'});
+								request += builder.createTextElement(styles.normal(align.lr("Card Online", "#chr(156)#
+									#DecimalFormat(loc.item.cash - loc.item.credit)#")));
+								request += builder.createTextElement({data: '\n'});
+							</cfif>
+						</cfcase>
+						<cfcase value="WASTE">
 							<cfif arguments.type eq "html">
 								<cfset loc.canClose = true>
 								<div class="btr_item material-ripple ebt_payment" #StructToDataAttributes(loc.item)# data-arrIndex="#loc.payCount#">
@@ -1969,7 +2093,7 @@
 
 							<!---<cfset loc.data.discount = loc.data.discount * loc.data.regMode>--->
 							<cfset loc.totalRetail -= loc.data.retail>	<!--- crash --->
-							<cfset session.basket.total.balance -= (loc.data.retail + loc.data.discount + session.basket.total.discstaff)>
+							<cfset session.basket.total.balance -= (loc.data.retail + loc.data.discount)>	<!---  + session.basket.total.discstaff --->
 							<cfset loc.cashtotal = loc.data.cash * loc.data.qty * loc.data.regMode>
 							<cfset loc.credittotal = loc.data.credit * loc.data.qty * loc.data.regMode>
 							<cfset session.basket.header.bCash -= loc.cashtotal>
@@ -2031,9 +2155,21 @@
 								<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
 								<cfset session.basket.info.canClose = true>
 							</cfcase>
-							<cfcase value="WASTEACC">
-								<cfset session.basket.total.WASTEACC += (loc.item.cash + loc.item.credit)>
-								<cfset session.basket.header.WASTEACC += (loc.item.cash + loc.item.credit)>
+							<cfcase value="BANKXFR">
+								<cfset session.basket.total.BANKXFR += (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.header.BANKXFRsales += (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.info.canClose = true>
+							</cfcase>
+							<cfcase value="ONLINE">
+								<cfset session.basket.total.ONLINE += (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.header.ONLINEsales += (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.info.canClose = true>
+							</cfcase>
+							<cfcase value="WASTE">
+								<cfset session.basket.total.WASTE += (loc.item.cash + loc.item.credit)>
+								<cfset session.basket.header.WASTE += (loc.item.cash + loc.item.credit)>
 								<cfset session.basket.header.balance -= (loc.item.cash + loc.item.credit)>
 								<cfset session.basket.info.canClose = true>
 							</cfcase>
@@ -2292,7 +2428,7 @@
 								<td align="right">#DecimalFormat(loc.disc)#</td>
 							</tr>
 						</cfcase>
-						<cfcase value="CASHINDW|CARDINDW|CHQINDW|CPN|Healthy|ACCINDW|WASTEACC" delimiters="|">
+						<cfcase value="CASHINDW|CARDINDW|CHQINDW|CPN|HSV|ACCINDW|WASTE" delimiters="|">
 							<cfset loc.tran.itemType = "pay">
 							<cfset loc.payID = loc.tran.payID>
 							<cfset loc.retail = loc.tran.gross>
@@ -2477,6 +2613,7 @@
 								<cfset loc.tran.itemType = "item">
 								<cfset loc.account = loc.tran.account>
 								<cfset loc.retail = loc.tran.gross>
+								<cfset loc.prodID = 12>
 								<cfif loc.showInfo>
 								<tr>
 									<td>#loc.tran.itemClass#</td>
@@ -2518,7 +2655,7 @@
 								</tr>
 								</cfif>
 							</cfcase>
-							<cfcase value="CASHINDW|CARDINDW|CHQINDW|ACCINDW|WASTEACC|CPN|HEALTHY" delimiters="|">
+							<cfcase value="CASHINDW|CARDINDW|CHQINDW|ACCINDW|BANKXFR|ONLINE|WASTE|CPN|HSV" delimiters="|">
 								<cfswitch expression="#loc.tran.itemClass#">
 									<cfcase value="CARDINDW">
 										<cfset loc.prodID = 2>
@@ -2532,14 +2669,20 @@
 									<cfcase value="ACCINDW">
 										<cfset loc.prodID = 7>
 									</cfcase>
-									<cfcase value="WASTEACC">
+									<cfcase value="BANKXFR">
+										<cfset loc.prodID = 15>
+									</cfcase>
+									<cfcase value="ONLINE">
+										<cfset loc.prodID = 16>
+									</cfcase>
+									<cfcase value="WASTE">
 										<cfset loc.prodID = 13>
 									</cfcase>
-									<cfcase value="HEALTHY">
+									<cfcase value="HSV">
 										<cfset loc.prodID = 8>
 									</cfcase>
 									<cfcase value="CPN">
-										<cfset loc.prodID = 11>
+										<cfset loc.prodID = 17>
 									</cfcase>
 									<cfdefaultcase>
 										<cfset loc.prodID = 1>
@@ -2581,7 +2724,7 @@
 								</tr>
 								</cfif>
 							</cfcase>
-							<cfdefaultcase>
+							<cfdefaultcase><!--- unhandled --->
 								<cfdump var="#loc.tran#" label="unhandled class #loc.tran.itemClass#" expand="yes" format="html"
 									output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 							</cfdefaultcase>
@@ -3250,8 +3393,6 @@
 				<cfif len(args.reportDate)>AND DATE(ehTimeStamp) = '#args.reportDate#' </cfif>
 				<cfif StructKeyExists(args,"accountID")>AND eiParent IN (#args.aIDs#)</cfif>
 			</cfquery>
-			<!---<cfdump var="#loc.QTrans#" label="QTrans" expand="false">
-			<cfset loc.result.QTrans = loc.QTrans>--->
 			<cfset loc.grandNet = 0>
 			<cfset loc.grandVAT = 0>
 			<cfset loc.grandCR = 0>
