@@ -109,8 +109,6 @@
 				<cfset session.basket.total.discstaff = 0>
 				<cfset this.closeTranNow = false>
 			</cflock>
-			<cfdump var="#session.basket#" label="baskety" expand="true">
-			<cfabort>
 		<cfcatch type="any">
 			<cfdump var="#cfcatch#" label="ClearBasket" expand="yes" format="html"
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
