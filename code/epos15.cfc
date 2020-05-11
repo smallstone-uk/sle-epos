@@ -34,79 +34,87 @@
 	</cffunction>
 
 	<cffunction name="ClearBasket" access="public" returntype="void" hint="clear current transaction without affecting till totals.">
-		<cflock scope="session" timeout="60" type="exclusive" throwontimeout="yes">
-			<cfif StructKeyExists(session,"basket")>
-				<cfset StructDelete(session,"basket",false)>
-			</cfif>
-			<cfset session.basket = {}>
-			<cfset session.basket.deals = {}>
-			<cfset session.basket.header = {}>
-			<cfset session.basket.total = {}>
-			<cfset session.basket.info = {}>
-			<cfset session.basket.shopItems = {}>
-			<cfset session.basket.mediaItems = {}>
-			<cfset session.basket.magsItems = {}>
-			<cfset session.basket.voucherItems = {}>
-			<cfset session.basket.trans = []>
-			<cfset session.basket.tranID = 0>
-			<cfset session.basket.lastItemAdded = {}>
-			<cfset LoadCatKeys()>
-	
-			<cfset session.basket.info.mode = "reg">
-			<cfset session.basket.info.type = "SALE">
-			<cfset session.basket.info.bod = "Customer">
-			<cfset session.basket.info.ageCheck = false>
-			<cfset session.basket.info.checkout = false>
-			<cfset session.basket.info.service = 0>
-			<cfset session.basket.info.errMsg = "">
-			<cfset session.basket.info.itemcount = 0>
-			<cfset session.basket.info.totaldue = 0>
-			<cfset session.basket.info.canClose = false>
-			<cfset session.basket.info.busy = false>
-			<cfset session.basket.info.showTotal = false>
-			<cfset session.till.info.staff = false>
-	
-			<cfset session.basket.payments = []>
-			<cfset session.basket.news = []>
-			<cfset session.basket.lottery = []>
-			<cfset session.basket.scratchcard = []>
-			<cfset session.basket.lprize = []>
-			<cfset session.basket.sprize = []>
-			<cfset session.basket.voucher = []>
-			<cfset session.basket.vatAnalysis = {}>
-	
-			<cfset session.basket.header.bCash = 0>
-			<cfset session.basket.header.bCredit = 0>
-			<cfset session.basket.header.LPrize = 0>
-			<cfset session.basket.header.SPrize = 0>
-			<cfset session.basket.header.voucher = 0>
-			<cfset session.basket.header.cpn = 0>
-			<cfset session.basket.header.hsv = 0>
-	
-			<cfset session.basket.header.cashtaken = 0>
-			<cfset session.basket.header.cardsales = 0>
-			<cfset session.basket.header.chqsales = 0>
-			<cfset session.basket.header.accsales = 0>
-			<cfset session.basket.header.BANKXFR = 0>
-			<cfset session.basket.header.BANKXFRsales = 0>
-			<cfset session.basket.header.ONLINE = 0>
-			<cfset session.basket.header.ONLINEsales = 0>
-			<cfset session.basket.header.WASTE = 0>
-			<cfset session.basket.header.discdeal = 0>
-			<cfset session.basket.header.discstaff = 0>
-			<cfset session.basket.header.cashback = 0>
-			<cfset session.basket.header.balance = 0>
-	
-			<cfset session.basket.total.chqINDW = 0>
-			<cfset session.basket.total.accINDW = 0>
-			<cfset session.basket.total.BANKXFR = 0>
-			<cfset session.basket.total.ONLINE = 0>
-			<cfset session.basket.total.WASTE = 0>
-			<cfset session.basket.total.balance = 0>
-			<cfset session.basket.total.discount = 0>
-			<cfset session.basket.total.discstaff = 0>
-			<cfset this.closeTranNow = false>
-		</cflock>
+		<cftry>
+			<cflock scope="session" timeout="60" type="exclusive" throwontimeout="yes">
+				<cfif StructKeyExists(session,"basket")>
+					<cfset StructDelete(session,"basket",false)>
+				</cfif>
+				<cfset session.basket = {}>
+				<cfset session.basket.deals = {}>
+				<cfset session.basket.header = {}>
+				<cfset session.basket.total = {}>
+				<cfset session.basket.info = {}>
+				<cfset session.basket.shopItems = {}>
+				<cfset session.basket.mediaItems = {}>
+				<cfset session.basket.magsItems = {}>
+				<cfset session.basket.voucherItems = {}>
+				<cfset session.basket.trans = []>
+				<cfset session.basket.tranID = 0>
+				<cfset session.basket.lastItemAdded = {}>
+				<cfset LoadCatKeys()>
+		
+				<cfset session.basket.info.mode = "reg">
+				<cfset session.basket.info.type = "SALE">
+				<cfset session.basket.info.bod = "Customer">
+				<cfset session.basket.info.ageCheck = false>
+				<cfset session.basket.info.checkout = false>
+				<cfset session.basket.info.service = 0>
+				<cfset session.basket.info.errMsg = "">
+				<cfset session.basket.info.itemcount = 0>
+				<cfset session.basket.info.totaldue = 0>
+				<cfset session.basket.info.canClose = false>
+				<cfset session.basket.info.busy = false>
+				<cfset session.basket.info.showTotal = false>
+				<cfset session.till.info.staff = false>
+		
+				<cfset session.basket.payments = []>
+				<cfset session.basket.news = []>
+				<cfset session.basket.lottery = []>
+				<cfset session.basket.scratchcard = []>
+				<cfset session.basket.lprize = []>
+				<cfset session.basket.sprize = []>
+				<cfset session.basket.voucher = []>
+				<cfset session.basket.vatAnalysis = {}>
+		
+				<cfset session.basket.header.bCash = 0>
+				<cfset session.basket.header.bCredit = 0>
+				<cfset session.basket.header.LPrize = 0>
+				<cfset session.basket.header.SPrize = 0>
+				<cfset session.basket.header.voucher = 0>
+				<cfset session.basket.header.cpn = 0>
+				<cfset session.basket.header.hsv = 0>
+		
+				<cfset session.basket.header.cashtaken = 0>
+				<cfset session.basket.header.cardsales = 0>
+				<cfset session.basket.header.chqsales = 0>
+				<cfset session.basket.header.accsales = 0>
+				<cfset session.basket.header.BANKXFR = 0>
+				<cfset session.basket.header.BANKXFRsales = 0>
+				<cfset session.basket.header.ONLINE = 0>
+				<cfset session.basket.header.ONLINEsales = 0>
+				<cfset session.basket.header.WASTE = 0>
+				<cfset session.basket.header.discdeal = 0>
+				<cfset session.basket.header.discstaff = 0>
+				<cfset session.basket.header.cashback = 0>
+				<cfset session.basket.header.balance = 0>
+		
+				<cfset session.basket.total.chqINDW = 0>
+				<cfset session.basket.total.accINDW = 0>
+				<cfset session.basket.total.BANKXFR = 0>
+				<cfset session.basket.total.ONLINE = 0>
+				<cfset session.basket.total.WASTE = 0>
+				<cfset session.basket.total.balance = 0>
+				<cfset session.basket.total.discount = 0>
+				<cfset session.basket.total.discstaff = 0>
+				<cfset this.closeTranNow = false>
+				<cfdump var="#session.basket#" label="basket" expand="yes" format="html" 
+					output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+			</cflock>
+		<cfcatch type="any">
+			<cfdump var="#cfcatch#" label="ClearBasket" expand="yes" format="html"
+				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+		</cfcatch>
+		</cftry>
 	</cffunction>
 
 	<cffunction name="ProcessDeals" access="public" returntype="void">
