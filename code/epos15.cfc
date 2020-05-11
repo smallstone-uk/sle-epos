@@ -83,6 +83,7 @@
 				<cfset session.basket.header.voucher = 0>
 				<cfset session.basket.header.cpn = 0>
 				<cfset session.basket.header.hsv = 0>
+				<cfset session.basket.header.fucky = 0>
 		
 				<cfset session.basket.header.cashtaken = 0>
 				<cfset session.basket.header.cardsales = 0>
@@ -107,9 +108,9 @@
 				<cfset session.basket.total.discount = 0>
 				<cfset session.basket.total.discstaff = 0>
 				<cfset this.closeTranNow = false>
-				<cfdump var="#session.basket#" label="basket" expand="yes" format="html" 
-					output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 			</cflock>
+			<cfdump var="#session.basket#" label="baskety" expand="true">
+			<cfabort>
 		<cfcatch type="any">
 			<cfdump var="#cfcatch#" label="ClearBasket" expand="yes" format="html"
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
