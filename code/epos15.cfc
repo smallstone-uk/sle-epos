@@ -83,7 +83,6 @@
 				<cfset session.basket.header.voucher = 0>
 				<cfset session.basket.header.cpn = 0>
 				<cfset session.basket.header.hsv = 0>
-				<cfset session.basket.header.fucky = 0>
 		
 				<cfset session.basket.header.cashtaken = 0>
 				<cfset session.basket.header.cardsales = 0>
