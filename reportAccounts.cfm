@@ -41,6 +41,7 @@
 	SELECT *
 	FROM `tblepos_account`
 	WHERE `eaMenu` = 'Yes'
+	ORDER BY eaTitle
 </cfquery>
 <cfif parm.accountID gt 0>
 	<cfquery name="QAccountPurchases" datasource="#parm.datasource#">
@@ -68,19 +69,22 @@
 			<select name="accountID" id="accountID">
 				<option value="">Select account...</option>
 				<cfloop query="QAccountNames">
-				<option value="#eaID#" <cfif eaID eq accountID> selected</cfif>>#eaID# #eaTitle#</option>
+				<option value="#eaID#" <cfif eaID eq accountID> selected</cfif>>#eaTitle#</option>
 				</cfloop>
 			</select>
 			<input type="submit" name="btnGo" value="Go">
 		</form>
 		<div style="clear:both"></div>
-		<div class="totalPanel">
-			<div class="header">Tran Dump</div>
-			<cfset ecfc.DumpTrans(parm)>
-		</div>
-		<div style="clear:both"></div>
 		<cfif parm.accountID gt 0>
+			<div class="totalPanel">
+				<div class="header">Tran Dump</div>
+				<cfset ecfc.DumpTrans(parm)>
+			</div>
+			<div style="clear:both"></div>
 			<table class="tableList">
+				<tr>
+					<th colspan="5">Account Transactions</th>
+				</tr>
 				<tr>
 					<th>ID</th>
 					<th>Mode</th>
@@ -91,7 +95,7 @@
 				<cfset balance = 0>
 				<cfloop query="QAccountPayments">
 					<tr>
-						<td>#ehID#</td>
+						<td><a href="reporttransaction.cfm?tranID=#ehID#" target="trandetail">#ehID#</a></td>
 						<td>#ehMode#</td>
 						<td>#eiType#</td>
 						<td align="right">#DateFormat(ehTimeStamp)#</td>
