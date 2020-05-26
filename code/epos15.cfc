@@ -6,6 +6,23 @@
 		<cfreturn application.site.datasource1>
 	</cffunction>
 
+	<cffunction name="QueryToStruct" access="public" returntype="struct" output="false" hint="returns a struct for a single record from query.">
+		<cfargument name="queryname" type="query" required="true">
+		<cfset var qStruct={}>
+		<cfset var columns=queryname.columnlist>
+		<cfset var colName="">
+		<cfset var fldValue="">
+		<cfloop query="queryname">
+			<cfset qStruct={}>
+			<cfloop list="#columns#" index="colName">
+				<cfset fldValue=StructFind(queryname,colName)>
+				<cfset StructInsert(qStruct,colName,fldValue)>
+			</cfloop>
+			<cfreturn StructCopy(qStruct)>	<!--- only return first record if query contains more than one. --->
+		</cfloop>
+		<cfreturn qStruct> <!--- returns empty struct if query if empty --->
+	</cffunction>
+
 	<cffunction name="ZTill" access="public" returntype="void" hint="initialise till at start of day.">
 		<cfargument name="loadDate" type="date" required="yes">
 		<cfset StructDelete(session,"till",false)>
@@ -249,7 +266,7 @@
 									<cfset loc.tran.price = ListFirst(loc.dealRec.prices[loc.i]," ") * 1>
 									<cfset loc.tran.cashonly = loc.data.cash neq 0>
 									<cfif session.till.info.staff AND loc.data.discountable>	<!--- staff sale and is a discountable item --->
-										<cfset loc.itemDiscount = round(loc.data.unitPrice * 100 * session.till.prefs.discount) / 100>
+										<cfset loc.itemDiscount = int(loc.data.unitPrice * 100 * session.till.prefs.discount) / 100>
 										<cfset loc.data.discount = loc.itemDiscount * (loc.data.qty - loc.dealRec.lastQual) * loc.rec.regMode>
 									</cfif>
 
@@ -390,7 +407,7 @@
 									<cfset loc.tran.cashonly = loc.data.cash neq 0>
 									<cfset loc.tran.price = loc.data.unitPrice>
 									<cfif session.till.info.staff AND loc.data.discountable>	<!--- staff sale and is a discountable item --->
-										<cfset loc.itemDiscount = round(loc.data.unitPrice * 100 * session.till.prefs.discount) / 100>
+										<cfset loc.itemDiscount = int(loc.data.unitPrice * 100 * session.till.prefs.discount) / 100>
 										<cfset loc.data.discount = loc.itemDiscount * (loc.data.qty - loc.dealRec.lastQual) * loc.rec.regMode>
 									</cfif>
 									<cfset loc.tran.prop = 1>
@@ -526,7 +543,7 @@
 									<cfset loc.tran.prodID = ListLast(loc.dealRec.prices[loc.i]," ")>
 									<cfset loc.data = StructFind(session.basket.shopItems,loc.tran.prodID)>
 									<cfif session.till.info.staff AND loc.data.discountable>	<!--- staff sale and is a discountable item --->
-										<cfset loc.itemDiscount = round(loc.data.unitPrice * 100 * session.till.prefs.discount) / 100>
+										<cfset loc.itemDiscount = int(loc.data.unitPrice * 100 * session.till.prefs.discount) / 100>
 										<cfset loc.data.discount = loc.itemDiscount * (loc.data.qty - loc.dealRec.lastQual) * loc.rec.regMode>
 									</cfif>
 
@@ -1233,7 +1250,8 @@
 
 			<!--- difference between cash sales and cash received... --->
 			<cfset loc.cashBalance = session.basket.header.bCash + session.basket.header.cashTaken
-				+ session.basket.header.cashback + session.basket.header.LPrize + session.basket.header.SPrize + session.basket.header.cpn + session.basket.header.hsv>
+				+ session.basket.header.cashback + session.basket.header.LPrize + session.basket.header.SPrize 
+				+ session.basket.header.cpn + session.basket.header.hsv>
 
 			<!--- payment methods --->
 			<cfswitch expression="#args.form.btnSend#">
@@ -1438,9 +1456,16 @@
 					<cfelse>
 						<cfset args.data.cash = args.data.cash + args.data.credit>
 						<cfset args.data.credit = 0>
+						
+						<cfif session.basket.info.mode eq "reg">
+							<cfset loc.diff = args.data.cash - session.basket.info.totaldue>
+						<cfelseif session.basket.info.mode eq "rfd">
+							<cfset loc.diff = args.data.cash + session.basket.info.totaldue>
+						</cfif>
+
 						<cfif args.data.cash is 0>
 							<cfset session.basket.info.errMsg = "Please enter the coupon value.">
-						<cfelseif args.data.cash gt session.basket.info.totaldue>
+						<cfelseif loc.diff gt 0.01>
 							<cfset session.basket.info.errMsg = "Coupon value cannot exceed basket total.">
 						<cfelse>
 							<cfset args.data.class = "pay">
@@ -1460,11 +1485,17 @@
 					<cfelse>
 						<cfset args.data.cash = args.data.cash + args.data.credit>
 						<cfset args.data.credit = 0>
-						<cfset loc.diff = args.data.cash - session.basket.info.totaldue>
+						
+						<cfif session.basket.info.mode eq "reg">
+							<cfset loc.diff = args.data.cash - session.basket.info.totaldue>
+						<cfelseif session.basket.info.mode eq "rfd">
+							<cfset loc.diff = args.data.cash + session.basket.info.totaldue>
+						</cfif>
+						
 						<cfif args.data.cash is 0>
-							<cfset session.basket.info.errMsg = "Please enter the coupon value.">
+							<cfset session.basket.info.errMsg = "Please enter the voucher value.">
 						<cfelseif loc.diff gt 0.01>
-							<cfset session.basket.info.errMsg = "Coupon value cannot exceed basket total.">
+							<cfset session.basket.info.errMsg = "Voucher value cannot exceed basket total.">
 						<cfelse>
 							<cfset args.data.class = "pay">
 							<cfset args.data.itemClass = "HSV">
@@ -3339,6 +3370,38 @@
 		</cftry>
 	</cffunction>
 
+	<cffunction name="LoadDayHeader" access="public" returntype="struct">
+		<cfargument name="args" type="struct" required="yes">
+		<cfset var loc = {}>
+		<cftry>
+			<cfif IsDate(args.reportDate)>
+				<cfquery name="loc.QDayHeader" datasource="#GetDataSource()#">
+					SELECT *
+					FROM tblepos_dayheader
+					WHERE DATE(dhTimeStamp) = '#args.reportDate#'
+				</cfquery>
+				<cfif loc.QDayHeader.recordcount is 0>
+					<cfquery name="loc.QCreateDayHeader" datasource="#GetDataSource()#">
+						INSERT INTO tblepos_dayheader (dhTimeStamp) VALUES ('#args.reportDate#')
+					</cfquery>				
+					<cfquery name="loc.QDayHeader" datasource="#GetDataSource()#">
+						SELECT *
+						FROM tblepos_dayheader
+						WHERE DATE(dhTimeStamp) = '#args.reportDate#'
+					</cfquery>
+				</cfif>
+				<cfreturn QueryToStruct(loc.QDayHeader)>
+			<cfelse>
+				<cfreturn {}>
+			</cfif>
+			
+		<cfcatch type="any">
+			<cfdump var="#loc#" label="LoadVAT" expand="yes" format="html"
+				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+		</cfcatch>
+		</cftry>
+	</cffunction>
+
 	<cffunction name="LoadCatKeys" access="public" returntype="void">
 		<cfset var loc = {}>
 
@@ -3376,17 +3439,16 @@
 		<cfset loc.result = {}>
 		<cfset var Qtrans = "">
 
+
 		<cftry>
+			<cfset loc.dayHeader = LoadDayHeader({"reportDate" = args.reportDate})>
 			<cfquery name="QTrans" datasource="#GetDataSource()#">
 				SELECT tblEPOS_Items.*,ehMode, empFirstName,
-				IF (eiClass='DISC',
-					(SELECT edTitle FROM tblEPOS_Deals WHERE edID=eiDealID),
-					IF (eiType='MEDIA',
-						(SELECT pubTitle FROM tblPublication WHERE pubID=eiPubID),
-						IF (eiClass='pay',
-							(SELECT eaTitle FROM tblEPOS_Account WHERE eaID=eiPayID),
-								(SELECT prodTitle FROM tblProducts WHERE prodID=eiProdID)
-						)
+				IF (eiType='MEDIA',
+					(SELECT pubTitle FROM tblPublication WHERE pubID=eiPubID),
+					IF (eiClass='pay',
+						(SELECT eaTitle FROM tblEPOS_Account WHERE eaID=eiPayID),
+							(SELECT prodTitle FROM tblProducts WHERE prodID=eiProdID)
 					)
 				) title,
 				tblProducts.prodCatID, tblproductcats.pcatTitle
@@ -3406,14 +3468,18 @@
 			<cfset loc.grandTrade = 0>
 			<cfset loc.grandRetail = 0>
 			<cfset loc.grandProfit = 0>
+			<cfset loc.grandDiscount = 0>
 			<cfset loc.tran = 0>
+			<cfset loc.showDetail = !StructKeyExists(args,"accountID")>
 			<cfoutput>
 			<table class="tableList">
 				<tr>
-					<th align="left" colspan="15"><input type="text" id="quicksearch" value="" placeholder="Search list"></th>
-					<th align="right">Net</th>
-					<th align="right">Gross</th>
-					<th></th>
+					<th align="left" colspan="13"><input type="text" id="quicksearch" value="" placeholder="Search list"></th>
+					<cfif loc.showDetail>
+						<th align="right">Net</th>
+						<th align="right">Gross</th>
+						<th></th>
+					</cfif>
 				</tr>
 				<tr>
 					<th>Tran</th>
@@ -3427,50 +3493,69 @@
 					<th>Qty</th>
 					<th width="120">Category</th>
 					<th>Description</th>
-					<th align="right" width="60">Net</th>
-					<th align="right" width="60">VAT</th>
 					<th align="right" width="60">DR</th>
 					<th align="right" width="60">CR</th>
-					<th align="right" width="60">Trade</th>
-					<th align="right" width="60">Retail</th>
-					<th align="right" width="60">Profit</th>
+					<cfif loc.showDetail>
+						<th align="right" width="60">Net</th>
+						<th align="right" width="60">VAT</th>
+						<th align="right" width="60">Trade</th>
+						<th align="right" width="60">Retail</th>
+						<th align="right" width="60">Profit</th>
+						<th align="right" width="60">Discount</th>
+					</cfif>
 				</tr>
 				<cfset loc.balance = 0>
 				<cfset loc.totTrade = 0>
 				<cfset loc.totRetail = 0>
-				<cfset loc.totProfit = 0>				
+				<cfset loc.totProfit = 0>	
+				<cfset loc.totDiscount = 0>		
+				<cfset loc.shopTotal = 0>	
+				<cfset loc.tillTotals = {}>
 				<cfloop query="QTrans">
 					<cfset loc.mode = 2 * int(ehMode eq 'reg') - 1>
 					<cfif loc.tran gt 0 AND loc.tran neq eiParent>
-						<cfif abs(loc.balance) gt 0.001>
-							<tr class="searchrow" data-title="#title#" data-prodID="#eiProdID#">
-								<td colspan="14" class="balError">&nbsp;</td>
-								<td align="right" class="balError">#DecimalFormat(loc.balance)#</td>
-								<th align="right">#DecimalFormat(loc.totTrade)#</th>
-								<th align="right">#DecimalFormat(loc.totRetail)#</th>
-								<th align="right">#DecimalFormat(loc.totProfit)#</th>
-							</tr>
-						<cfelse>
-							<tr class="searchrow" data-title="#title#" data-prodID="#eiProdID#">
-								<th colspan="15">&nbsp;</th>
-								<th align="right">#DecimalFormat(loc.totTrade)#</th>
-								<th align="right">#DecimalFormat(loc.totRetail)#</th>
-								<th align="right">#DecimalFormat(loc.totProfit)#</th>
-							</tr>
+						<cfif loc.showDetail>
+							<cfif abs(loc.balance) gt 0.001>
+								<tr class="searchrow" data-title="#title#" data-prodID="#eiProdID#">
+									<td colspan="14" class="balError">&nbsp;</td>
+									<td align="right" class="balError">#DecimalFormat(loc.balance)#</td>
+									<th align="right">#DecimalFormat(loc.totTrade)#</th>
+									<th align="right">#DecimalFormat(loc.totRetail)#</th>
+									<th align="right">#DecimalFormat(loc.totProfit)#</th>
+									<th align="right">#DecimalFormat(loc.totDiscount)#</th>
+								</tr>
+							<cfelse>
+								<tr class="searchrow" data-title="#title#" data-prodID="#eiProdID#">
+									<th colspan="15">&nbsp;</th>
+									<th align="right">#DecimalFormat(loc.totTrade)#</th>
+									<th align="right">#DecimalFormat(loc.totRetail)#</th>
+									<th align="right">#DecimalFormat(loc.totProfit)#</th>
+									<th align="right">#DecimalFormat(loc.totDiscount)#</th>
+								</tr>
+							</cfif>
 						</cfif>
-<!---						<tr class="searchrow" data-title="#title#" data-prodID="#eiProdID#">
-							<td colspan="18">&nbsp;</td>
-						</tr>
---->						<cfset loc.balance = 0>
+						<cfset loc.balance = 0>
 						<cfset loc.totTrade = 0>
 						<cfset loc.totRetail = 0>
 						<cfset loc.totProfit = 0>				
+						<cfset loc.totDiscount = 0>		
 					</cfif>
 					<cfset loc.gross = eiNet + eiVAT>
 					<cfset loc.grandNet += eiNet>
 					<cfset loc.grandVAT += eiVAT>
+				<cfif StructKeyExists(loc.tillTotals,eiType)>
+					<cfset loc.typeTotal = StructFind(loc.tillTotals,eiType)>
+					<cfset loc.typeTotal += loc.gross>
+					<cfset StructUpdate(loc.tillTotals,eiType,loc.typeTotal)>
+				<cfelse>
+					<cfset StructInsert(loc.tillTotals,eiType,loc.gross)>
+				</cfif>
+					<cfset loc.profit = 0>
+					<cfset loc.trade = 0>
+					<cfset loc.retail = 0>						
+					<cfset loc.discount = 0>
 					<tr class="searchrow" data-title="#pcatTitle# #title#" data-prodID="#eiProdID#">
-						<td><a href="reporttransaction.cfm?tranID=#eiParent#" target="trandetail">#eiParent#</a></td>
+						<td><a href="reporttransaction.cfm?tranID=#eiParent#" target="tranDetail">#eiParent#</a></td>
 						<td>#ehMode#</td>
 						<td>#eiID#</td>
 						<td>#empFirstName#</td>
@@ -3481,8 +3566,6 @@
 						<td align="center">#eiQty#</td>
 						<td width="200"><span title="#pcatTitle#">#Left(pcatTitle,20)#</span></td>
 						<td>#title#</td>
-						<td align="right">#eiNet#</td>
-						<td align="right" class="rhborder">#eiVAT#</td>
 						<cfif loc.gross gt 0>
 							<cfset loc.grandDR += loc.gross>
 							<td align="right">#DecimalFormat(loc.gross)#</td>
@@ -3492,67 +3575,79 @@
 							<td align="right"></td>
 							<td align="right" class="rhborder">#DecimalFormat(-loc.gross)#</td>
 						</cfif>
-						
-						<cfset loc.profit = 0>
-						<cfset loc.trade = 0>
-						<cfset loc.retail = 0>						
-						<cfif eiClass eq 'sale'>
-							<cfif eiTrade neq 0>
-								<cfset loc.trade = eiTrade * loc.mode>
-							<cfelse>
-								<cfset loc.trade = eiRetail * 0.5 * loc.mode>
-							</cfif>
-							<cfset loc.retail = eiRetail * loc.mode>
-							<cfset loc.totTrade += loc.trade>
-							<cfset loc.totRetail += loc.retail>
-							<cfset loc.grandTrade += loc.trade>
-							<cfset loc.grandRetail += loc.retail>
-							<td align="right"><cfif loc.trade neq 0>#DecimalFormat(loc.trade)#</cfif></td>
-							<td align="right"><cfif loc.retail neq 0>#DecimalFormat(loc.retail)#</cfif></td>
+						<cfif loc.showDetail>
+							<td align="right">#eiNet#</td>
+							<td align="right" class="rhborder">#eiVAT#</td>
 							
-							<cfif eiNet lt 0 OR ehMode eq 'wst' OR ehMode eq 'rfd'>	<!--- normal sale --->
-								<cfset loc.profit = -(eiNet + loc.trade)><!---<td align="right">a #eiNet# + #loc.trade# = #loc.profit#</td>--->
-							<cfelse>	<!--- bogof (zero net) --->
-								<cfset loc.profit = eiNet - loc.trade><!---<td align="right">c #eiNet# - #loc.trade# = #loc.profit#</td>--->
+							<cfif eiClass eq 'sale'>
+								<cfif eiTrade neq 0>
+									<cfset loc.trade = eiTrade * loc.mode>
+								<cfelse>
+									<cfset loc.trade = eiRetail * 0.5 * loc.mode>
+								</cfif>
+								<cfset loc.retail = eiRetail * loc.mode>
+								<cfset loc.totTrade += loc.trade>
+								<cfset loc.totRetail += loc.retail>
+								<cfset loc.grandTrade += loc.trade>
+								<cfset loc.grandRetail += loc.retail>
+								<td align="right"><cfif loc.trade neq 0>#DecimalFormat(loc.trade)#</cfif></td>
+								<td align="right"><cfif loc.retail neq 0>#DecimalFormat(loc.retail)#</cfif></td>
+								
+								<cfif eiNet lt 0 OR ehMode eq 'wst' OR ehMode eq 'rfd'>	<!--- normal sale --->
+									<cfset loc.profit = -(eiNet + loc.trade)><!---<td align="right">a #eiNet# + #loc.trade# = #loc.profit#</td>--->
+								<cfelse>	<!--- bogof (zero net) --->
+									<cfset loc.profit = eiNet - loc.trade><!---<td align="right">c #eiNet# - #loc.trade# = #loc.profit#</td>--->
+								</cfif>
+								<td align="right">#DecimalFormat(loc.profit)#</td>
+								<cfset loc.discount = loc.retail +  eiNet + eiVAT>
+								<td align="right" class="rhborder">#DecimalFormat(loc.discount)#</td>
+							<cfelse>
+								<td colspan="3" align="right"></td>
 							</cfif>
-							<td align="right" class="rhborder">#DecimalFormat(loc.profit)#</td>
-						<cfelse>
-							<td colspan="3" align="right"></td>
 						</cfif>
 					</tr>
 					<cfset loc.tran = eiParent>
 					<cfset loc.balance += loc.gross>
 					<cfset loc.totProfit += loc.profit>		
+					<cfset loc.totDiscount += loc.discount>		
+					<cfset loc.grandDiscount += loc.discount>		
 					<cfset loc.grandProfit += loc.profit>		
 				</cfloop>
-				<cfif abs(loc.balance) gt 0.001>
-					<tr>
-						<td colspan="14" class="balError">&nbsp;</td>
-						<td align="right" class="balError">#DecimalFormat(loc.balance)#</td>
-						<th align="right">#DecimalFormat(loc.totTrade)#</th>
-						<th align="right">#DecimalFormat(loc.totRetail)#</th>
-						<th align="right">#DecimalFormat(loc.totProfit)#</th>
-					</tr>
-				<cfelse>
-					<tr>
-						<th colspan="15">&nbsp;</th>
-						<th align="right">#DecimalFormat(loc.totTrade)#</th>
-						<th align="right">#DecimalFormat(loc.totRetail)#</th>
-						<th align="right">#DecimalFormat(loc.totProfit)#</th>
-					</tr>
+				<cfif loc.showDetail>
+					<cfif abs(loc.balance) gt 0.001>
+						<tr>
+							<td colspan="14" class="balError">&nbsp;</td>
+							<td align="right" class="balError">#DecimalFormat(loc.balance)#</td>
+							<th align="right">#DecimalFormat(loc.totTrade)#</th>
+							<th align="right">#DecimalFormat(loc.totRetail)#</th>
+							<th align="right">#DecimalFormat(loc.totProfit)#</th>
+							<th align="right">#DecimalFormat(loc.totDiscount)#</th>
+						</tr>
+					<cfelse>
+						<tr>
+							<th colspan="15">&nbsp;</th>
+							<th align="right">#DecimalFormat(loc.totTrade)#</th>
+							<th align="right">#DecimalFormat(loc.totRetail)#</th>
+							<th align="right">#DecimalFormat(loc.totProfit)#</th>
+							<th align="right">#DecimalFormat(loc.totDiscount)#</th>
+						</tr>
+					</cfif>
 				</cfif>
 				<tr>
 					<td colspan="18">&nbsp;</td>
 				</tr>
 				<tr id="pagetotals">
 					<th colspan="11">Grand Total</th>
-					<th align="right">#DecimalFormat(loc.grandNet)#</th>
-					<th align="right">#DecimalFormat(loc.grandVAT)#</th>
 					<th align="right">#DecimalFormat(loc.grandDR)#</th>
 					<th align="right">#DecimalFormat(loc.grandCR)#</th>
-					<th align="right">#DecimalFormat(loc.grandTrade)#</th>
-					<th align="right">#DecimalFormat(loc.grandRetail)#</th>
-					<th align="right">#DecimalFormat(loc.grandProfit)#</th>
+					<cfif loc.showDetail>
+						<th align="right">#DecimalFormat(loc.grandNet)#</th>
+						<th align="right">#DecimalFormat(loc.grandVAT)#</th>
+						<th align="right">#DecimalFormat(loc.grandTrade)#</th>
+						<th align="right">#DecimalFormat(loc.grandRetail)#</th>
+						<th align="right">#DecimalFormat(loc.grandProfit)#</th>
+						<th align="right">#DecimalFormat(loc.grandDiscount)#</th>
+					</cfif>
 				</tr>
 			</table>
 			</cfoutput>
@@ -3562,6 +3657,14 @@
 			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
+		<cfif NOT StructIsEmpty(loc.dayHeader)>
+			<!---<cfset loc.tillTotals.discount = int(loc.grandDiscount * 100) / 100>
+			<cfset loc.tillTotals.discount = loc.grandDiscount>--->
+			<cfset loc.tillTotals.discount = (abs(loc.grandDiscount) gt 0.001) ? loc.grandDiscount : 0>
+			<cfset loc.tillTotals.float = -loc.dayHeader.dhFloat>
+			<cfset loc.tillTotals.cashINDW += loc.dayHeader.dhFloat>
+			<cfset loc.result.tillTotals = loc.tillTotals>
+		</cfif>
 		<cfreturn loc.result>
 	</cffunction>
 

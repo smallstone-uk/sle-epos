@@ -35,7 +35,7 @@
 <cfset dates = ecfc.GetDates(parm)>
 <cfif StructKeyExists(session,"till")>
 	<cfset parm.reportDate = session.till.prefs.reportDate>
-	<cfelse>
+<cfelse>
 	<cfset parm.reportDate = Now()>
 </cfif>
 <cfif StructKeyExists(form,"reportDate")>
@@ -63,7 +63,7 @@
 		INNER JOIN tblProductCats ON pcatID = prodCatID
 		INNER JOIN tblProductGroups ON pgID = pcatGroup
 		WHERE DATE( ehTimeStamp ) = '#form.reportDate#'
-		GROUP by eiClass, eiType, pgTitle,prodEposCatID
+		GROUP by eiClass, eiType, pgTitle<!---,prodEposCatID--->
 	</cfquery>
 	<!---<cfdump var="#QItemSummary#" label="QItemSummary" expand="false">--->
 	<cfquery name="QCashback" datasource="#parm.datasource#">
@@ -102,6 +102,7 @@
 			<option value="#item.value#" <cfif parm.reportDate eq item.value> selected</cfif>>#item.title#</option>
 			</cfloop>
 		</select>
+		<input type="checkbox" name="fixTotals" value="1" />Repair Till Totals
 		<input type="submit" name="btnGo" value="Go">
 	</form>
 </div>
@@ -119,6 +120,7 @@
 				<th align="right">CR</th>
 				<th align="right">Count</th>
 			</tr>
+			<!---<cfset tillTotals = {}>--->
 			<cfset crtotal = 0>
 			<cfset drtotal = 0>
 			<cfset vatTotal = 0>
@@ -129,21 +131,24 @@
 				<cfset gross = net + vat>
 				<cfif gross gt 0>
 					<cfset drtotal += gross>
-					<cfelse>
+				<cfelse>
 					<cfset crtotal += gross>
 				</cfif>
-				<tr>
+<!---				<cfif StructKeyExists(tillTotals,eiType)>
+					<cfset typeTotal = StructFind(tillTotals,eiType)>
+					<cfset typeTotal += gross>
+					<cfset StructUpdate(tillTotals,eiType,typeTotal)>
+				<cfelse>
+					<cfset StructInsert(tillTotals,eiType,gross)>
+				</cfif>
+--->				<tr>
 					<td>#pcatGroup#</td>
 					<td>#prodEposCatID#</td>
 					<td>#eiClass#</td>
 					<td>#eiType#</td>
 					<td>#pgTitle#</td>
-					<td align="right"><cfif gross gt 0>
-							#DecimalFormat(net)#
-						</cfif></td>
-					<td align="right"><cfif gross lt 0>
-							#DecimalFormat(-net)#
-						</cfif></td>
+					<td align="right"><cfif gross gt 0>#DecimalFormat(net)#</cfif></td>
+					<td align="right"><cfif gross lt 0>#DecimalFormat(-net)#</cfif></td>
 					<td align="right">#itemCount#</td>
 				</tr>
 			</cfloop>
@@ -153,12 +158,8 @@
 				<td>SALES VAT TOTAL</td>
 				<td></td>
 				<td></td>
-				<td align="right"><cfif vatTotal gt 0>
-						#DecimalFormat(vatTotal)#
-					</cfif></td>
-				<td align="right"><cfif vatTotal lt 0>
-						#DecimalFormat(-vatTotal)#
-					</cfif></td>
+				<td align="right"><cfif vatTotal gt 0>#DecimalFormat(vatTotal)#</cfif></td>
+				<td align="right"><cfif vatTotal lt 0>#DecimalFormat(-vatTotal)#</cfif></td>
 				<td></td>
 			</tr>
 			<tr>
@@ -167,6 +168,7 @@
 				<th align="right">#DecimalFormat(-crtotal)#</th>
 				<th align="right">#countTotal#</th>
 			</tr>
+			<!---<cfdump var="#tillTotals#" label="tillTotals" expand="false">--->
 			<cfif abs(drtotal + crtotal) gt 0>
 				<tr>
 					<th align="right" colspan="4">Difference</th>
@@ -270,42 +272,25 @@
 					<th>Description</th>
 					<th width="70" align="right">Value</th>
 				</tr>
-		<cfloop collection="#epos.accounts#" item="key">
-			<cfset value = StructFind(epos.accounts,key)>
-			<cfif value neq 0>
+				<cfloop collection="#epos.accounts#" item="key">
+					<cfset value = StructFind(epos.accounts,key)>
+					<cfif value neq 0>
+						<cfif ListFind("SUPPLIER|CARDINDW",key,"|")>
+						<cfelse>
+							<tr>
+								<td>#key#</td>
+								<td align="right">#value#</td>
+							</tr>
+						</cfif>
+					</cfif>
+				</cfloop>
 				<tr>
-					<td>#key#</td>
-					<td align="right">#value#</td>
-				</tr>
-			</cfif>
-		</cfloop>
-				<tr>
-					<td>Healthy Start:</td>
-					<td align="right">#GetTotal(epos.accounts,"healthy")#</td>
-				</tr>
-				<tr>
-					<td>News Vouchers:</td>
-					<td align="right">#GetTotal(epos.accounts,"voucher")#</td>
-				</tr>
-				<tr>
-					<td>Account in Drawer:</td>
-					<td align="right">#GetTotal(epos.accounts,"accindw")#</td>
-				</tr>
-				<tr>
-					<td>Cash via Till:</td>
-					<td align="right">#DecimalFormat(cashTaken)#</td>
+					<td>&nbsp;</td>
+					<td align="right"></td>
 				</tr>
 				<tr>
 					<td>Card Payments:</td>
 					<td align="right">#DecimalFormat(epos.accounts.cardindw - val(QCashback.total))#</td>
-				</tr>
-				<tr>
-					<td>Cheque Account:</td>
-					<td align="right">#GetTotal(epos.accounts,"chqindw")#</td>
-				</tr>
-				<tr>
-					<td>&nbsp;</td>
-					<td align="right"></td>
 				</tr>
 				<tr>
 					<td>Supplier COD Payments:</td>
@@ -430,7 +415,8 @@
 		<div class="header">Tran Dump</div>
 		<cfset parm = {}>
 		<cfset parm.reportDate = form.reportDate>
-		<cfset ecfc.DumpTrans(parm)>
+		<cfset tillTotals = ecfc.DumpTrans(parm)>
+		<cfdump var="#tillTotals#" label="tillTotals" expand="false">
 	</div>
 	<div style="clear:both"></div>
 </cfif>
