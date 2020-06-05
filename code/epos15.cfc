@@ -3437,12 +3437,10 @@
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
-		<cfset var Qtrans = "">
-
 
 		<cftry>
 			<cfset loc.dayHeader = LoadDayHeader({"reportDate" = args.reportDate})>
-			<cfquery name="QTrans" datasource="#GetDataSource()#">
+			<cfquery name="loc.QTrans" datasource="#GetDataSource()#">
 				SELECT tblEPOS_Items.*,ehMode, empFirstName,
 				IF (eiType='MEDIA',
 					(SELECT pubTitle FROM tblPublication WHERE pubID=eiPubID),
@@ -3451,7 +3449,7 @@
 							(SELECT prodTitle FROM tblProducts WHERE prodID=eiProdID)
 					)
 				) title,
-				tblProducts.prodCatID, tblproductcats.pcatTitle
+				tblProducts.prodCatID,tblProducts.prodUnitSize, tblproductcats.pcatTitle
 				FROM tblEPOS_Items
 				INNER JOIN tblEPOS_Header ON ehID = eiParent
 				INNER JOIN tblemployee ON empID = ehEmployee
@@ -3473,13 +3471,9 @@
 			<cfset loc.showDetail = !StructKeyExists(args,"accountID")>
 			<cfoutput>
 			<table class="tableList">
-				<tr>
+				<tr class="noPrint">
 					<th align="left" colspan="13"><input type="text" id="quicksearch" value="" placeholder="Search list"></th>
-					<cfif loc.showDetail>
-						<th align="right">Net</th>
-						<th align="right">Gross</th>
-						<th></th>
-					</cfif>
+					<cfif loc.showDetail><th colspan="6"></th></cfif>
 				</tr>
 				<tr>
 					<th>Tran</th>
@@ -3498,8 +3492,8 @@
 					<cfif loc.showDetail>
 						<th align="right" width="60">Net</th>
 						<th align="right" width="60">VAT</th>
-						<th align="right" width="60">Trade</th>
-						<th align="right" width="60">Retail</th>
+						<th align="right" width="60">Trade<br><span class="tiny">(net)</span></th>
+						<th align="right" width="60">Retail<br><span class="tiny">(gross)</span></th>
 						<th align="right" width="60">Profit</th>
 						<th align="right" width="60">Discount</th>
 					</cfif>
@@ -3511,7 +3505,7 @@
 				<cfset loc.totDiscount = 0>		
 				<cfset loc.shopTotal = 0>	
 				<cfset loc.tillTotals = {}>
-				<cfloop query="QTrans">
+				<cfloop query="loc.QTrans">
 					<cfset loc.mode = 2 * int(ehMode eq 'reg') - 1>
 					<cfif loc.tran gt 0 AND loc.tran neq eiParent>
 						<cfif loc.showDetail>
@@ -3533,6 +3527,10 @@
 									<th align="right">#DecimalFormat(loc.totDiscount)#</th>
 								</tr>
 							</cfif>
+						<cfelse>
+							<tr>
+								<th colspan="19">&nbsp;</th>
+							</tr>
 						</cfif>
 						<cfset loc.balance = 0>
 						<cfset loc.totTrade = 0>
@@ -3565,7 +3563,7 @@
 						<td>#eiPayType#</td>
 						<td align="center">#eiQty#</td>
 						<td width="200"><span title="#pcatTitle#">#Left(pcatTitle,20)#</span></td>
-						<td>#title#</td>
+						<td>#title# #prodUnitSize#</td>
 						<cfif loc.gross gt 0>
 							<cfset loc.grandDR += loc.gross>
 							<td align="right">#DecimalFormat(loc.gross)#</td>
@@ -3602,7 +3600,7 @@
 								<cfset loc.discount = loc.retail +  eiNet + eiVAT>
 								<td align="right" class="rhborder">#DecimalFormat(loc.discount)#</td>
 							<cfelse>
-								<td colspan="3" align="right"></td>
+								<td colspan="4" class="rhborder"></td>
 							</cfif>
 						</cfif>
 					</tr>
@@ -3634,7 +3632,7 @@
 					</cfif>
 				</cfif>
 				<tr>
-					<td colspan="18">&nbsp;</td>
+					<td colspan="19" class="rhborder">&nbsp;</td>
 				</tr>
 				<tr id="pagetotals">
 					<th colspan="11">Grand Total</th>
@@ -3650,6 +3648,40 @@
 					</cfif>
 				</tr>
 			</table>
+			<cfset loc.diff = abs(loc.grandDR - loc.grandCR)>
+			<cfif loc.diff gt 0.001 >
+				<p>
+					Warning, accounts do not balance. The Repair Totals option is unavailable.<br>
+					Please correct transaction errors before repairing totals.<br>
+					Error total is #loc.diff#.
+				 </p>
+			<cfelseif NOT StructIsEmpty(loc.dayHeader)>
+				<cfquery name="loc.result.QTotals" datasource="#GetDataSource()#">
+					SELECT *
+					FROM tblEPOS_Totals
+					WHERE totDate='#args.reportDate#'
+				</cfquery>
+				<cfset loc.result.newTotals = {}>
+				<cfloop query="loc.result.QTotals">
+					<cfif StructKeyExists(loc.tillTotals,totAcc)>
+						<cfset loc.totalValue = StructFind(loc.tillTotals,totAcc)>
+					<cfelse>
+						<cfset loc.totalValue = 0>
+					</cfif>
+					<cfset StructInsert(loc.result.newTotals,totAcc,{"recID" = totID, "totValue" = loc.totalValue},false)>
+					<cfif StructKeyExists(args,"fixTotals")>
+						<cfquery name="loc.fixTotal" datasource="#GetDataSource()#">
+							UPDATE tblEPOS_Totals
+							SET totValue = #loc.totalValue#
+							WHERE totID = #loc.result.QTotals.totID#
+						</cfquery>
+					</cfif>
+				</cfloop>
+				<cfset loc.tillTotals.discount = (abs(loc.grandDiscount) gt 0.001) ? loc.grandDiscount : 0>
+				<cfset loc.tillTotals.float = -loc.dayHeader.dhFloat>
+				<cfset loc.tillTotals.cashINDW += loc.dayHeader.dhFloat>
+				<cfset loc.result.tillTotals = loc.tillTotals>
+			</cfif>
 			</cfoutput>
 
 		<cfcatch type="any">
@@ -3657,14 +3689,6 @@
 			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
-		<cfif NOT StructIsEmpty(loc.dayHeader)>
-			<!---<cfset loc.tillTotals.discount = int(loc.grandDiscount * 100) / 100>
-			<cfset loc.tillTotals.discount = loc.grandDiscount>--->
-			<cfset loc.tillTotals.discount = (abs(loc.grandDiscount) gt 0.001) ? loc.grandDiscount : 0>
-			<cfset loc.tillTotals.float = -loc.dayHeader.dhFloat>
-			<cfset loc.tillTotals.cashINDW += loc.dayHeader.dhFloat>
-			<cfset loc.result.tillTotals = loc.tillTotals>
-		</cfif>
 		<cfreturn loc.result>
 	</cffunction>
 

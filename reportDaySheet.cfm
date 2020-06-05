@@ -175,6 +175,7 @@
 					<th></th>
 					<th align="right">#DecimalFormat(drtotal + crtotal)#</th>
 					<th></th>
+					<th></th>
 				</tr>
 			</cfif>
 		</table>
@@ -228,7 +229,7 @@
 					<cfset crValue = 0>
 					<cfset gross = net + vat>
 					<cfif Find(eiClass,"supp,pay")>
-						<cfif eiType neq 'WASTE'>
+						<cfif eiType neq 'WASTEACC'>
 							<cfset drValue = gross>
 							<cfset drTotal += gross>
 						<cfelse>
@@ -415,6 +416,7 @@
 		<div class="header">Tran Dump</div>
 		<cfset parm = {}>
 		<cfset parm.reportDate = form.reportDate>
+		<cfset parm.fixTotals = StructKeyExists(form,"fixTotals")>
 		<cfset tillTotals = ecfc.DumpTrans(parm)>
 		<cfdump var="#tillTotals#" label="tillTotals" expand="false">
 	</div>
