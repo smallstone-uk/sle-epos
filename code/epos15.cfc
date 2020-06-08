@@ -3375,28 +3375,27 @@
 		<cfset var loc = {}>
 		<cftry>
 			<cfif IsDate(args.reportDate)>
-				<cfquery name="loc.QDayHeader" datasource="#GetDataSource()#">
+				<cfquery name="loc.QDayHeader" datasource="#GetDataSource()#">	<!--- get specified day header record --->
 					SELECT *
 					FROM tblepos_dayheader
 					WHERE DATE(dhTimeStamp) = '#args.reportDate#'
 				</cfquery>
 				<cfif loc.QDayHeader.recordcount is 0>
-					<cfquery name="loc.QCreateDayHeader" datasource="#GetDataSource()#">
-						INSERT INTO tblepos_dayheader (dhTimeStamp) VALUES ('#args.reportDate#')
-					</cfquery>				
-					<cfquery name="loc.QDayHeader" datasource="#GetDataSource()#">
+					<cfquery name="loc.QDayHeader" datasource="#GetDataSource()#">	<!--- get most recent day header record --->
 						SELECT *
 						FROM tblepos_dayheader
-						WHERE DATE(dhTimeStamp) = '#args.reportDate#'
+						ORDER BY dhID DESC
+						LIMIT 0,1
 					</cfquery>
 				</cfif>
+
 				<cfreturn QueryToStruct(loc.QDayHeader)>
 			<cfelse>
 				<cfreturn {}>
 			</cfif>
 			
 		<cfcatch type="any">
-			<cfdump var="#loc#" label="LoadVAT" expand="yes" format="html"
+			<cfdump var="#loc#" label="LoadDayHeader" expand="yes" format="html"
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
@@ -3437,7 +3436,7 @@
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
-
+		<cfset loc.result.msg = "">
 		<cftry>
 			<cfset loc.dayHeader = LoadDayHeader({"reportDate" = args.reportDate})>
 			<cfquery name="loc.QTrans" datasource="#GetDataSource()#">
@@ -3677,10 +3676,40 @@
 						</cfquery>
 					</cfif>
 				</cfloop>
+				<cfset loc.tillTotals.discok = (abs(loc.grandDiscount) gt 0.001)>
 				<cfset loc.tillTotals.discount = (abs(loc.grandDiscount) gt 0.001) ? loc.grandDiscount : 0>
 				<cfset loc.tillTotals.float = -loc.dayHeader.dhFloat>
 				<cfset loc.tillTotals.cashINDW += loc.dayHeader.dhFloat>
+				<cfif StructKeyExists(args,"fixTotals")>
+					<!--- write discount total --->
+					<cfset loc.totalRec = StructFind(loc.result.newTotals,"DISCOUNT")>
+					<cfquery name="loc.fixTotal" datasource="#GetDataSource()#">
+						UPDATE tblEPOS_Totals
+						SET totValue = #loc.grandDiscount#
+						WHERE totID = #loc.totalRec.recID#
+					</cfquery>
+					<cfset loc.totalRec = StructFind(loc.result.newTotals,"SHOP")>
+					<cfquery name="loc.fixTotal" datasource="#GetDataSource()#">
+						UPDATE tblEPOS_Totals
+						SET totValue = #loc.totalRec.totValue - loc.grandDiscount#
+						WHERE totID = #loc.totalRec.recID#
+					</cfquery>
+					<cfset loc.totalRec = StructFind(loc.result.newTotals,"FLOAT")>
+					<cfquery name="loc.fixTotal" datasource="#GetDataSource()#">
+						UPDATE tblEPOS_Totals
+						SET totValue = #-loc.dayHeader.dhFloat#
+						WHERE totID = #loc.totalRec.recID#
+					</cfquery>
+					<cfset loc.totalRec = StructFind(loc.result.newTotals,"CASHINDW")>
+					<cfquery name="loc.fixTotal" datasource="#GetDataSource()#">
+						UPDATE tblEPOS_Totals
+						SET totValue = #loc.totalRec.totValue + loc.dayHeader.dhFloat#
+						WHERE totID = #loc.totalRec.recID#
+					</cfquery>
+				</cfif>
 				<cfset loc.result.tillTotals = loc.tillTotals>
+			<cfelse>
+				<cfset loc.result.msg = "Day Header not available. FixTotals option cannot be used.">
 			</cfif>
 			</cfoutput>
 
@@ -3689,7 +3718,7 @@
 			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
-		<cfreturn loc.result>
+		<cfreturn loc>
 	</cffunction>
 
 </cfcomponent>
