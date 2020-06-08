@@ -169,7 +169,7 @@
 				<th align="right">#countTotal#</th>
 			</tr>
 			<!---<cfdump var="#tillTotals#" label="tillTotals" expand="false">--->
-			<cfif abs(drtotal + crtotal) gt 0>
+			<cfif abs(drtotal + crtotal) gt 0.001>
 				<tr>
 					<th align="right" colspan="4">Difference</th>
 					<th></th>
