@@ -229,7 +229,7 @@
 					<cfset crValue = 0>
 					<cfset gross = net + vat>
 					<cfif Find(eiClass,"supp,pay")>
-						<cfif eiType neq 'WASTEACC'>
+						<cfif eiType neq 'WASTE'>
 							<cfset drValue = gross>
 							<cfset drTotal += gross>
 						<cfelse>
