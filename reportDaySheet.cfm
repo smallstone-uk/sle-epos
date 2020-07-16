@@ -264,7 +264,7 @@
 				</tr>
 				</cfif>
 			</table>
-		</div><cfdump var="#epos.accounts#" label="" expand="false">
+		</div>
 		<div id="xreading7" class="totalPanel">
 			<div class="header">Account Totals</div>
 			<cfset checkTotal = 0>
