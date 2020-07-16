@@ -264,9 +264,10 @@
 				</tr>
 				</cfif>
 			</table>
-		</div>
+		</div><cfdump var="#epos.accounts#" label="" expand="false">
 		<div id="xreading7" class="totalPanel">
 			<div class="header">Account Totals</div>
+			<cfset checkTotal = 0>
 			<cfset cashTaken = GetTotal(epos.accounts,"cashindw") + GetTotal(epos.accounts,"supplier") + GetTotal(epos.accounts,"float") + val(QCashback.total)>
 			<table class="tableList" border="1">
 				<tr>
@@ -278,6 +279,7 @@
 					<cfif value neq 0>
 						<cfif ListFind("SUPPLIER|CARDINDW",key,"|")>
 						<cfelse>
+							<cfset checkTotal += value>
 							<tr>
 								<td>#key#</td>
 								<td align="right">#value#</td>
@@ -286,8 +288,8 @@
 					</cfif>
 				</cfloop>
 				<tr>
-					<td>&nbsp;</td>
-					<td align="right"></td>
+					<td>&nbsp;Check Total</td>
+					<td align="right">#checkTotal#</td>
 				</tr>
 				<tr>
 					<td>Card Payments:</td>
@@ -418,7 +420,7 @@
 		<cfset parm.reportDate = form.reportDate>
 		<cfset parm.fixTotals = StructKeyExists(form,"fixTotals")>
 		<cfset tillTotals = ecfc.DumpTrans(parm)>
-		<cfdump var="#tillTotals#" label="tillTotals" expand="false">
+		<!---<cfdump var="#tillTotals#" label="tillTotals" expand="false">--->
 	</div>
 	<div style="clear:both"></div>
 </cfif>
