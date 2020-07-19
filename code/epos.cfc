@@ -3353,7 +3353,7 @@
 		<cfset var loc = {}>
 		<cftry>
 			<cfquery name="loc.products" datasource="#GetDatasource()#">
-				SELECT prodID,prodTitle,prodOurPrice,prodStaffDiscount,prodClass,prodVatRate,prodCashOnly,prodSign,prodUnitTrade,
+				SELECT prodID,prodTitle,prodUnitSize,prodOurPrice,prodStaffDiscount,prodClass,prodVatRate,prodCashOnly,prodSign,prodUnitTrade,
 					siUnitTrade,siUnitSize,siOurPrice, epcKey,epcOrder
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct

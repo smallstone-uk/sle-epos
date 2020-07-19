@@ -71,9 +71,10 @@
 					</cfif>
 				>
 					<span class="priceTitle">#item.prodTitle#</span>
+					<span class="prodSize">#item.prodUnitSize#</span>
 					<cfif item.prodCashOnly eq 1><span class="priceCash">(Cash Only)</span></cfif>
 					<span class="priceButton">
-						<cfif ourPrice gt 0>
+						<cfif ourPrice neq 0>
 							&pound;#DecimalFormat(ourPrice)#
 						<cfelse>
 							Manual Price

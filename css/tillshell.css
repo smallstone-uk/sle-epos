@@ -26,6 +26,7 @@
 .mismatch {color:#F00; font-weight:bold; font-size:14px;}
 .balError {color:#FFF; font-weight:bold; background-color:#F03}
 .rhborder {border-right:solid 1px #000}
+.tiny {font-size:9px}
 @media print {    
     .noPrint {display: none !important;}
     .no-print {display: none !important;}
