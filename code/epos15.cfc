@@ -37,7 +37,7 @@
 		<cfset session.till.catKeys = []>
 		<cfset session.till.total.float = -200>
 		<cfset session.till.total.cashINDW = 200>
-		<cfset session.till.prefs.mincard = 3.00>
+		<cfset session.till.prefs.mincard = 0.00>
 		<cfset session.till.prefs.service = 0.50>
 		<cfset session.till.prefs.discount = 0.10>
 		<cfset session.till.prefs.reportDate = LSDateFormat(loadDate,"yyyy-mm-dd")>
