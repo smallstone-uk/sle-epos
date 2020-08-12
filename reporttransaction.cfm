@@ -78,7 +78,7 @@
 				<td>#pcatTitle#</td>
 				<td>
 					<cfif eiType eq 'shop'>
-						<a href="http://dev.sle-admin.lan/productStock6.cfm?product=#eiProdID#" target="_new">#eiProdID#</a>
+						<a href="productStock6.cfm?product=#eiProdID#" target="_new">#eiProdID#</a>
 					</cfif>
 				</td>
 				<td>#title#</td>
