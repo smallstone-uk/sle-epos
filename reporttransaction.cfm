@@ -76,6 +76,7 @@
 				<td>#eiPayType#</td>
 				<td>#eiQty#</td>
 				<td>#pcatTitle#</td>
+				
 				<td>
 					<cfif eiType eq 'shop'>
 						<a href="#application.site.parentURL#productStock6.cfm?product=#eiProdID#" target="_new">#eiProdID#</a>
