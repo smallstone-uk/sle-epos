@@ -3031,36 +3031,70 @@
 		<cfset var loc = {}>
 		<cfset loc.result = []>
 		
-		<cftry>
-		
-		<cfquery name="loc.pubs" datasource="#args.datasource#">
-			SELECT pubID, pubTitle, pubRoundTitle, pubPrice, pubTradePrice
-			FROM tblPublication
-			WHERE pubGroup = 'news'
-			<cfif args.daynow is "saturday">
-				AND pubType IN ('saturday', 'weekly', 'weekend')
-			<cfelseif args.daynow is "sunday">
-				AND pubType IN ('sunday', 'weekly', 'weekend')
-			<cfelse>
-				AND pubType IN ('morning', 'weekly')
-			</cfif>
-			AND pubSaleType = 'variable'
-			AND pubEPOS
-			AND pubActive
-			ORDER BY pubType ASC, pubRoundTitle ASC
-		</cfquery>
-		
-		<cfloop query="loc.pubs">
-			<cfset loc.item = {}>
-			<cfset loc.item.id = pubID>
-			<cfset loc.item.title = (Len(pubRoundTitle)) ? pubRoundTitle : pubTitle>
-			<cfset loc.item.price = pubPrice>
-			<cfset loc.item.tradePrice = pubTradePrice>
-			<cfset ArrayAppend(loc.result, loc.item)>
-		</cfloop>
+		<cftry>		
+			<cfquery name="loc.pubs" datasource="#args.datasource#">
+				SELECT pubID, pubTitle, pubRoundTitle, pubPrice, pubTradePrice
+				FROM tblPublication
+				WHERE pubGroup = 'news'
+				<cfif args.daynow is "saturday">
+					AND pubType IN ('saturday', 'weekly', 'weekend')
+				<cfelseif args.daynow is "sunday">
+					AND pubType IN ('sunday', 'weekly', 'weekend')
+				<cfelse>
+					AND pubType IN ('morning', 'weekly')
+				</cfif>
+				AND pubSaleType = 'variable'
+				AND pubEPOS
+				AND pubActive
+				ORDER BY pubType ASC, pubRoundTitle ASC
+			</cfquery>
+			
+			<cfloop query="loc.pubs">
+				<cfset loc.item = {}>
+				<cfset loc.item.id = pubID>
+				<cfset loc.item.title = (Len(pubRoundTitle)) ? pubRoundTitle : pubTitle>
+				<cfset loc.item.price = pubPrice>
+				<cfset loc.item.tradePrice = pubTradePrice>
+				<cfset ArrayAppend(loc.result, loc.item)>
+			</cfloop>
 
 		<cfcatch type="any">
-			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+			 	output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+		</cfcatch>
+		</cftry>
+		
+		<cfreturn loc.result>
+	</cffunction>
+
+	<cffunction name="LoadAllNewspapers" access="public" returntype="array">
+		<cfargument name="args" type="struct" required="yes">
+		<cfset var loc = {}>
+		<cfset loc.result = []>
+		
+		<cftry>		
+			<cfquery name="loc.pubs" datasource="#args.datasource#">
+				SELECT pubID, pubTitle, pubRoundTitle, pubPrice, pubTradePrice
+				FROM tblPublication
+				WHERE pubGroup = 'news'
+				AND pubSaleType = 'variable'
+				AND pubEPOS
+				AND pubActive
+				ORDER BY pubTitle ASC
+			</cfquery>
+			
+			<cfloop query="loc.pubs">
+				<cfset loc.item = {}>
+				<cfset loc.item.id = pubID>
+				<cfset loc.item.title = pubTitle>
+				<cfset loc.item.price = pubPrice>
+				<cfset loc.item.tradePrice = pubTradePrice>
+				<cfset ArrayAppend(loc.result, loc.item)>
+			</cfloop>
+
+		<cfcatch type="any">
+			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+			 	output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
 		
