@@ -81,7 +81,7 @@
 				<cfset ecfc.DumpTrans(parm)>
 			</div>
 			<div style="clear:both; page-break-after:always;"></div>
-			<table class="tableList">
+			<table class="tableList" width="600">
 				<tr>
 					<th colspan="6">Account Transactions</th>
 				</tr>
@@ -89,15 +89,17 @@
 					<th>ID</th>
 					<th>Mode</th>
 					<th>Type</th>
-					<th>Date</th>
-					<th>Debit</th>
-					<th>Credit</th>
+					<th align="right">Date</th>
+					<th align="right">Debit</th>
+					<th align="right">Credit</th>
+					<th align="right">Balance</th>
 				</tr>
 				<cfset balance = 0>
 				<cfset drTotal = 0>
 				<cfset crTotal = 0>
 				<cfloop query="QAccountPayments">
 					<cfset lineTotal = eiNet + eiVAT>
+					<cfset balance += (lineTotal)>
 					<tr>
 						<td><a href="reporttransaction.cfm?tranID=#ehID#" target="trandetail">#ehID#</a></td>
 						<td>#ehMode#</td>
@@ -112,8 +114,8 @@
 							<td align="right"></td>
 							<td align="right">#DecimalFormat(-lineTotal)#</td>
 						</cfif>
+						<td align="right">#DecimalFormat(balance)#</td>
 					</tr>
-					<cfset balance += (lineTotal)>
 				</cfloop>
 				<tr>
 					<th colspan="4">Totals</th>
@@ -131,6 +133,7 @@
 						<th align="right">#DecimalFormat(balance)#</th>
 					</tr>
 				</cfif>
+				<th></th>
 			</table>
 			<!---<cfdump var="#QAccountPayments#" label="QAccountPayments" expand="false">--->
 		</cfif>
