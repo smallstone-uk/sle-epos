@@ -13,8 +13,6 @@
         "datasource1": "kcc_sle_production",
         "datasource2": "mvc_sle",
         "mapping1": "/kccCMS/",
-		
-		// "parentURL": "http://dev.sle-admin.lan/",
 		"parentURL": "http://tweb.sle-admin.co.uk/",
 		
         "useAlias": false,
