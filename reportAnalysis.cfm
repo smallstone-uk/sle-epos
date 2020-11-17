@@ -11,7 +11,7 @@
 <cfparam name="reportDateTo" default="#Now()#">
 <cfparam name="reportMode" default="">
 <cfset startHour = 6>
-<cfset endHour = 19>
+<cfset endHour = 20>
 <cfset parm = {}>
 <cfset parm.datasource = application.site.datasource1>
 <cfset dates = ecfc.GetDates(parm)>
