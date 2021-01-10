@@ -24,6 +24,10 @@
 	<cfset parm.reportDateFrom = form.reportDateFrom>
 	<cfset parm.reportDateTo = form.reportDateTo>
 	<cfif len(form.reportDateTo) IS 0><cfset parm.reportDateTo = form.reportDateFrom></cfif>
+	<cfset parm.reportHourFrom = form.reportHourFrom>
+	<cfset parm.reportMinFrom = form.reportMinFrom>
+	<cfset parm.reportHourTo = form.reportHourTo>
+	<cfset parm.reportMinTo = form.reportMinTo>
 	<cfquery name="QItemAnalysis" datasource="#parm.datasource#" result="QItemAnalysisResult">
 		SELECT prodID,prodCatID,prodEposCatID,prodTitle, siUnitSize, eiClass,eiType,eiNet,eiVAT,
 			ehID, ehTimeStamp, DATE(ehTimeStamp) AS yymmdd, HOUR(ehTimeStamp) AS hh, COUNT(*) AS recCount,
