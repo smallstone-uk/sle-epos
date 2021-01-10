@@ -9,6 +9,10 @@
 <cfobject component="#application.site.codePath#" name="ecfc">
 <cfparam name="reportDateFrom" default="#Now()#">
 <cfparam name="reportDateTo" default="#Now()#">
+<cfparam name="reportHourFrom" default="0">
+<cfparam name="reportMinFrom" default="0">
+<cfparam name="reportHourTo" default="23">
+<cfparam name="reportMinTo" default="59">
 <cfparam name="reportMode" default="">
 <cfset startHour = 6>
 <cfset endHour = 20>
@@ -36,6 +40,10 @@
 						AND siStatus NOT IN ("returned","inactive") )
 		WHERE DATE(ehTimeStamp) >= '#parm.reportDateFrom#'
 		AND DATE(ehTimeStamp) <= '#parm.reportDateTo#'
+		AND HOUR(ehTimeStamp) >= '#parm.reportHourFrom#'
+		AND HOUR(ehTimeStamp) <= '#parm.reportHourTo#'
+		AND MINUTE(ehTimeStamp) >= '#parm.reportMinFrom#'
+		AND MINUTE(ehTimeStamp) <= '#parm.reportMinTo#'
 		AND eiClass LIKE 'sale'
 		<cfif len(reportMode)>AND ehMode LIKE '#reportMode#'</cfif>
         GROUP BY groupTitle, catTitle, prodTitle, siUnitSize, eiNet, hh
@@ -68,6 +76,34 @@
 					<option value="rfd" <cfif reportMode eq "rfd"> selected</cfif>>Refund Mode</option>
 					<option value="wst" <cfif reportMode eq "wst"> selected</cfif>>Waste Mode</option>
 				</select>
+				<br />
+				Time From:
+				<select name="reportHourFrom" id="reportHourFrom">
+					<option value="">Select hour...</option>
+					<cfloop from="0" to="23" index="item">
+						<option value="#item#" <cfif reportHourFrom eq item> selected</cfif>>#NumberFormat(item,"00")#</option>
+					</cfloop>
+				</select>
+				<select name="reportMinFrom" id="reportMinFrom">
+					<option value="">Select minute...</option>
+					<cfloop from="0" to="59" index="item">
+						<option value="#item#" <cfif reportMinFrom eq item> selected</cfif>>#NumberFormat(item,"00")#</option>
+					</cfloop>
+				</select>
+				Time To:
+				<select name="reportHourTo" id="reportHourTo">
+					<option value="">Select hour...</option>
+					<cfloop from="0" to="23" index="item">
+						<option value="#item#" <cfif reportHourTo eq item> selected</cfif>>#NumberFormat(item,"00")#</option>
+					</cfloop>
+				</select>
+				<select name="reportMinTo" id="reportMinTo">
+					<option value="">Select minute...</option>
+					<cfloop from="0" to="59" index="item">
+						<option value="#item#" <cfif reportMinTo eq item> selected</cfif>>#NumberFormat(item,"00")#</option>
+					</cfloop>
+				</select>
+				
 				<input type="submit" name="btnGo" value="Go">
 			</form>
 			</div>
