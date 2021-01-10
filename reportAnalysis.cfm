@@ -212,6 +212,20 @@
 					<th>&pound;#DecimalFormat(totValue)#</th>
 				</tr>
 				<tr>
+					<th colspan="5">Totals</th>
+					<cfloop from="#startHour#" to="#endHour#" index="i">
+						<cfif StructKeyExists(totals,i)>
+							<cfset hourTotal = StructFind(totals,i)>
+							<th>&pound;#DecimalFormat(hourTotal / dayRange)#</th>
+						<cfelse>
+							<th></th>
+						</cfif>
+					</cfloop>
+					<th></th>
+					<th></th>
+					<th></th>
+				</tr>
+				<tr>
 					<th colspan="21" align="right">Average per day </th>
 					<th align="right">&pound;#DecimalFormat(totValue / dayRange)#</th>
 				</tr>
