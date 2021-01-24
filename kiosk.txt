@@ -1,0 +1,9 @@
+
+// close Chrome's kiosk mode
+
+Open Google Chrome
+Install extension: https://chrome.google.com/webstore/detail/close-kiosk/dfbjahmenldfpkokepmfmkjkhdjelmkb?hl=en
+
+Use this code to close kiosk mode
+javascript:location.href = 'http://closekiosk';
+

@@ -23,13 +23,13 @@
 		<MapCF>/kccCMS/</MapCF>
 		<dir_data>D:\HostingSpaces\SLE\epos.co.uk\data</dir_data>
 		<dir_logs>D:\HostingSpaces\SLE\epos.co.uk\data\logs\</dir_logs>
-		<dir_invoices>D:\HostingSpaces\SLE\shortlanesendstore.co.uk\data\invoices\</dir_invoices>
+		<dir_invoices>D:\HostingSpaces\SLE-Production\sle-admin.co.uk\data\invoices\</dir_invoices>
 		<url_data>http://tweb.epos.co.uk/data/</url_data>
-		<url_invoices>http://tweb.shortlanesendstore.co.uk/data/invoices/</url_invoices>
+		<url_invoices>http://tweb.sle-admin.co.uk/data/invoices/</url_invoices>
 		<disableDrawer>true</disableDrawer>
 	</site>
 	<printer>
-		<ip>192.168.234.189</ip>
+		<ip>192.168.234.191</ip>
 		<port>80</port>
 	</printer>
 	<core>
