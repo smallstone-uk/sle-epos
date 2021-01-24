@@ -72,7 +72,7 @@
 						data-prodsign="#item.prodSign#"
 						data-itemclass="#item.epcKey#"
 						<cfif StructKeyExists(item,"siUnitTrade")>data-unittrade="#item.siUnitTrade#"
-							<cfelse>data-unittrade=0</cfif>
+							<cfelse>data-unittrade="#item.prodUnitTrade#"</cfif>
 						<cfif item.prodCashOnly is 1>
 							data-cash="#ourPrice#"
 							data-credit="0"

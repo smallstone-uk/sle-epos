@@ -3,10 +3,64 @@
 		Your session has timed out, please log-in again.
 		<cfexit>
 	</cfif>
+	<cfscript>
+		dayHeader = new App.DayHeader();
+		today = dayHeader.today();
+	</cfscript>
+	
 	<cfoutput>
+		<cfif !StructIsEmpty(today)>
+			<cfset noteTotal = 0>
+			<cfset coinTotal = 0>
+			<cfset poundArray = [50,20,10,5,2,1]>
+			<div id="xreading2" class="totalPanel">
+				<table>
+					<tr>
+						<th colspan="2">Cash In Drawer</th>
+					</tr>
+					<cfloop array="#poundArray#" index="denom">
+						<cfset dataMOD = denom * 100>
+						<cfset poundFld = "dhcid_#NumberFormat(dataMOD,'0000')#">
+						<cfset value = StructFind(today,poundFld)>
+						<cfif denom lt 5>
+							<cfset coinTotal += value>
+						<cfelse>
+							<cfset noteTotal += value>
+						</cfif>
+						<tr>
+							<td>&pound;#denom#</td>
+							<td align="right">#value#</td>
+						</tr>
+					</cfloop>
+					<cfloop array="#poundArray#" index="denom">
+						<cfset penceFld = "dhcid_#NumberFormat(denom,'0000')#">
+						<cfset value = StructFind(today,penceFld)>
+						<cfset coinTotal += value>
+						<tr>
+							<td>#denom#p</td>
+							<td align="right">#value#</td>
+						</tr>
+					</cfloop>
+					<tr>
+						<td>Coin Total</td>
+						<td align="right">#DecimalFormat(coinTotal)#</td>
+					</tr>
+					<tr>
+						<td>Note Total</td>
+						<td align="right">#DecimalFormat(noteTotal)#</td>
+					</tr>
+					<tr>
+						<td>Cash Total</td>
+						<td align="right">#DecimalFormat(noteTotal + coinTotal)#</td>
+					</tr>
+				</table>
+			</div>
+		</cfif>
 		<div id="xreading3" class="totalPanel">
-			<div class="header">Till Header</div>
 			<table class="tableList" border="1">
+				<tr>
+					<th colspan="3">Till Header</th>
+				</tr>
 				<tr>
 					<th>DESCRIPTION</th>
 					<th width="70" align="right">DR</th>
@@ -42,8 +96,10 @@
 		</div>
 	
 		<div id="xreading4" class="totalPanel">
-			<div class="header">Till Totals</div>
 			<table class="tableList" border="1">
+				<tr>
+					<th colspan="3">Till Totals</th>
+				</tr>
 				<tr>
 					<th>DESCRIPTION</th>
 					<th width="70" align="right">DR</th>

@@ -13,8 +13,6 @@
 		today = dayHeader.today();
 		yesterday = dayHeader.yesterday();
 	</cfscript>
-	<cfdump var="#yesterday#" label="yesterday" expand="yes" format="html" 
-	output="#application.site.dir_logs#epos\yest-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 	<cfoutput>
 		<script>
@@ -57,11 +55,11 @@
 					$('.ui').each(function(i, e) {
 						var denom = parseInt($(e).val() * 100);		// get amount in pence
 						dc.dhcid_subtotal += denom;
-						console.log(denom + " total " + dc.dhcid_subtotal);
+					//	console.log(denom + " total " + dc.dhcid_subtotal);
 					});
 					var zcash = parseInt($('.zcash').val() * 100);	// convert zcash to pence
 					var diff = dc.dhcid_subtotal - zcash;		// check difference
-					console.log(dc.dhcid_subtotal + " zcash " + zcash);
+				//	console.log(dc.dhcid_subtotal + " zcash " + zcash);
 					if (Math.abs(diff) < 0.01) diff = 0;	// ignore tiny rounding errors less than 1p
 
 					$('.subtotal').val( nf(dc.dhcid_subtotal / 100, "str") );		// show in pounds & pence
@@ -126,8 +124,7 @@
 
 		<div id="app-endofday">
 			<form method="post" enctype="multipart/form-data" class="CashInDrawerForm">
-				<span class="title">Cash In Drawer</span>
-
+				<span class="eodTitle">Cash In Drawer</span>
 				<table border="0">
 					<cfset tabIndex = 0>
 					<cfset subTotal = 0>
@@ -144,11 +141,13 @@
 							<cfset penceValue = StructFind(today,penceFld)>
 						</cfif>
 						<cfset subTotal += (poundValue + penceValue)>
+						<cfif poundValue eq 0><cfset poundValue = ""></cfif>
+						<cfif penceValue eq 0><cfset penceValue = ""></cfif>
 						<tr>
 							<th>&pound;#denom#</th>
-							<td><input type="text" name="#poundFld#" class="money ui" data-mod="#dataMOD#" placeholder="GBP" tabindex="#tabIndex#" value="#poundValue#" /></td>
+							<td><input type="text" name="#poundFld#" class="money ui" data-mod="#dataMOD#" tabindex="#tabIndex#" value="#poundValue#" /></td>
 							<th>#denom#p</th>
-							<td><input type="text" name="#penceFld#" class="money ui" data-mod="#denom#" placeholder="GBP" tabindex="#tabIndex+6#" value="#penceValue#" /></td>
+							<td><input type="text" name="#penceFld#" class="money ui" data-mod="#denom#" tabindex="#tabIndex+6#" value="#penceValue#" /></td>
 						</tr>
 					</cfloop>
 				</table>
@@ -156,7 +155,7 @@
 				<table border="0">
 					<tr>
 						<th align="right">Sub Total</th>
-						<td><input type="text" placeholder="GBP" class="money subtotal" value="#subTotal#" disabled></td>
+						<td><input type="text" placeholder="GBP" class="money subtotal" value="#DecimalFormat(subTotal)#" disabled></td>
 					</tr>
 					<tr>
 						<th align="right">Z Cash</th>
@@ -174,7 +173,7 @@
 			</form>
 
 			<form method="post" enctype="multipart/form-data" class="ScratchcardsForm" style="display:none;">
-				<span class="title">
+				<span class="eodTitle">
 					<span class="back icon-circle-left"></span>
 					Scratchcards
 				</span>
@@ -190,37 +189,51 @@
 						<th>Total</th>
 					</tr>
 					<cfset totalSC = 0>
-					<cfset gameValues = [10,5,5,3,2,2,1,1]>
-					<cfset packQtys = [25,50,50,60,90,90,180,180]>
+					<cfset gameValues = [5,5,3,3,2,2,1,1]>
+					<cfset packQtys = [60,60,60,60,120,120,180,180]>
 					<cfloop from="1" to="8" index="game">
 						<cfset gStart = "dhsc_g#game#_start">
 						<cfset gEnd = "dhsc_g#game#_end">
+						<cfset sold = 0>
+						<cfset value = 0>
 						<cfif StructIsEmpty(today)>
-							<cfset start = "">
-							<cfset end = "">
+							<cfif StructIsEmpty(yesterday)>
+								<cfset start = "">
+								<cfset end = "">
+							<cfelse>
+								<cfset start = StructFind(yesterday,gEnd)>
+								<cfset end = "">
+							</cfif>
 						<cfelse>
-							<cfset start = StructFind(yesterday,gStart)>
+							<cfset start = StructFind(today,gStart)>
 							<cfset end = StructFind(today,gEnd)>
+							<cfif end gt 0>
+								<cfset sold = val(end) - val(start)>
+								<cfset value = sold * gameValues[game]>
+							</cfif>
 						</cfif>
-						<cfset sold = val(end) - val(start)>
-						<cfset value = sold * gameValues[game]>
 						<cfset totalSC += value>
 						<cfif end eq 0><cfset end = ""></cfif>
+						<cfif sold eq 0><cfset sold = ""></cfif>
+						<cfif value eq 0><cfset value = "">
+							<cfelse><cfset value = DecimalFormat(value)></cfif>
 						<tr>
-							<th>#game#</th>
+							<th>#game# ##</th>
 							<th>#packQtys[game]#</th>
 							<th>&pound;#gameValues[game]#</th>
 							<td><input type="text" name="#gStart#" data-qty="#packQtys[game]#" data-value="#gameValues[game]#" data-maximum="#packQtys[game]-1#"
-									 data-wholenumber="true" data-pack="#packQtys[game]#" data-game="#game#" data-minimum="0" class="scratch ui2" placeholder="##" value="#start#" /></td>
+									 data-wholenumber="true" data-pack="#packQtys[game]#" data-game="#game#" data-minimum="0" class="scratch ui2" 
+									 value="#start#" /></td>
 							<td><input type="text" name="#gEnd#" data-qty="#packQtys[game]#" data-value="#gameValues[game]#" data-maximum="#packQtys[game]-1#"
-									 data-wholenumber="true" data-pack="#packQtys[game]#" data-game="#game#" data-minimum="0" class="scratch ui2" placeholder="##" value="#end#" /></td>
+									 data-wholenumber="true" data-pack="#packQtys[game]#" data-game="#game#" data-minimum="0" class="scratch ui2" 
+									 value="#end#" /></td>
 							<td><input type="text" name="dhsc_g#game#_qty" value="#sold#" class="scratch ui2" disabled="disabled" /></td>
-							<td><input type="text" name="dhsc_g#game#_total" value="#DecimalFormat(value)#" class="money dhsc_g#game#_total" disabled="disabled"></td>
+							<td><input type="text" name="dhsc_g#game#_total" value="#value#" class="money dhsc_g#game#_total" disabled="disabled"></td>
 						</tr>
 					</cfloop>
 					<tr>
 						<td colspan="6" align="right">Total</td>
-						<td align="right"><input type="text" name="scrTotal" id="scrTotal" class="money" disabled="disabled" /></td>
+						<td align="right"><input type="text" name="scrTotal" id="scrTotal" class="money" disabled="disabled" value="#DecimalFormat(totalSC)#" /></td>
 					</tr>
 				</table>
 
@@ -228,7 +241,7 @@
 			</form>
 
 			<form method="post" enctype="multipart/form-data" class="LotteryForm" style="display:none;">
-				<span class="title">
+				<span class="eodTitle">
 					<span class="back icon-circle-left"></span>
 					Lottery
 				</span>

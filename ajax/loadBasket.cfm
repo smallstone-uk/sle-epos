@@ -24,6 +24,7 @@
 					$.confirmation("Are you sure you want to clear the basket?", function() {
 						ajax.emptyBasket({}, function(data) {
 							$.loadBasket();
+							$('##hti_home').click();
 	                        $('*').blur();
 						});
 					});
@@ -67,7 +68,7 @@
 				<script>
 					$(document).ready(function(e) {
 						sound('error');
-					// once error appear, till breaks and items cannot be added to basket.
+					// once error appears, till breaks and items cannot be added to basket.
 					//	var err_box = document.getElementById('##bskt_Error');
 					//	err_box.scrollIntoView();
 						//$('.basket_error').scrollIntoView();
@@ -81,6 +82,7 @@
 			<cfif not loc.thisBasket.tranID>
 				<script>
 					$(document).ready(function(e) {
+					//	var canAmend = $(this).attr("data-discountable");
 						$('.basket_payment, .basket_discount').touchHold([
 							{
 								text: "remove",
@@ -94,12 +96,13 @@
 										},
 										success: function(data) {
 											$.loadBasket();
+											$('##hti_home').click();
 										}
 									});
 								}
 							}
 						]);
-<!--- not working
+
 						$('.ebt_payment').touchHold([
 							{
 								text: "remove",
@@ -110,21 +113,23 @@
 										data: a,
 										success: function(data) {
 											$.loadBasket();
+											$('##hti_home').click();
 										}
 									});
 								}
 							}
 						]);
---->
+
 						$('.basket_item').touchHold([
 							{
 								text: "add one",
 								action: function(a, e) {
 									ajax.incBasketItem(a, $.loadBasket);
+									$('##hti_home').click();
 								}
 							},
 							{
-								text: "add many",
+								text: "add many...",
 								action: function(a, e) {
 									$.virtualNumpad({
 										wholenumber: true,
@@ -134,6 +139,7 @@
 										callback: function(value) {
 											a.incqty = value;
 											ajax.incBasketItemMany(a, $.loadBasket);
+											$('##hti_home').click();
 										}
 									});
 								}
@@ -142,12 +148,42 @@
 								text: "remove one",
 								action: function(a, e) {
 									ajax.removeFromBasket(a, $.loadBasket);
+									$('##hti_home').click();
 								}
 							},
 							{
 								text: "remove all",
 								action: function(a, e) {
 									ajax.removeAllFromBasket(a, $.loadBasket);
+									$('##hti_home').click();
+								}
+							},
+							{
+								text: "amend price...",
+								condition: function (item) {
+									// item is the selected basket item
+									// console.log(item.data('discountable'));
+									// return String(item.data('discountable')).toLowerCase() == 'yes'
+									var discText = String(item.data('discountable')).toLowerCase();
+									return discText == 'yes' || discText == 'true';
+								},
+								action: function(a, e) {
+									if (typeof a.origprice !== 'undefined') {
+										var maxy =  -a.origprice;
+									} else {
+										var maxy =  -a.retail;
+									}
+									$.virtualNumpad({
+										wholenumber: false,
+										minimum: (maxy*0.8).toFixed(2),
+										maximum: maxy.toFixed(2),
+										overide: false,
+										callback: function(value) {
+											a.newretail = value;
+											ajax.amendPrice(a, $.loadBasket);
+											$('##hti_home').click();
+										}
+									});
 								}
 							}
 						]);

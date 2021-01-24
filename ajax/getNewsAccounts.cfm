@@ -19,8 +19,8 @@
     </div>
 
     <script>
-        Vue.filter('currency', value => {
-            let language = (navigator.language || navigator.browserLanguage).split('-')[0];
+        Vue.filter('currency', function(value) {
+            var language = (navigator.language || navigator.browserLanguage).split('-')[0];
 
             return value.toLocaleString(language, {
                 style: 'currency',

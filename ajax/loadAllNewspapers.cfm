@@ -4,7 +4,7 @@
 <cfset parm.datasource = application.site.datasource1>
 <cfset parm.form = form>
 <cfset parm.daynow = LSDateFormat(Now(), "dddd")>
-<cfset publications = epos.LoadNewspapers(parm)>
+<cfset publications = epos.LoadAllNewspapers(parm)>
 
 <cfoutput>
 	<script>

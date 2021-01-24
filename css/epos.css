@@ -421,7 +421,7 @@ input::-webkit-inner-spin-button {
     position: fixed;
     top: 75px;
     left: 0;
-    width: 20%;
+    width: 25%;
     background: #F2F2F2;
     bottom: 0;
     z-index: 25;
@@ -456,7 +456,7 @@ input::-webkit-inner-spin-button {
 
 .categories_viewer {
     position: fixed;
-    left: 20%;
+    left: 25%;
     top: 75px;
     bottom: 0;
     overflow-y: auto;
@@ -810,6 +810,19 @@ input[type="text"]:focus {
     height: 75px;
 }
 
+.basket_balance {
+    position: absolute;
+    bottom: 75px;
+    left: 0;
+    right: 0;
+    height: 75px;
+    background: #F2F2F2;
+    margin: 0 6px 0 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-width: 0 0 1px 0;
+}
+
 .basket_clear {
     background: #333;
     float: left;
@@ -845,13 +858,13 @@ button[disabled] {
 .payment_item_special {
     float: left;
     background: #5094CB;
-    line-height: 100px;
+    line-height: 80px;
     text-align: center;
     font-size: 18px;
     cursor: pointer;
     width: calc(50% - 8px);
     margin: 4px;
-    height: 100px;
+    height: 80px;
     color: #FFF;
     padding: 0;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
@@ -1248,18 +1261,21 @@ button[disabled] {
 }
 
 .popup_box {
-    background: #fff;
+    background: #999;
     z-index: 99999999999999999;
     padding: 30px;
     transform: scale3d(0, 0, 0);
     min-width: 500px;
     min-height: 300px;
+	height:560px;
     opacity: 0;
     color: #000;
     transform-origin: center;
     border-radius: 4px;
     box-shadow: 0 7px 14px 0 rgba(50,50,93,.1), 0 3px 6px 0 rgba(0,0,0,.07);
     font-weight: 400;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .fullscreen_popup_box {
@@ -2622,12 +2638,12 @@ select:focus {
 
 .header_toolbar {
     float: left;
-    width: 45%;
+	/*width:200px;*/
     height: 75px;
 }
 
 .header_icons {
-    float: right;
+    float: left;
     height: 100%;
     margin: 0;
     padding: 0;
@@ -2666,7 +2682,7 @@ select:focus {
     float: left;
     width: 100%;
     height: 50px;
-    font-size: 22px;
+    font-size: 20px;
     line-height: 50px;
     padding: 0 15px;
 }
@@ -2788,3 +2804,84 @@ select:focus {
 .priceTitle {font-size:18px;}
 .priceCash {font-size:12px;padding: 0;margin: 0;}
 .priceButton {font-size:24px;}
+
+.payWarning	{
+	float: left;
+	width: 100%;
+	background:#F33;
+	color: #FFF;
+	padding: 10px;
+	font-size: 18px;
+	text-align: center;
+	margin-bottom: 2px;
+	border-radius: 4px;
+}
+
+.payOK	{
+	float: left;
+	width: 100%;
+	background:#093;
+	color: #FFF;
+	padding: 10px;
+	font-size: 18px;
+	text-align: center;
+	margin-bottom: 2px;
+	border-radius: 4px;
+}
+
+.lottoCheck	{
+	float: left;
+	width: 100%;
+	background:#C66;
+	color: #FFF;
+	padding: 10px;
+	font-size: 18px;
+	text-align: center;
+	margin-bottom: 2px;
+	border-radius: 4px;
+}
+
+.msgContent {
+	margin: 20px;
+	padding: 20px;
+}
+.homeMsgs {
+	top:20px;
+	width: 100%;
+	font-size: 24px;
+}
+.msgHeader {
+	font-size: 24px;
+	font-weight:bold;
+	text-align:center;
+	padding: 10px;
+	width:100%;
+}
+.homeMsgs li {
+	font-size: 24px;
+}
+.msgBlock {
+	margin: 20px;
+	padding: 20px;
+}
+
+.account-list {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.account-title {
+	font-size:18px;
+	font-weight:bold;
+	line-height: 40px;
+}
+.topup-account {
+	height:440px;
+    overflow-x: hidden;
+    overflow-y: auto;
+	margin-bottom:10px;
+}
+.prodSize {
+	font-size:14px; 
+	font-style:italic;
+	color:#000;
+}

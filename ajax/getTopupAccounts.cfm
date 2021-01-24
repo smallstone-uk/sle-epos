@@ -7,10 +7,10 @@
         $(document).ready(function(e) {
             #toScript(accounts, 'window.accounts')#;
 
-            Vue.filter('currency', value => {
-                let langage = (navigator.language || navigator.browserLanguage).split('-')[0];
+            Vue.filter('currency', function(value) {
+                var language = (navigator.language || navigator.browserLanguage).split('-')[0];
 
-                return value.toLocaleString(langage, {
+                return value.toLocaleString(language, {
                     style: 'currency',
                     currency: 'gbp'
                 });
@@ -92,7 +92,7 @@
 
         <div class="grid gap-1 row-size-3">
             <div class="grid-item">
-                <button class="button is-primary" :disabled="notValid" @click.prevent="complete">Complete</button>
+                <button class="button is-primary" :disabled="notValid" @click.prevent="complete">Pay Selected Account...</button>
             </div>
         </div>
     </div>

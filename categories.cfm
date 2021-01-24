@@ -51,7 +51,7 @@
 	<div class="categories">
 		<ul class="categories_list">
 			<cfloop array="#cats#" index="item">
-				<li data-id="#item.epcID#" data-file="#item.epcFile#" class="categories_item material-ripple" data-title="#item.epcTitle#">
+				<li data-id="#item.epcID#" data-file="#item.epcFile#" class="categories_item material-ripple" data-title="#item.epcTitle#" style="#item.epcStyle#">
 					<span>#item.epcTitle#</span>
 				</li>
 			</cfloop>

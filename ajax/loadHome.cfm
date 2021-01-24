@@ -59,6 +59,7 @@
 							$.virtualNumpad({
 								autolength: 4,
 								wholenumber: true,
+								secret: true,
 								callback: function(pin) {
 									$.ajax({
 										type: "POST",
@@ -82,13 +83,30 @@
 			});
 		});
 	</script>
-	<ul class="home_list">
-		<cfloop array="#home#" index="item">
-			<li class="home_list_item material-ripple" data-index="#item.ehIndex#">
-				<span>#item.ehTitle#</span>
-			</li>
-		</cfloop>
-	</ul>
+	<div>
+		<ul class="home_list">
+			<cfloop array="#home#" index="item">
+				<li class="home_list_item material-ripple" data-index="#item.ehIndex#">
+					<span>#item.ehTitle#</span>
+				</li>
+			</cfloop>
+		</ul>
+		<div style="clear:both"></div>
+	</div>
+	<div class="msgContent">
+		<div class="homeMsgs">
+			<span class="msgHeader">Golden Rules</span>
+			<div class="msgBlock">
+				<ol>
+					<li>Serve the customer</li>
+					<li>Check dates</li>
+					<li>Put stock out</li>
+					<li>Re-stock Bunnery chillers</li>
+				</ol>
+				<div style="clear:both"></div>
+			</div>
+		</div>
+	</div>
 </cfoutput>
 
 <cfcatch type="any">

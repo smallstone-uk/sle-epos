@@ -2662,8 +2662,8 @@
 		<cfquery name="loc.allValidDeals" datasource="#GetDatasource()#">
 			SELECT *
 			FROM tblEPOS_Deals
-			WHERE edStarts <= '#LSDateFormat(Now(), "yyyy-mm-dd")#'
-			AND edEnds >= '#LSDateFormat(Now(), "yyyy-mm-dd")#'
+			WHERE edStarts <= '#LSDateFormat(DATE(Now()), "yyyy-mm-dd")#'
+			AND edEnds >= '#LSDateFormat(DATE(Now()), "yyyy-mm-dd")#'
 			AND edStatus = 'Active'
 			AND edType != 'Selection'<!---TEMP--->
 		</cfquery>
@@ -3031,36 +3031,70 @@
 		<cfset var loc = {}>
 		<cfset loc.result = []>
 		
-		<cftry>
-		
-		<cfquery name="loc.pubs" datasource="#args.datasource#">
-			SELECT pubID, pubTitle, pubRoundTitle, pubPrice, pubTradePrice
-			FROM tblPublication
-			WHERE pubGroup = 'news'
-			<cfif args.daynow is "saturday">
-				AND pubType IN ('saturday', 'weekly')
-			<cfelseif args.daynow is "sunday">
-				AND pubType IN ('sunday', 'weekly')
-			<cfelse>
-				AND pubType IN ('morning', 'weekly')
-			</cfif>
-			AND pubSaleType = 'variable'
-			AND pubEPOS
-			AND pubActive
-			ORDER BY pubType ASC, pubRoundTitle ASC
-		</cfquery>
-		
-		<cfloop query="loc.pubs">
-			<cfset loc.item = {}>
-			<cfset loc.item.id = pubID>
-			<cfset loc.item.title = (Len(pubRoundTitle)) ? pubRoundTitle : pubTitle>
-			<cfset loc.item.price = pubPrice>
-			<cfset loc.item.tradePrice = pubTradePrice>
-			<cfset ArrayAppend(loc.result, loc.item)>
-		</cfloop>
+		<cftry>		
+			<cfquery name="loc.pubs" datasource="#args.datasource#">
+				SELECT pubID, pubTitle, pubRoundTitle, pubPrice, pubTradePrice
+				FROM tblPublication
+				WHERE pubGroup = 'news'
+				<cfif args.daynow is "saturday">
+					AND pubType IN ('saturday', 'weekly', 'weekend')
+				<cfelseif args.daynow is "sunday">
+					AND pubType IN ('sunday', 'weekly', 'weekend')
+				<cfelse>
+					AND pubType IN ('morning', 'weekly')
+				</cfif>
+				AND pubSaleType = 'variable'
+				AND pubEPOS
+				AND pubActive
+				ORDER BY pubType ASC, pubRoundTitle ASC
+			</cfquery>
+			
+			<cfloop query="loc.pubs">
+				<cfset loc.item = {}>
+				<cfset loc.item.id = pubID>
+				<cfset loc.item.title = (Len(pubRoundTitle)) ? pubRoundTitle : pubTitle>
+				<cfset loc.item.price = pubPrice>
+				<cfset loc.item.tradePrice = pubTradePrice>
+				<cfset ArrayAppend(loc.result, loc.item)>
+			</cfloop>
 
 		<cfcatch type="any">
-			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+			 	output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+		</cfcatch>
+		</cftry>
+		
+		<cfreturn loc.result>
+	</cffunction>
+
+	<cffunction name="LoadAllNewspapers" access="public" returntype="array">
+		<cfargument name="args" type="struct" required="yes">
+		<cfset var loc = {}>
+		<cfset loc.result = []>
+		
+		<cftry>		
+			<cfquery name="loc.pubs" datasource="#args.datasource#">
+				SELECT pubID, pubTitle, pubRoundTitle, pubPrice, pubTradePrice
+				FROM tblPublication
+				WHERE pubGroup = 'news'
+				AND pubSaleType = 'variable'
+				AND pubEPOS
+				AND pubActive
+				ORDER BY pubTitle ASC
+			</cfquery>
+			
+			<cfloop query="loc.pubs">
+				<cfset loc.item = {}>
+				<cfset loc.item.id = pubID>
+				<cfset loc.item.title = pubTitle>
+				<cfset loc.item.price = pubPrice>
+				<cfset loc.item.tradePrice = pubTradePrice>
+				<cfset ArrayAppend(loc.result, loc.item)>
+			</cfloop>
+
+		<cfcatch type="any">
+			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+			 	output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
 		
@@ -3104,7 +3138,7 @@
 					SELECT MAX( siID )
 					FROM tblStockItem
 					WHERE prodID = siProduct 
-					AND siStatus NOT IN ('returned','inactive','promo'))
+					AND siStatus NOT IN ('returned','inactive'))<!--- whats wrong with promos ,'promo'--->
 				INNER JOIN tblEPOS_Cats ON prodEposCatID=epcID
 				INNER JOIN tblStockOrder ON siOrder=soID
 				WHERE prodTitle LIKE '%#args.form.title#%'
@@ -3155,7 +3189,7 @@
 		<cftry>
 			<cfquery name="loc.product" datasource="#GetDatasource()#" result="loc.prodres">
 				SELECT prodID,prodStaffDiscount,prodRef,prodRecordTitle,prodTitle,prodCountDate,prodStockLevel,prodLastBought,prodOurPrice,
-						prodPackPrice,prodValidTo,prodPriceMarked,prodCatID,prodVATRate,prodSign,prodCashOnly,prodClass,
+						prodPackPrice,prodValidTo,prodPriceMarked,prodCatID,prodVATRate,prodSign,prodCashOnly,prodClass,prodUnitTrade,
 						siID,siRef,siOrder,siUnitSize,siPackQty,siQtyPacks,siQtyItems,siWSP,siUnitTrade,siRRP,siOurPrice,siPOR,siReceived,siBookedIn,siExpires,siStatus,
 						epcKey
 				FROM tblProducts
@@ -3353,7 +3387,8 @@
 		<cfset var loc = {}>
 		<cftry>
 			<cfquery name="loc.products" datasource="#GetDatasource()#">
-				SELECT prodID,prodTitle,prodOurPrice,prodStaffDiscount,prodClass,prodVatRate,prodCashOnly,prodSign, siUnitTrade,siUnitSize,siOurPrice, epcKey,epcOrder
+				SELECT prodID,prodTitle,prodUnitSize,prodOurPrice,prodStaffDiscount,prodClass,prodVatRate,prodCashOnly,prodSign,prodUnitTrade,
+					siUnitTrade,siUnitSize,siOurPrice, epcKey,epcOrder
 				FROM tblProducts
 				LEFT JOIN tblStockItem ON prodID = siProduct
 				AND tblStockItem.siID = (

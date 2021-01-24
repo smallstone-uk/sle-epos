@@ -26,16 +26,16 @@
 <script src="js/vue-resource.js"></script>
 
 <script>
-    Vue.filter('currency', value => {
-        let langage = (navigator.language || navigator.browserLanguage).split('-')[0];
+    Vue.filter('currency', function(value) {
+        var language = (navigator.language || navigator.browserLanguage).split('-')[0];
 
-        return value.toLocaleString(langage, {
+        return value.toLocaleString(language, {
             style: 'currency',
             currency: 'gbp'
         });
     });
 
-    window.opt = (object) => {
+    window.opt = function(object) {
         return new Proxy(object || {}, {
             get(target, name) {
                 return (name in target)

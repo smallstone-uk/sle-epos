@@ -12,7 +12,7 @@
 			$('.products_item').click(function(event) {
 				var obj = $(this);
 				var dataAttributes = getDataAttributes( $(this) );
-				console.log(dataAttributes);
+				//console.log(dataAttributes);
 				if (dataAttributes.credit != 0 || dataAttributes.cash != 0) {
 					$.addToBasket(dataAttributes);
 				} else {
@@ -39,15 +39,17 @@
 				<cfelse>
 					<cfset ourPrice = item.siOurPrice>
 				</cfif>
+				<cfif StructKeyExists(item,"siUnitTrade") AND val(item.siUnitTrade) neq 0><cfset unittrade=item.siUnitTrade>
+					<cfelse><cfset unittrade=val(item.prodUnitTrade)></cfif>
 				<li
 					class="products_item material-ripple"
-					data-account=""
+					data-account="0"
 					data-addtobasket="true"
 					data-btnsend="add"
 					data-class="item"
 					data-discount="0"
 					data-discountable="#item.prodStaffDiscount#"
-					data-pubid=""
+					data-pubid="0"
 					data-prodid="#item.prodID#"
 					data-prodtitle="#item.prodTitle#"
 					data-unitsize="#item.siUnitSize#"
@@ -59,7 +61,7 @@
 					data-cashonly="#item.prodCashOnly#"
 					data-prodsign="#item.prodSign#"
 					data-itemclass="#item.epcKey#"
-					data-unittrade="#item.siUnitTrade#"
+					data-unittrade="#unittrade#"
 					<cfif item.prodCashOnly is 1>
 						data-cash="#ourPrice#"
 						data-credit="0"
@@ -69,9 +71,10 @@
 					</cfif>
 				>
 					<span class="priceTitle">#item.prodTitle#</span>
+					<span class="prodSize">#item.prodUnitSize#</span>
 					<cfif item.prodCashOnly eq 1><span class="priceCash">(Cash Only)</span></cfif>
 					<span class="priceButton">
-						<cfif ourPrice gt 0>
+						<cfif ourPrice neq 0>
 							&pound;#DecimalFormat(ourPrice)#
 						<cfelse>
 							Manual Price
