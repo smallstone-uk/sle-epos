@@ -105,6 +105,9 @@
 				<cfset ecfc.DumpTrans(parm)>
 			</div>
 			<div style="clear:both; page-break-after:always;"></div>
+			<cfset balance = val(loc.QSalesBFwd.Net)>
+			<cfset drTotal = 0>
+			<cfset crTotal = 0>
 			<table class="tableList" width="600">
 				<tr>
 					<th colspan="7">Account Transactions for #accountName#</th>
@@ -120,14 +123,11 @@
 				</tr>
 				<tr>
 					<th colspan="6">Brought Forward</th>
-					<th align="right">#loc.QSalesBFwd.Net#</th>
+					<th align="right">#DecimalFormat(balance)#</th>
 				</tr>
-				<cfset balance = loc.QSalesBFwd.Net>
-				<cfset drTotal = 0>
-				<cfset crTotal = 0>
 				<cfloop query="QAccountPayments">
 					<cfset lineTotal = eiNet + eiVAT>
-					<cfset balance += (lineTotal)>
+					<cfset balance += lineTotal>
 					<tr>
 						<td><a href="reporttransaction.cfm?tranID=#ehID#" target="trandetail">#ehID#</a></td>
 						<td>#ehMode#</td>
@@ -158,9 +158,8 @@
 					</tr>
 				<cfelse>
 					<tr>
-						<th colspan="5">Balance Outstanding</th>
+						<th colspan="6">Balance Outstanding</th>
 						<th align="right">#DecimalFormat(balance)#</th>
-						<th align="right"></th>
 					</tr>
 				</cfif>
 				<th></th>
