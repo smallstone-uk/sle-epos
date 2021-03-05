@@ -3455,9 +3455,14 @@
 				INNER JOIN tblProducts ON prodID=eiProdID
 				INNER JOIN tblproductcats ON prodCatID=pcatID
 				WHERE 1
-				<cfif len(args.reportDate)>AND DATE(ehTimeStamp) = '#args.reportDate#' </cfif>
-				<cfif StructKeyExists(args,"accountID")>AND eiParent IN (#args.aIDs#)</cfif>
+				<cfif StructKeyExists(args,"accountID")>
+					AND eiParent IN (#args.aIDs#)
+					<cfif len(args.reportDate)>AND DATE(ehTimeStamp) >= '#args.reportDate#' </cfif>
+				<cfelse>
+					<cfif len(args.reportDate)>AND DATE(ehTimeStamp) = '#args.reportDate#' </cfif>
+				</cfif>
 			</cfquery>
+
 			<cfset loc.grandNet = 0>
 			<cfset loc.grandVAT = 0>
 			<cfset loc.grandCR = 0>
@@ -3556,7 +3561,7 @@
 						<td>#ehMode#</td>
 						<td>#eiID#</td>
 						<td>#empFirstName#</td>
-						<td nowrap>#LSDateFormat(eiTimestamp,"dd-mmm")# #LSTimeFormat(eiTimestamp)#</td>
+						<td nowrap>#LSDateFormat(eiTimestamp,"dd-mmm-yy")# #LSTimeFormat(eiTimestamp)#</td>
 						<td>#eiClass#</td>
 						<td>#eiType#</td>
 						<td>#eiPayType#</td>
