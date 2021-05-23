@@ -694,6 +694,7 @@
 						<cfset loc.tran.cashonly = loc.data.cash neq 0>
 						<cfset loc.tran.prop = 1>
 						<cfset loc.tran.account = loc.data.account>
+						<cfset loc.tran.supplier = loc.data.supplier>
 						<cfset loc.tran.itemClass = loc.data.itemClass>
 						<cfset loc.tran.gross = loc.data.totalGross>
 						<cfset loc.tran.vrate = loc.data.vrate>
@@ -1162,6 +1163,7 @@
 							<cfif args.data.cash neq 0>
 								<cfset args.data.credit = 0>	<!--- force empty - only use cash figure --->
 								<cfset args.data.gross = args.data.cash>	<!--- calc gross transaction value --->
+								<cfset args.data.supplier = args.data.itemID>
 								<cfset session.basket.info.type = "PURCH">	<!--- set receipt title --->
 								<cfset session.basket.info.bod = "Supplier">
 								<cfset CalcValues(args.data)>
@@ -1575,11 +1577,29 @@
 					request += builder.createTextElement({data: '\n'});
 
 					request += builder.createAlignmentElement({position: 'center'});
+<!---				message missing?	
+					<cfif loc.thisBasket.info.bod eq "Supplier">
+						<cfif loc.thisBasket.info.mode eq "rfd">
+							<cfset loc.typeStr = "Supplier Refund\n">
+						<cfelse>
+							<cfset loc.typeStr = "Supplier Purchase\n">
+						</cfif>
+					<cfelseif loc.thisBasket.info.mode eq "rfd">
+						<cfset loc.typeStr = "Customer Refund\n">
+					<cfelse>
+						<cfset loc.typeStr = "Sale\n">
+					</cfif>
+					request += builder.createTextElement(styles.bold(loc.typeStr));
+--->					
+					
 					<cfif loc.thisBasket.info.mode eq "rfd">
 						request += builder.createTextElement(styles.bold("Refund\n"));
+					<cfelseif loc.thisBasket.info.bod eq "Supplier">
+						request += builder.createTextElement(styles.bold("Purchase\n"));
 					<cfelse>
 						request += builder.createTextElement(styles.bold("Sale\n"));
 					</cfif>
+
 
 					request += builder.createAlignmentElement({position: 'left'});
 					request += builder.createTextElement(styles.normal(align.lr("Served by: #session.user.firstName# #left(session.user.lastName, 1)#", ("Ref: #loc.thisBasket.tranID#"))));
@@ -1933,7 +1953,8 @@
 								</tr> --->
 							<cfelse>
 								request += builder.createAlignmentElement({position: 'left'});
-								request += builder.createTextElement(styles.normal(align.lr("#UCase(loc.item.title)#", "#chr(156)##DecimalFormat((loc.item.cash + loc.item.credit))#")));
+								request += builder.createTextElement(styles.normal(align.lr("#UCase(loc.item.title)#", "#chr(156)#
+									#DecimalFormat((loc.item.cash + loc.item.credit))#")));
 								request += builder.createTextElement({data: '\n'});
 							</cfif>
 						</cfdefaultcase>
@@ -1988,7 +2009,8 @@
 								</tr> --->
 							<cfelse>
 								request += builder.createAlignmentElement({position: 'left'});
-								request += builder.createTextElement(styles.bold(align.lr("BALANCE DUE FROM CUSTOMER", "#chr(156)##DecimalFormat(loc.thisBasket.total.balance)#")));
+								request += builder.createTextElement(styles.bold(align.lr("BALANCE DUE FROM CUSTOMER", "#chr(156)#
+									#DecimalFormat(loc.thisBasket.total.balance)#")));
 								request += builder.createTextElement({data: '\n'});
 							</cfif>
 						</cfif>
@@ -2003,7 +2025,8 @@
 								</tr> --->
 							<cfelse>
 								request += builder.createAlignmentElement({position: 'left'});
-								request += builder.createTextElement(styles.bold(align.lr("BALANCE DUE TO CUSTOMER", "#chr(156)##DecimalFormat(loc.thisBasket.total.balance)#")));
+								request += builder.createTextElement(styles.bold(align.lr("BALANCE DUE TO CUSTOMER", "#chr(156)#
+									#DecimalFormat(loc.thisBasket.total.balance)#")));
 								request += builder.createTextElement({data: '\n'});
 							</cfif>
 							<cfif arguments.type eq "html">
@@ -2031,7 +2054,8 @@
 								</tr> --->
 							<cfelse>
 								request += builder.createAlignmentElement({position: 'left'});
-								request += builder.createTextElement(styles.bold(align.lr("BALANCE DUE FROM CUSTOMER", "#chr(156)##DecimalFormat(loc.thisBasket.total.balance)#")));
+								request += builder.createTextElement(styles.bold(align.lr("BALANCE DUE FROM CUSTOMER", "#chr(156)#
+									#DecimalFormat(loc.thisBasket.total.balance)#")));
 								request += builder.createTextElement({data: '\n'});
 							</cfif>
 						</cfif>
@@ -2055,7 +2079,8 @@
 							</tr> --->
 						<cfelse>
 							request += builder.createAlignmentElement({position: 'left'});
-							request += builder.createTextElement(styles.bold(align.lr("MULTIBUY DISCOUNT SAVINGS", "#chr(156)##DecimalFormat(loc.thisBasket.total.discount)#")));
+							request += builder.createTextElement(styles.bold(align.lr("MULTIBUY DISCOUNT SAVINGS", "#chr(156)#
+								#DecimalFormat(loc.thisBasket.total.discount)#")));
 							request += builder.createTextElement({data: '\n'});
 						</cfif>
 					</cfif>
@@ -2316,39 +2341,46 @@
 	<cffunction name="CloseTransaction" access="public" returntype="void">
 		<cfset var loc = {}>
 
-		<cfoutput>
-		<cfloop collection="#session.basket.header#" item="loc.key">
-			<cfset loc.basketvalue = StructFind(session.basket.header,loc.key)><!--- #loc.key# #loc.basketvalue# --->
-			<cfif StructKeyExists(session.till.header,loc.key)>
-				<cfset loc.tillvalue = StructFind(session.till.header,loc.key)><!--- #loc.key# #loc.tillvalue#<br>--->
-				<cfset StructUpdate(session.till.header,loc.key,loc.tillvalue + loc.basketvalue)>
-			<cfelse>
-				<cfset StructInsert(session.till.header,loc.key,loc.basketvalue)>
-			</cfif>
-		</cfloop>
-		<cfloop collection="#session.basket.total#" item="loc.key">
-			<cfset loc.basketvalue = StructFind(session.basket.total,loc.key)><!--- #loc.key# #loc.basketvalue# --->
-			<cfif StructKeyExists(session.till.total,loc.key)>
-				<cfset loc.tillvalue = StructFind(session.till.total,loc.key)><!--- #loc.key# #loc.tillvalue#<br>--->
-				<cfset StructUpdate(session.till.total,loc.key,loc.tillvalue + loc.basketvalue)>
-			<cfelse>
-				<cfset StructInsert(session.till.total,loc.key,loc.basketvalue)>
-			</cfif>
-		</cfloop>
-		</cfoutput>
-		<!---Transaction in progress flag--->
-		<cfset session.till.isTranOpen = false>
-		<cfset WriteTransaction(session.basket)>
-		<cfset session.till.prevtran = session.basket>
-		<cfset ClearBasket()>
-		<cfset SaveTillTotals()>
+		<cftry>
+			<!--- code --->
+			<cfoutput>
+				<cfloop collection="#session.basket.header#" item="loc.key">
+					<cfset loc.basketvalue = StructFind(session.basket.header,loc.key)><!--- #loc.key# #loc.basketvalue# --->
+					<cfif StructKeyExists(session.till.header,loc.key)>
+						<cfset loc.tillvalue = StructFind(session.till.header,loc.key)><!--- #loc.key# #loc.tillvalue#<br>--->
+						<cfset StructUpdate(session.till.header,loc.key,loc.tillvalue + loc.basketvalue)>
+					<cfelse>
+						<cfset StructInsert(session.till.header,loc.key,loc.basketvalue)>
+					</cfif>
+				</cfloop>
+				<cfloop collection="#session.basket.total#" item="loc.key">
+					<cfset loc.basketvalue = StructFind(session.basket.total,loc.key)><!--- #loc.key# #loc.basketvalue# --->
+					<cfif StructKeyExists(session.till.total,loc.key)>
+						<cfset loc.tillvalue = StructFind(session.till.total,loc.key)><!--- #loc.key# #loc.tillvalue#<br>--->
+						<cfset StructUpdate(session.till.total,loc.key,loc.tillvalue + loc.basketvalue)>
+					<cfelse>
+						<cfset StructInsert(session.till.total,loc.key,loc.basketvalue)>
+					</cfif>
+				</cfloop>
+			</cfoutput>
+			<!---Transaction in progress flag--->
+			<cfset session.till.isTranOpen = false>
+			<cfset WriteTransaction(session.basket)>
+			<cfset session.till.prevtran = session.basket>
+			<cfset ClearBasket()>
+			<cfset SaveTillTotals()>
 
-		<!--- Create archive record of basket --->
-		<!--- Used in transaction barcode restoration --->
-		<!--- Returns archive ID --->
-		<cfset session.till.prevtran.archive = new App.EPOSArchive().save({
-			'json' = serializeJSON(session.till.prevtran)
-		})>
+			<!--- Create archive record of basket --->
+			<!--- Used in transaction barcode restoration --->
+			<!--- Returns archive ID --->
+			<cfset session.till.prevtran.archive = new App.EPOSArchive().save({
+				'json' = serializeJSON(session.till.prevtran)
+			})>
+		<cfcatch type="any">
+			<cfdump var="#cfcatch#" label="CloseTransaction" expand="yes" format="html" 
+				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+		</cfcatch>
+		</cftry>
 	</cffunction>
 
 	<cffunction name="ShowTrans" access="public" returntype="void">
@@ -2512,7 +2544,6 @@
 
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
-		<cfset loc.itemStr = "">
 		<cfset loc.showInfo = false>
 		<cftry>
 			<cfif session.user.ID gt 0>
@@ -2555,8 +2586,9 @@
 						<cfset loc.disc = 0>
 						<cfset loc.prodID = 1>
 						<cfset loc.pubID = 1>
-						<cfset loc.account = 1>
 						<cfset loc.payID = 1>
+						<cfset loc.account = 1>
+						<cfset loc.supplier = 1>
 						<cfset loc.retail = 0>
 						<cfswitch expression="#loc.tran.itemClass#">
 							<cfcase value="SHOP">
@@ -2727,7 +2759,6 @@
 								</cfswitch>
 								<cfset loc.tran.itemType = "pay">
 								<cfset loc.payID = loc.tran.payID>
-								<cfset loc.account = loc.tran.accid>
 								<cfset loc.retail = 0>
 								<cfif loc.showInfo>
 								<tr>
@@ -2745,12 +2776,13 @@
 							</cfcase>
 							<cfcase value="SUPPLIER">
 								<cfset loc.prodID = 5>
+								<cfset loc.supplier = loc.tran.supplier>
 								<cfset loc.tran.itemType = "supp">
 								<cfset loc.retail = loc.tran.gross>
 								<cfif loc.showInfo>
 								<tr>
 									<td>#loc.tran.itemClass#</td>
-									<td></td>
+									<td>#loc.account#</td>
 									<td></td>
 									<td align="right">#DecimalFormat(loc.tran.gross)#</td>
 									<td align="right">##</td>
@@ -2779,7 +2811,7 @@
 							<cfset loc.qty = val(loc.tran.qty)>
 						<cfelse><cfset loc.qty = 1></cfif>
 						<cfset loc.itemStr = "#loc.itemStr#,(#loc.ID#,'#loc.tran.itemType#','#loc.tran.itemClass#',#loc.prodID#,#loc.pubID#,#loc.payID#,
-							#loc.account#,#loc.retail#,#loc.net#,#loc.vat#,#loc.trade#,#loc.qty#)">
+							#loc.account#,#loc.supplier#,#loc.retail#,#loc.net#,#loc.vat#,#loc.trade#,#loc.qty#)">
 					</cfloop>
 					<cfif abs(loc.total.gross) gte 0.01>		<!--- dump basket if transaction not balanced --->
 						<cfdump var="#session.basket#" label="basket" expand="yes" format="html"
@@ -2808,6 +2840,7 @@
 							eiPubID,
 							eiPayID,
 							eiAccID,
+							eiSuppID,
 							eiRetail,
 							eiNet,
 							eiVAT,
@@ -2823,6 +2856,7 @@
 							eiPubID,
 							eiPayID,
 							eiAccID,
+							eiSuppID,
 							eiRetail,
 							eiNet,
 							eiVAT,
@@ -2847,6 +2881,7 @@
 		<cfreturn loc.result>
 	</cffunction>
 
+<!---
 	<cffunction name="PrintReceipt" access="public" returntype="void">
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
@@ -2975,6 +3010,7 @@
 		</cftry>
 	</cffunction>
 
+
 	<cfscript>
 		function bold(str) {
 			return "#Chr(27)##Chr(14)##str##Chr(27)##Chr(20)#";
@@ -3026,7 +3062,7 @@
 		};
 	</cfscript>
 
-<!---	<cffunction name="PrintASCIIReceipt" access="public" returntype="any">
+	<cffunction name="PrintASCIIReceipt" access="public" returntype="any">
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
 		<cftry>
@@ -3437,15 +3473,19 @@
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
 		<cfset loc.result.msg = "">
+
 		<cftry>
 			<cfset loc.dayHeader = LoadDayHeader({"reportDate" = args.reportDate})>
-			<cfquery name="loc.QTrans" datasource="#GetDataSource()#">
+			<cfquery name="loc.QTrans" datasource="#GetDataSource()#" result="loc.QTransResult">
 				SELECT tblEPOS_Items.*,ehMode, empFirstName,
 				IF (eiType='MEDIA',
 					(SELECT pubTitle FROM tblPublication WHERE pubID=eiPubID),
 					IF (eiClass='pay',
 						(SELECT eaTitle FROM tblEPOS_Account WHERE eaID=eiPayID),
-							(SELECT prodTitle FROM tblProducts WHERE prodID=eiProdID)
+						IF (eiType='SUPPLIER',
+							(SELECT accName FROM tblaccount WHERE accID=eiSuppID),
+								(SELECT prodTitle FROM tblProducts WHERE prodID=eiProdID)
+						)
 					)
 				) title,
 				tblProducts.prodCatID,tblProducts.prodUnitSize, tblproductcats.pcatTitle

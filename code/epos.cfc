@@ -2581,25 +2581,44 @@
 		
 		<cfreturn (loc.localReminders.recordcount gt 0) ? QueryToArrayOfStruct(loc.localReminders) : []>
 	</cffunction>
+	
 	<cffunction name="LoadHomeFunctions" access="public" returntype="array">
 		<cfargument name="args" type="struct" required="yes">
 		<cfset var loc = {}>
 		
-		<cftry>
-		
-		<cfquery name="loc.homeFunctions" datasource="#args.datasource#">
-			SELECT *
-			FROM tblEPOS_Home
-			ORDER BY ehOrder ASC
-		</cfquery>
+		<cftry>		
+			<cfquery name="loc.homeFunctions" datasource="#args.datasource#">
+				SELECT *
+				FROM tblEPOS_Home
+				ORDER BY ehOrder ASC
+			</cfquery>
 
 		<cfcatch type="any">
-			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+			 	output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 		</cfcatch>
 		</cftry>
-		
 		<cfreturn QueryToArrayOfStruct(loc.homeFunctions)>
 	</cffunction>
+	
+	<cffunction name="LoadCurrentMessages" access="public" returntype="struct">
+		<cfargument name="args" type="struct" required="yes">
+		<cfset var loc = {}>
+		<cftry>	
+			<cfquery name="loc.messages" datasource="#args.datasource#">
+				SELECT *
+				FROM tblMessages
+				WHERE msgExpires > NOW()
+				ORDER BY msgEntered DESC
+			</cfquery>
+		<cfcatch type="any">
+			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+			 	output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+		</cfcatch>
+		</cftry>
+		<cfreturn loc>
+	</cffunction>
+	
 	<cffunction name="ProcessDiscounts" access="public" returntype="string">
 		<cfset var loc = {}>
 		<cfset loc.sign = (2 * int(session.basket.info.mode eq "reg")) - 1>

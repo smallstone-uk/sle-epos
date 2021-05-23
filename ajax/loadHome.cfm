@@ -4,6 +4,7 @@
 <cfset parm.datasource = application.site.datasource1>
 <cfset parm.url = application.site.normal>
 <cfset home = epos.LoadHomeFunctions(parm)>
+<cfset data = epos.LoadCurrentMessages(parm)>
 
 <cfoutput>
 	<script>
@@ -94,18 +95,14 @@
 		<div style="clear:both"></div>
 	</div>
 	<div class="msgContent">
-		<div class="homeMsgs">
-			<span class="msgHeader">Golden Rules</span>
-			<div class="msgBlock">
-				<ol>
-					<li>Serve the customer</li>
-					<li>Check dates</li>
-					<li>Put stock out</li>
-					<li>Re-stock Bunnery chillers</li>
-				</ol>
-				<div style="clear:both"></div>
+		<cfloop query="data.messages">
+			<div class="homeMsgs">
+				<span class="msgHeader">#msgTitle#</span>
+				<div class="msgBlock">#msgText#</div>
+				<span class="msgDate">#DateFormat(msgEntered,'ddd dd mmm yy')#</span>
+				<div style="clear:both;	margin-top:15px;"></div>
 			</div>
-		</div>
+		</cfloop>
 	</div>
 </cfoutput>
 
