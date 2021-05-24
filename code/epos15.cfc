@@ -689,12 +689,13 @@
 					<cfif IsStruct(loc.item)>
 						<cfset loc.data = loc.item>
 						<cfset loc.tran = {}>
+						<cfset loc.tran.supplier = 0>
 						<cfset loc.tran.price = loc.data.unitPrice>
 						<cfset loc.tran.prodID = loc.data.itemID>
 						<cfset loc.tran.cashonly = loc.data.cash neq 0>
 						<cfset loc.tran.prop = 1>
 						<cfset loc.tran.account = loc.data.account>
-						<cfset loc.tran.supplier = loc.data.supplier>
+						<cfif StructKeyExists(loc.data,"supplier")><cfset loc.tran.supplier = loc.data.supplier></cfif>
 						<cfset loc.tran.itemClass = loc.data.itemClass>
 						<cfset loc.tran.gross = loc.data.totalGross>
 						<cfset loc.tran.vrate = loc.data.vrate>
