@@ -66,7 +66,8 @@
 		FROM `tblepos_items`
 		INNER JOIN tblepos_header ON ehID = eiParent
 		WHERE eiType IN ('ACCPAY','ACCINDW')
-		AND `eiAccID` = #parm.accountID#
+		AND `eiPayID` = #parm.accountID#
+		<!---AND `eiAccID` = #parm.accountID#--->
 		AND DATE(ehTimeStamp) >= '#parm.reportDate#'
 		ORDER BY ehTimeStamp
 	</cfquery>
