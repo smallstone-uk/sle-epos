@@ -56,7 +56,7 @@
 	<cfquery name="QAccountPurchases" datasource="#parm.datasource#">	<!--- get parent ID of payment transactions for the account holder  --->
 		SELECT eiParent
 		FROM tblepos_items
-		WHERE eiAccID = #parm.accountID#
+		WHERE (`eiPayID` = #parm.accountID#	OR `eiAccID` = #parm.accountID#)
 	</cfquery>
 	<cfset parm.aIDs = QuotedValueList(QAccountPurchases.eiParent,",")>
 	<cfset parm.aIDs = Replace(parm.aIDs,"'","","all")>		<!--- create csv list to pass on to tran dump --->
