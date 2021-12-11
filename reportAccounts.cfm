@@ -148,13 +148,13 @@
 					</tr>
 				</cfloop>
 				<tr>
-					<th colspan="5">Totals</th>
+					<th colspan="4">Totals</th>
 					<th align="right">#DecimalFormat(drTotal)#</th>
 					<th align="right">#DecimalFormat(crTotal)#</th>
 				</tr>
 				<cfif balance lt 0>
 					<tr>
-						<th colspan="5">Account in Credit</th>
+						<th colspan="4">Account in Credit</th>
 						<th align="right">#DecimalFormat(balance)#</th>
 						<th align="right"></th>
 					</tr>

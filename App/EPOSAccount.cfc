@@ -33,9 +33,9 @@ component extends = "Framework.Model"
     {
         return val(this.sql("
             SELECT eaTitle, SUM(eiNet + eiVAT) AS balance
-            FROM tblEPOS_Account
-            LEFT JOIN tblEPOS_Items ON eaID = eiAccID
-            WHERE eaMenu = 'Yes'
+            FROM tblEPOS_Account,tblEPOS_Items 
+			WHERE (eaID = eiAccID OR eaID = eiPayID)
+            AND eaMenu = 'Yes'
             AND eaID = #this.eaID#
             GROUP BY eaID
         ").balance);
