@@ -77,7 +77,7 @@
 						<cfif ourPrice neq 0>
 							&pound;#DecimalFormat(ourPrice)#
 						<cfelse>
-							Manual Price
+							<span class="prodManual">Enter a Price</span>
 						</cfif>
 					</span>
 				</li>

@@ -2886,7 +2886,11 @@ select:focus {
 	margin-bottom:10px;
 }
 .prodSize {
-	font-size:14px; 
+	font-size:18px; 
 	font-style:italic;
+	color:#000;
+}
+.prodManual {
+	font-size:16px; 
 	color:#000;
 }
