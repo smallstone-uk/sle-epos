@@ -3784,7 +3784,7 @@
 						<cfset loc.cr = 0>
 						<cfset loc.dr = 0>
 						<cfset loc.keys = ListSort(StructKeyList(loc.salesTotals,","),"text","asc")>
-						<cfloop list="#loc.keys#" item="saleTotal">
+						<cfloop list="#loc.keys#" index="saleTotal">
 							<cfset loc.item = StructFind(loc.salesTotals,saleTotal)>
 							<tr>
 								<td>#ListRest(saleTotal,"-")#</td>
