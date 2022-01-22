@@ -3493,8 +3493,8 @@
 				FROM tblEPOS_Items
 				INNER JOIN tblEPOS_Header ON ehID = eiParent
 				INNER JOIN tblemployee ON empID = ehEmployee
-				INNER JOIN tblProducts ON prodID=eiProdID
-				INNER JOIN tblproductcats ON prodCatID=pcatID
+				INNER JOIN tblProducts ON prodID = eiProdID
+				INNER JOIN tblproductcats ON prodCatID = pcatID
 				WHERE 1
 				<cfif StructKeyExists(args,"accountID")>
 					AND eiParent IN (#args.aIDs#)
@@ -3502,6 +3502,7 @@
 				<cfelse>
 					<cfif len(args.reportDate)>AND DATE(ehTimeStamp) = '#args.reportDate#' </cfif>
 				</cfif>
+				ORDER BY eiTimestamp, ehID, eiID
 			</cfquery>
 
 			<cfset loc.grandNet = 0>
@@ -3513,11 +3514,12 @@
 			<cfset loc.grandProfit = 0>
 			<cfset loc.grandDiscount = 0>
 			<cfset loc.tran = 0>
-			<cfset loc.showDetail = !StructKeyExists(args,"accountID")>
+			<cfset loc.showDetail = true <!---!StructKeyExists(args,"accountID")--->>
 			<cfoutput>
+			<div style="float:left">
 			<table class="tableList">
 				<tr class="noPrint">
-					<th align="left" colspan="13"><input type="text" id="quicksearch" value="" placeholder="Search list"></th>
+					<th align="left" colspan="13"><input type="text" id="quicksearch" value="" placeholder="Search list" /></th>
 					<cfif loc.showDetail><th colspan="6"></th></cfif>
 				</tr>
 				<tr>
@@ -3537,8 +3539,8 @@
 					<cfif loc.showDetail>
 						<th align="right" width="60">Net</th>
 						<th align="right" width="60">VAT</th>
-						<th align="right" width="60">Trade<br><span class="tiny">(net)</span></th>
-						<th align="right" width="60">Retail<br><span class="tiny">(gross)</span></th>
+						<th align="right" width="60">Trade<br /><span class="tiny">(net)</span></th>
+						<th align="right" width="60">Retail<br /><span class="tiny">(gross)</span></th>
 						<th align="right" width="60">Profit</th>
 						<th align="right" width="60">Discount</th>
 					</cfif>
@@ -3550,6 +3552,8 @@
 				<cfset loc.totDiscount = 0>		
 				<cfset loc.shopTotal = 0>	
 				<cfset loc.tillTotals = {}>
+				<cfset loc.salesTotals = {}>
+				<cfset loc.tillTotals.cashINDW = 0>
 				<cfloop query="loc.QTrans">
 					<cfset loc.mode = 2 * int(ehMode eq 'reg') - 1>
 					<cfif loc.tran gt 0 AND loc.tran neq eiParent>
@@ -3586,13 +3590,23 @@
 					<cfset loc.gross = eiNet + eiVAT>
 					<cfset loc.grandNet += eiNet>
 					<cfset loc.grandVAT += eiVAT>
-				<cfif StructKeyExists(loc.tillTotals,eiType)>
-					<cfset loc.typeTotal = StructFind(loc.tillTotals,eiType)>
-					<cfset loc.typeTotal += loc.gross>
-					<cfset StructUpdate(loc.tillTotals,eiType,loc.typeTotal)>
-				<cfelse>
-					<cfset StructInsert(loc.tillTotals,eiType,loc.gross)>
-				</cfif>
+					<cfif StructKeyExists(loc.tillTotals,eiType)>
+						<cfset loc.typeTotal = StructFind(loc.tillTotals,eiType)>
+						<cfset loc.typeTotal += loc.gross>
+						<cfset StructUpdate(loc.tillTotals,eiType,loc.typeTotal)>
+					<cfelse>
+						<cfset StructInsert(loc.tillTotals,eiType,loc.gross)>
+					</cfif>
+					
+					<cfset loc.key = Replace("#eiClass#-#pcatTitle#",",","","all")>
+					<cfif StructKeyExists(loc.salesTotals,loc.key)>
+						<cfset loc.salesTotal = StructFind(loc.salesTotals,loc.key)>
+						<cfset loc.salesTotal += loc.gross>
+						<cfset StructUpdate(loc.salesTotals,loc.key,loc.salesTotal)>
+					<cfelse>
+						<cfset StructInsert(loc.salesTotals,loc.key,loc.gross)>
+					</cfif>
+					
 					<cfset loc.profit = 0>
 					<cfset loc.trade = 0>
 					<cfset loc.retail = 0>						
@@ -3693,11 +3707,12 @@
 					</cfif>
 				</tr>
 			</table>
+			</div>
 			<cfset loc.diff = abs(loc.grandDR - loc.grandCR)>
 			<cfif loc.diff gt 0.001 >
 				<p>
-					Warning, accounts do not balance. The Repair Totals option is unavailable.<br>
-					Please correct transaction errors before repairing totals.<br>
+					Warning, accounts do not balance. The Repair Totals option is unavailable.<br />
+					Please correct transaction errors before repairing totals.<br />
 					Error total is #loc.diff#.
 				 </p>
 			<cfelseif NOT StructIsEmpty(loc.dayHeader)>
@@ -3757,8 +3772,42 @@
 			<cfelse>
 				<cfset loc.result.msg = "Day Header not available. FixTotals option cannot be used.">
 			</cfif>
+			<cfif args.showAnalysis eq 1>
+				<!---<cfdump var="#loc.salesTotals#" label="salesTotals" expand="false">--->
+				<div style="float:left">
+					<table class="tableList">
+						<tr>
+							<th>Category</th>
+							<th>DR</th>
+							<th>CR</th>
+						</tr>
+						<cfset loc.cr = 0>
+						<cfset loc.dr = 0>
+						<cfset loc.keys = ListSort(StructKeyList(loc.salesTotals,","),"text","asc")>
+						<cfloop list="#loc.keys#" item="saleTotal">
+							<cfset loc.item = StructFind(loc.salesTotals,saleTotal)>
+							<tr>
+								<td>#ListRest(saleTotal,"-")#</td>
+								<cfif loc.item gt 0>
+									<cfset loc.dr += loc.item>
+									<td align="right">#DecimalFormat(loc.item)#</td>
+									<td align="right" class="rhborder"></td>
+								<cfelse>
+									<cfset loc.cr -= loc.item>
+									<td align="right"></td>
+									<td align="right" class="rhborder">#DecimalFormat(-loc.item)#</td>
+								</cfif>
+							</tr>
+						</cfloop>
+							<tr>
+								<th>Totals</th>
+								<th align="right">#DecimalFormat(loc.dr)#</th>
+								<th align="right">#DecimalFormat(loc.cr)#</th>
+							</tr>
+					</table>
+				</div>
+			</cfif>
 			</cfoutput>
-
 		<cfcatch type="any">
 			<cfdump var="#cfcatch#" label="DumpTrans" expand="yes" format="html"
 			output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">

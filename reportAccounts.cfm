@@ -3,15 +3,9 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="stylesheet" type="text/css" href="css/tillshell.css">
-	<link href="css/jquery-ui.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
 	<title>EPOS Accounts</title>
 	<script src="js/jquery-1.11.1.min.js"></script>
-	<script src="js/jquery-ui.js"></script>
-	<script type="text/javascript">
-		$(document).ready(function() {
-			$('.datepicker').datepicker({dateFormat: "yy-mm-dd",changeMonth: true,changeYear: true,showButtonPanel: true, minDate: new Date(2013, 1 - 1, 1)});
-		});
-	</script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$('#quicksearch').on("keyup",function() {
@@ -33,16 +27,20 @@
 					else $('#pagetotals').show();
 			});
 		});
+		$('.datepicker').datepicker({dateFormat: "yy-mm-dd",changeMonth: true,changeYear: true,showButtonPanel: true, minDate: new Date(2013, 1 - 1, 1)});
 	</script>
+	<script src="js/jquery-ui.js"></script>
 </head>
 
 <cfobject component="#application.site.codePath#" name="ecfc">
 <cfparam name="accountID" default="0">
 <cfparam name="reportDate" default="">
+<cfparam name="showAnalysis" default="false">
 <cfset parm = {}>
 <cfset parm.datasource = application.site.datasource1>
 <cfset parm.accountID = accountID>
 <cfset parm.reportDate = reportDate>
+<cfset parm.showAnalysis = showAnalysis>
 <cfsetting requesttimeout="30">
 <cfflush interval="200">
 <cfquery name="QAccountNames" datasource="#parm.datasource#">
@@ -98,6 +96,7 @@
 				</cfloop>
 			</select>
 			<input type="text" name="reportDate" value="#reportDate#" class="datepicker" />
+			<input type="checkbox" name="showAnalysis" value="1" />Show Analysis
 			<input type="submit" name="btnGo" value="Go">
 		</form>
 		<div style="clear:both"></div>
@@ -106,10 +105,11 @@
 				<div class="header">Transaction Listing for #accountName#</div>
 				<cfset ecfc.DumpTrans(parm)>
 			</div>
-			<div style="clear:both; page-break-after:always;"></div>
+			<!---<div style="clear:both; page-break-after:always;"></div>--->
 			<cfset balance = val(loc.QSalesBFwd.Net)>
 			<cfset drTotal = 0>
 			<cfset crTotal = 0>
+			<div style="float:left">
 			<table class="tableList" width="600">
 				<tr>
 					<th colspan="7">Account Transactions for #accountName#</th>
@@ -151,12 +151,13 @@
 					<th colspan="4">Totals</th>
 					<th align="right">#DecimalFormat(drTotal)#</th>
 					<th align="right">#DecimalFormat(crTotal)#</th>
+					<th align="right"></th>
 				</tr>
 				<cfif balance lt 0>
 					<tr>
 						<th colspan="4">Account in Credit</th>
 						<th align="right">#DecimalFormat(balance)#</th>
-						<th align="right"></th>
+						<th colspan="2" align="right"></th>
 					</tr>
 				<cfelse>
 					<tr>
@@ -166,6 +167,7 @@
 				</cfif>
 				<th></th>
 			</table>
+			</div>
 			<!---<cfdump var="#QAccountPayments#" label="QAccountPayments" expand="false">--->
 		</cfif>
 	</cfoutput>
