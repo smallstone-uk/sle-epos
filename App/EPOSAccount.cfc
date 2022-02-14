@@ -37,6 +37,7 @@ component extends = "Framework.Model"
 			WHERE (eaID = eiAccID OR eaID = eiPayID)
             AND eaMenu = 'Yes'
             AND eaID = #this.eaID#
+			AND eiType IN ('ACCINDW','ACCPAY')
             GROUP BY eaID
         ").balance);
     }
