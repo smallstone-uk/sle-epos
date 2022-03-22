@@ -73,9 +73,10 @@
 	<cfquery name="loc.QSalesBFwd" datasource="#parm.datasource#">
 		SELECT eiAccID, SUM(eiNet) AS Net
 		FROM tblepos_items
-		WHERE eiAccID = #parm.accountID#
+		WHERE eiType IN ('ACCPAY','ACCINDW')
+		AND (eiAccID = #parm.accountID# OR eiPayID = #parm.accountID#)
 		AND DATE(eiTimestamp) < '#parm.reportDate#'
-		GROUP BY eiAccID
+		ORDER BY eiTimestamp
 	</cfquery>
 </cfif>
 
