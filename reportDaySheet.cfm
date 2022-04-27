@@ -52,7 +52,7 @@
 		INNER JOIN tblProductCats ON pcatID = prodCatID
 		INNER JOIN tblProductGroups ON pgID = pcatGroup
 		INNER JOIN tblNominal ON pgNomGroup = nomCode
-		WHERE DATE( ehTimeStamp ) = '#form.reportDate#'
+		WHERE DATE( ehTimeStamp ) = '#form.reportDateFrom#'
 		GROUP by pgNomGroup
 	</cfquery>
 	<!---<cfdump var="#QItemSum2#" label="QItemSum2" expand="false">--->
@@ -64,19 +64,19 @@
 		INNER JOIN tblProducts ON prodID = eiProdID
 		INNER JOIN tblProductCats ON pcatID = prodCatID
 		INNER JOIN tblProductGroups ON pgID = pcatGroup
-		WHERE DATE( ehTimeStamp ) = '#form.reportDate#'
+		WHERE DATE( ehTimeStamp ) = '#form.reportDateFrom#'
 		GROUP by eiClass, eiType, pgTitle <!---,prodEposCatID--->
 	</cfquery>
 	<!---<cfdump var="#QItemSummary#" label="QItemSummary" expand="false">--->
 	<cfquery name="QCashback" datasource="#parm.datasource#">
 		SELECT SUM(ehCashback) AS total
 		FROM tblEPOS_Header
-		WHERE DATE( ehTimeStamp ) = '#form.reportDate#'
+		WHERE DATE( ehTimeStamp ) = '#form.reportDateFrom#'
 	</cfquery>
 	<cfquery name="QDayHeader" datasource="#parm.datasource#">
 		SELECT *
 		FROM tblepos_dayheader
-		WHERE DATE( dhTimeStamp ) = '#form.reportDate#'
+		WHERE DATE( dhTimeStamp ) = '#form.reportDateFrom#'
 	</cfquery>
 	<cfset today = ep.QueryToStruct(QDayHeader)>	
 </cfif>
@@ -98,19 +98,19 @@
 <div>
 	<form method="post" enctype="multipart/form-data">
 		Report Date:
-		<select name="reportDate" id="reportDate">
+		<select name="reportDateFrom" id="reportDate">
 			<option value="">Select date...</option>
 			<cfloop array="#dates.recs#" index="item">
-			<option value="#item.value#" <cfif parm.reportDate eq item.value> selected</cfif>>#item.title#</option>
+			<option value="#item.value#" <cfif parm.reportDateFrom eq item.value> selected</cfif>>#item.title#</option>
 			</cfloop>
 		</select>
 		<input type="checkbox" name="fixTotals" value="1" />Repair Till Totals
 		<input type="submit" name="btnGo" value="Go">
 	</form>
 </div>
-<cfif StructKeyExists(form,"reportDate")>
+<cfif StructKeyExists(form,"reportDateFrom")>
 	<div id="xreading3" class="totalPanel">
-		<div class="header">Shop Daysheet Summary &nbsp; &nbsp; #LSDateFormat(form.reportDate,'ddd dd-mmm-yyyy')# &nbsp; &nbsp; #LSTimeFormat(Now())#</div>
+		<div class="header">Shop Daysheet Summary &nbsp; &nbsp; #LSDateFormat(form.reportDateFrom,'ddd dd-mmm-yyyy')# &nbsp; &nbsp; #LSTimeFormat(Now())#</div>
 		<table class="tableList" border="1">
 			<tr>
 				<th>Group</th>
@@ -191,7 +191,7 @@
 				</tr>
 			</cfif>
 		</table>
-		<cfdump var="#productTotals#" label="productTotals" expand="false">
+		<!---<cfdump var="#productTotals#" label="productTotals" expand="false">--->
 	</div>
 	<div id="xreading4" class="totalPanel">
 		<div class="header">Till Totals</div>
@@ -431,7 +431,7 @@
 		<div class="header">Tran Dump</div>
 		<cfset parm = {}>
 		<cfset parm.reportDateFrom = form.reportDateFrom>
-		<cfset parm.reportDateTo = form.reportDateTo>
+		<cfset parm.reportDateTo = form.reportDateFrom>
 		<cfset parm.fixTotals = StructKeyExists(form,"fixTotals")>
 		<cfset tillTotals = ecfc.DumpTrans(parm)>
 		<!---<cfdump var="#tillTotals#" label="tillTotals" expand="false">--->

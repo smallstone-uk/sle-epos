@@ -187,7 +187,7 @@
 									<cfset loc.tran.net = loc.tran.gross>
 									<cfset loc.tran.vat = 0>								
 								</cfif>
-								<cfset loc.tran.qty = 1 * loc.rec.regMode>
+								<cfset loc.tran.qty = 1 * loc.rec.regMode> 
 
 								<cfset loc.tran.gross = loc.tran.gross * loc.tranType * loc.rec.regMode>
 								<cfset loc.tran.net = loc.tran.net * loc.tranType * loc.rec.regMode>
@@ -2725,7 +2725,27 @@
 								</tr>
 								</cfif>
 							</cfcase>
-							<cfcase value="CASHINDW|CARDINDW|CHQINDW|ACCINDW|BANKXFR|ONLINE|WASTE|CPN|HSV" delimiters="|">
+							<cfcase value="WASTE" delimiters="|">
+								<cfset loc.prodID = 13>
+								<cfset loc.tran.itemType = "pay">
+								<cfset loc.payID = loc.tran.payID>
+								<cfset loc.retail = 0>
+								<cfset loc.tran.qty = abs(loc.tran.qty)>
+								<cfif loc.showInfo>
+								<tr>
+									<td>#loc.tran.itemClass#</td>
+									<td></td>
+									<td></td>
+									<td align="right">#DecimalFormat(loc.tran.gross)#</td>
+									<td align="right"></td>
+									<td align="right">#DecimalFormat(loc.tran.net)#</td>
+									<td align="right">#DecimalFormat(loc.tran.vat)#</td>
+									<td align="right"></td>
+									<td align="right"></td>
+								</tr>
+								</cfif>
+							</cfcase>
+							<cfcase value="CASHINDW|CARDINDW|CHQINDW|ACCINDW|BANKXFR|ONLINE|CPN|HSV" delimiters="|">
 								<cfswitch expression="#loc.tran.itemClass#">
 									<cfcase value="CARDINDW">
 										<cfset loc.prodID = 2>
@@ -2744,9 +2764,6 @@
 									</cfcase>
 									<cfcase value="ONLINE">
 										<cfset loc.prodID = 16>
-									</cfcase>
-									<cfcase value="WASTE">
-										<cfset loc.prodID = 13>
 									</cfcase>
 									<cfcase value="HSV">
 										<cfset loc.prodID = 8>
@@ -2833,6 +2850,8 @@
 						</tr>
 						</cfif>
 					</table>
+				<cfdump var="#loc#" label="loc. WriteTransaction" expand="yes" format="html"
+					output="#application.site.dir_logs#epos\write-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 					<cfset loc.fields = "(
 							eiParent,
 							eiClass,
@@ -3330,7 +3349,7 @@
 
 	<cffunction name="LoadEPOSTotals" access="public" returntype="struct">
 		<cfargument name="args" type="struct" required="yes">
-		<cfreturn new App.EPOSTotal().getTotals(args.reportDate)>
+		<cfreturn new App.EPOSTotal().getTotals(args.reportDateFrom)>
 	</cffunction>
 
 	<cffunction name="LoadDeals" access="public" returntype="void" hint="Load deal info.">
