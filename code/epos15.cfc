@@ -3476,7 +3476,7 @@
 		<cfset loc.result.msg = "">
 
 		<cftry>
-			<cfset loc.dayHeader = LoadDayHeader({"reportDate" = args.reportDate})>
+			<cfset loc.dayHeader = LoadDayHeader({"reportDate" = args.reportDateFrom})>
 			<cfquery name="loc.QTrans" datasource="#GetDataSource()#" result="loc.QTransResult">
 				SELECT tblEPOS_Items.*,ehMode, empFirstName,
 				IF (eiType='MEDIA',
@@ -3498,9 +3498,11 @@
 				WHERE 1
 				<cfif StructKeyExists(args,"accountID")>
 					AND eiParent IN (#args.aIDs#)
-					<cfif len(args.reportDate)>AND DATE(ehTimeStamp) >= '#args.reportDate#' </cfif>
+					<cfif len(args.reportDateFrom)>AND DATE(ehTimeStamp) >= '#args.reportDateFrom#' </cfif>
+					<cfif len(args.reportDateTo)>AND DATE(ehTimeStamp) <= '#args.reportDateTo#' </cfif>
 				<cfelse>
-					<cfif len(args.reportDate)>AND DATE(ehTimeStamp) = '#args.reportDate#' </cfif>
+					<cfif len(args.reportDateFrom)>AND DATE(ehTimeStamp) = '#args.reportDateFrom#' </cfif>
+					<cfif len(args.reportDateTo)>AND DATE(ehTimeStamp) <= '#args.reportDateTo#' </cfif>
 				</cfif>
 				ORDER BY eiTimestamp, ehID, eiID
 			</cfquery>
@@ -3719,7 +3721,7 @@
 				<cfquery name="loc.result.QTotals" datasource="#GetDataSource()#">
 					SELECT *
 					FROM tblEPOS_Totals
-					WHERE totDate='#args.reportDate#'
+					WHERE totDate='#args.reportDateFrom#'
 				</cfquery>
 				<cfset loc.result.newTotals = {}>
 				<cfloop query="loc.result.QTotals">

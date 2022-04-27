@@ -53,6 +53,7 @@ INNER JOIN tblEPOS_Cats ON eecCategory = epcID
 WHERE eecEmployee =122
 ORDER BY eecOrder
 
+
 //Products & stock items price check where product ourprice <> stock item ourprice
 SELECT prodID,prodTitle,siUnitSize,prodLastBought,prodPriceMarked,prodOurPrice,
 siRRP,siOurPrice,siPOR,siID	
@@ -64,4 +65,11 @@ AND tblStockItem.siID = (
 	FROM tblStockItem
 	WHERE prodID = siProduct )
 WHERE prodOurPrice!=siOurPrice
+
+
+// Clone user EPOS buttons to new user. Change EMPLOYEE_ID to required user.
+// Gets the records assigned to User 122 and inserts them for the specified user.
+INSERT INTO tblepos_empcats (eecEmployee,eecCategory,eecOrder) 
+SELECT EMPLOYEE_ID,eecCategory,eecOrder FROM `tblepos_empcats` WHERE `eecEmployee` = 122
+
 

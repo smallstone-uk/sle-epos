@@ -635,7 +635,8 @@
 <div class="totalPanel">
 	<div class="header">Tran Dump</div>
 	<cfset parm = {}>
-	<cfset parm.reportDate = session.till.prefs.reportDate>
+	<cfset parm.reportDateFrom = session.till.prefs.reportDate>
+	<cfset parm.reportDateTo = session.till.prefs.reportDate>
 	<cfset ecfc.DumpTrans(parm)>
 </div>
 <div style="clear:both"></div>

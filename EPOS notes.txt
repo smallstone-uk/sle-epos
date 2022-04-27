@@ -42,3 +42,14 @@ Stock Management
 1.		Add archive option to old stock items.
 2.		Find all prodxxx fields and replace with sixxx fields.
 3.		Check discount flag correctly set on products.
+
+
+SET @runtot:=0;
+SELECT eiAccID, eiPayID, eiType, eiParent, eiTimestamp, eiNet,
+(@runtot := @runtot + eiNet) AS rt
+		FROM tblepos_items
+		WHERE eiType IN ('ACCPAY','ACCINDW')
+		AND (eiAccID = 252 OR eiPayID = 252)
+		AND DATE(eiTimestamp) < '2022-07-01'
+ORDER BY eiTimestamp
+LIMIT 0,1000

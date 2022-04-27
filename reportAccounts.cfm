@@ -6,6 +6,7 @@
 	<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
 	<title>EPOS Accounts</title>
 	<script src="js/jquery-1.11.1.min.js"></script>
+	<script src="js/jquery-ui.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$('#quicksearch').on("keyup",function() {
@@ -34,13 +35,17 @@
 
 <cfobject component="#application.site.codePath#" name="ecfc">
 <cfparam name="accountID" default="0">
-<cfparam name="reportDate" default="">
 <cfparam name="showAnalysis" default="false">
+<cfparam name="reportDateFrom" default="#Now()#">
+<cfparam name="reportDateTo" default="#Now()#">
 <cfset parm = {}>
 <cfset parm.datasource = application.site.datasource1>
 <cfset parm.accountID = accountID>
-<cfset parm.reportDate = reportDate>
+<cfset parm.reportDateFrom = reportDateFrom>
+<cfset parm.reportDateTo = reportDateTo>
 <cfset parm.showAnalysis = showAnalysis>
+<cfset dates = ecfc.GetDates(parm)>
+
 <cfsetting requesttimeout="30">
 <cfflush interval="200">
 <cfquery name="QAccountNames" datasource="#parm.datasource#">
@@ -65,9 +70,8 @@
 		INNER JOIN tblepos_header ON ehID = eiParent
 		WHERE eiType IN ('ACCPAY','ACCINDW')
 		AND (`eiPayID` = #parm.accountID#
-			OR `eiAccID` = #parm.accountID#)
-		<!---AND `eiAccID` = #parm.accountID#--->
-		AND DATE(ehTimeStamp) >= '#parm.reportDate#'
+				OR `eiAccID` = #parm.accountID#)
+		AND DATE(ehTimeStamp) BETWEEN '#parm.reportDateFrom#' AND '#parm.reportDateTo#'
 		ORDER BY ehTimeStamp
 	</cfquery>
 	<cfquery name="loc.QSalesBFwd" datasource="#parm.datasource#">
@@ -75,7 +79,7 @@
 		FROM tblepos_items
 		WHERE eiType IN ('ACCPAY','ACCINDW')
 		AND (eiAccID = #parm.accountID# OR eiPayID = #parm.accountID#)
-		AND DATE(eiTimestamp) < '#parm.reportDate#'
+		AND DATE(eiTimestamp) < '#parm.reportDateFrom#'
 		ORDER BY eiTimestamp
 	</cfquery>
 </cfif>
@@ -96,8 +100,22 @@
 					<option value="#eaID#"#selectMe#>#eaTitle#</option>
 				</cfloop>
 			</select>
-			<input type="text" name="reportDate" value="#reportDate#" class="datepicker" />
+			<!---<input type="text" name="reportDate" value="#reportDate#" class="datepicker" />--->
 			<input type="checkbox" name="showAnalysis" value="1" />Show Analysis
+			Report From:
+			<select name="reportDateFrom" id="reportDateFrom">
+				<option value="">Select date...</option>
+				<cfloop array="#dates.recs#" index="item">
+				<option value="#item.value#" <cfif reportDateFrom eq item.value> selected</cfif>>#DateFormat(item.value,'ddd dd-mmm-yy')#</option>
+				</cfloop>
+			</select>
+			Report To:
+			<select name="reportDateTo" id="reportDateTo">
+				<option value="">Select date...</option>
+				<cfloop array="#dates.recs#" index="item">
+				<option value="#item.value#" <cfif reportDateTo eq item.value> selected</cfif>>#DateFormat(item.value,'ddd dd-mmm-yy')#</option>
+				</cfloop>
+			</select>
 			<input type="submit" name="btnGo" value="Go">
 		</form>
 		<div style="clear:both"></div>

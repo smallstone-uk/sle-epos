@@ -3,8 +3,9 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="stylesheet" type="text/css" href="css/tillshell.css">
-	<script src="js/jquery-1.11.1.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
 	<title>Day Report</title>
+	<script src="js/jquery-1.11.1.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$('#quicksearch').on("keyup",function() {
@@ -34,12 +35,13 @@
 <cfobject component="code/epos" name="ep">
 <cfset dates = ecfc.GetDates(parm)>
 <cfif StructKeyExists(session,"till")>
-	<cfset parm.reportDate = session.till.prefs.reportDate>
+	<cfset parm.reportDateFrom = session.till.prefs.reportDate>
 <cfelse>
-	<cfset parm.reportDate = Now()>
+	<cfset parm.reportDateFrom = Now()>
 </cfif>
-<cfif StructKeyExists(form,"reportDate")>
-	<cfset parm.reportDate = form.reportDate>
+<cfset parm.reportDateTo = Now()>
+<cfif StructKeyExists(form,"reportDateFrom")>
+	<cfset parm.reportDateFrom = form.reportDateFrom>
 	<cfset epos = ecfc.LoadEPOSTotals(parm)>
 	<!---<cfdump var="#epos#" label="epos" expand="true">--->
 	<cfquery name="QItemSum2" datasource="#parm.datasource#">
@@ -56,14 +58,14 @@
 	<!---<cfdump var="#QItemSum2#" label="QItemSum2" expand="false">--->
 	
 	<cfquery name="QItemSummary" datasource="#parm.datasource#">
-		SELECT pcatGroup, prodTitle,prodID,prodCatID,prodEposCatID, eiClass, eiType, pgTitle, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
+		SELECT pgTitle, pcatGroup, prodTitle,prodID,prodCatID,prodEposCatID, eiClass, eiType, SUM(eiQty) AS qty, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
 		FROM `tblEPOS_Items`
 		INNER JOIN tblEPOS_Header ON ehID = eiParent
 		INNER JOIN tblProducts ON prodID = eiProdID
 		INNER JOIN tblProductCats ON pcatID = prodCatID
 		INNER JOIN tblProductGroups ON pgID = pcatGroup
 		WHERE DATE( ehTimeStamp ) = '#form.reportDate#'
-		GROUP by eiClass, eiType, pgTitle<!---,prodEposCatID--->
+		GROUP by eiClass, eiType, pgTitle <!---,prodEposCatID--->
 	</cfquery>
 	<!---<cfdump var="#QItemSummary#" label="QItemSummary" expand="false">--->
 	<cfquery name="QCashback" datasource="#parm.datasource#">
@@ -125,6 +127,7 @@
 			<cfset drtotal = 0>
 			<cfset vatTotal = 0>
 			<cfset countTotal = 0>
+			<cfset productTotals = {}>
 			<cfloop query="QItemSummary">
 				<cfset countTotal += itemCount>
 				<cfset vatTotal += vat>
@@ -141,7 +144,16 @@
 				<cfelse>
 					<cfset StructInsert(tillTotals,eiType,gross)>
 				</cfif>
---->				<tr>
+--->
+				<cfif StructKeyExists(productTotals,prodID)>
+					<cfset prod = StructFind(productTotals,prodID)>
+					<cfset prod.qty += Qty>
+					<cfset prod.value += (net + VAT)>
+					<cfset StructUpdate(productTotals,prodID,prod)>
+				<cfelse>
+					<cfset StructInsert(productTotals,prodID,{"Title"=prodTitle,"Qty"=Qty, "Value"=(net + VAT)})>
+				</cfif>
+				<tr>
 					<td>#pcatGroup#</td>
 					<td>#prodEposCatID#</td>
 					<td>#eiClass#</td>
@@ -179,6 +191,7 @@
 				</tr>
 			</cfif>
 		</table>
+		<cfdump var="#productTotals#" label="productTotals" expand="false">
 	</div>
 	<div id="xreading4" class="totalPanel">
 		<div class="header">Till Totals</div>
@@ -417,7 +430,8 @@
 	<div class="totalPanel">
 		<div class="header">Tran Dump</div>
 		<cfset parm = {}>
-		<cfset parm.reportDate = form.reportDate>
+		<cfset parm.reportDateFrom = form.reportDateFrom>
+		<cfset parm.reportDateTo = form.reportDateTo>
 		<cfset parm.fixTotals = StructKeyExists(form,"fixTotals")>
 		<cfset tillTotals = ecfc.DumpTrans(parm)>
 		<!---<cfdump var="#tillTotals#" label="tillTotals" expand="false">--->
