@@ -7,7 +7,7 @@ class Energy
      */
     onAdded(product)
     {
-        $.confirmation("Energy drinks are not suitable for persons under 16.<br>Please ask the customer for proof of age if they appear under 25.","",true);
+        $.confirmation("Energy drinks are not suitable for persons under 16.<br>Please ask the customer for proof of age if they appear under 25.",function() {},true);
     }
 
     /**

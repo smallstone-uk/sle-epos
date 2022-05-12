@@ -7,7 +7,7 @@ class Tobacco
      */
     onAdded(product)
     {
-        $.confirmation("It is illegal to sell tobacco to under 18's.<br>Please ask the customer for proof of age if they appear under 25.","",true);
+        $.confirmation("It is illegal to sell tobacco to under 18's.<br>Please ask the customer for proof of age if they appear under 25.",function() {},true);
     }
 
     /**

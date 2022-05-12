@@ -33,11 +33,13 @@
 <cfset parm.datasource = application.site.datasource1>
 <cfobject component="#application.site.codePath#" name="ecfc">
 <cfif StructKeyExists(session,"till")>
-	<cfset parm.reportDate = session.till.prefs.reportDate>
+	<cfset parm.reportDateFrom = session.till.prefs.reportDate>
 <cfelse>
-	<cfset parm.reportDate = Now()>
+	<cfset parm.reportDateFrom = Now()>
 </cfif>
+<cfset parm.reportDate = parm.reportDateFrom>
 <cfset epos = ecfc.LoadEPOSTotals(parm)>
+
 <cfif StructIsEmpty(epos.accounts)>
 	Nothing to show yet.
 	<cfexit>
