@@ -2850,8 +2850,8 @@
 						</tr>
 						</cfif>
 					</table>
-				<cfdump var="#loc#" label="loc. WriteTransaction" expand="yes" format="html"
-					output="#application.site.dir_logs#epos\write-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+				<!---<cfdump var="#loc#" label="loc. WriteTransaction" expand="yes" format="html"
+					output="#application.site.dir_logs#epos\write-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">--->
 					<cfset loc.fields = "(
 							eiParent,
 							eiClass,
