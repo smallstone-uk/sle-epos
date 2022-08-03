@@ -51,7 +51,7 @@
 <cfquery name="QAccountNames" datasource="#parm.datasource#">
 	SELECT *
 	FROM `tblepos_account`
-	WHERE `eaMenu` = 'Yes'
+	WHERE 1
 	ORDER BY eaTitle
 </cfquery>
 
