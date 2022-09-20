@@ -29,7 +29,7 @@
 		});
 	</script>
 </head>
-<cfflush interval="20">
+<cfsetting requesttimeout="900">
 <cfset parm = {}>
 <cfset parm.datasource = application.site.datasource1>
 <cfobject component="#application.site.codePath#" name="ecfc">
@@ -42,6 +42,8 @@
 </cfif>
 <cfset parm.reportDateTo = Now()>
 <cfif StructKeyExists(form,"reportDateFrom")>
+	<cfflush interval="20">
+	<p>Starting...</p>
 	<cfoutput>
 		<cfset sysTime = GetTickCount()>
 		<cfset parm.reportDateFrom = form.reportDateFrom>
