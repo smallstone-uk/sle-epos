@@ -51,7 +51,7 @@
 			<cfset epos = ecfc.LoadEPOSTotals(parm)>
 			<cfset tickNow = GetTickCount()>
 			<p>#tickNow - sysTime#ms Load EPOS totals...</p>
-		
+		<cfset endofDay = DateFormat(DateAdd("d",1,form.reportDateFrom),"yyyy-mm-dd")>
 		<cfset sysTime = GetTickCount()>
 		<cfquery name="QItemSum2" datasource="#parm.datasource#">
 			SELECT pcatGroup, prodCatID,prodEposCatID, eiClass,eiType, pgTitle,pgNomGroup, nomTitle, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
@@ -61,7 +61,8 @@
 			INNER JOIN tblProductCats ON pcatID = prodCatID
 			INNER JOIN tblProductGroups ON pgID = pcatGroup
 			INNER JOIN tblNominal ON pgNomGroup = nomCode
-			WHERE DATE( ehTimeStamp ) = '#form.reportDateFrom#'
+			WHERE ehTimeStamp > '#form.reportDateFrom#'
+			AND ehTimeStamp < '#endofDay#'
 			GROUP by pgNomGroup
 		</cfquery>
 		<cfset tickNow = GetTickCount()>

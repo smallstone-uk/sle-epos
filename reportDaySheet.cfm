@@ -48,6 +48,7 @@
 		<cfset sysTime = GetTickCount()>
 		<cfset parm.reportDateFrom = form.reportDateFrom>
 		<cfset epos = ecfc.LoadEPOSTotals(parm)>
+		<cfset endofDay = DateFormat(DateAdd("d",1,form.reportDateFrom),"yyyy-mm-dd")>
 		<cfset tickNow = GetTickCount()>
 		<p>#tickNow - sysTime#ms Load EPOS totals...</p>
 		<!---<cfdump var="#epos#" label="epos" expand="true">--->
@@ -61,7 +62,8 @@
 			INNER JOIN tblProductCats ON pcatID = prodCatID
 			INNER JOIN tblProductGroups ON pgID = pcatGroup
 			INNER JOIN tblNominal ON pgNomGroup = nomCode
-			WHERE DATE( ehTimeStamp ) = '#form.reportDateFrom#'
+			WHERE ehTimeStamp > '#form.reportDateFrom#'
+			AND ehTimeStamp < '#endofDay#'
 			GROUP by pgNomGroup
 		</cfquery>
 		<cfset tickNow = GetTickCount()>
@@ -76,7 +78,8 @@
 			INNER JOIN tblProducts ON prodID = eiProdID
 			INNER JOIN tblProductCats ON pcatID = prodCatID
 			INNER JOIN tblProductGroups ON pgID = pcatGroup
-			WHERE DATE( ehTimeStamp ) = '#form.reportDateFrom#'
+			WHERE ehTimeStamp > '#form.reportDateFrom#'
+			AND ehTimeStamp < '#endofDay#'
 			GROUP by eiClass, eiType, pgTitle <!---,prodEposCatID--->
 		</cfquery>
 		<cfset tickNow = GetTickCount()>
@@ -87,7 +90,8 @@
 		<cfquery name="QCashback" datasource="#parm.datasource#">
 			SELECT SUM(ehCashback) AS total
 			FROM tblEPOS_Header
-			WHERE DATE( ehTimeStamp ) = '#form.reportDateFrom#'
+			WHERE ehTimeStamp > '#form.reportDateFrom#'
+			AND ehTimeStamp < '#endofDay#'
 		</cfquery>
 		<cfset tickNow = GetTickCount()>
 		<p>#tickNow - sysTime#ms Load cashback summary...</p>
@@ -96,7 +100,8 @@
 		<cfquery name="QDayHeader" datasource="#parm.datasource#">
 			SELECT *
 			FROM tblepos_dayheader
-			WHERE DATE( dhTimeStamp ) = '#form.reportDateFrom#'
+			WHERE dhTimeStamp > '#form.reportDateFrom#'
+			AND dhTimeStamp < '#endofDay#'
 		</cfquery>
 		<cfset today = ep.QueryToStruct(QDayHeader)>
 		<cfset tickNow = GetTickCount()>
