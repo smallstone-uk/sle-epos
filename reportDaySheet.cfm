@@ -105,7 +105,8 @@
 		</cfquery>
 		<cfset today = ep.QueryToStruct(QDayHeader)>
 		<cfset tickNow = GetTickCount()>
-		<p>#tickNow - sysTime#ms Load day header...</p>
+		<p>#tickNow - sysTime#ms Load Day Header...</p>
+		
 	</cfoutput>
 </cfif>
 
