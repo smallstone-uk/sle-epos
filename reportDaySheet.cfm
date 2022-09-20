@@ -43,7 +43,7 @@
 <cfset parm.reportDateTo = Now()>
 <cfif StructKeyExists(form,"reportDateFrom")>
 	<cfflush interval="20">
-	<p>Starting...</p>
+	<p>Starting the report...</p>
 	<cfoutput>
 		<cfset sysTime = GetTickCount()>
 		<cfset parm.reportDateFrom = form.reportDateFrom>
