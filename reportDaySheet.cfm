@@ -29,7 +29,7 @@
 		});
 	</script>
 </head>
-<cfflush interval="200">
+<cfflush interval="20">
 <cfset parm = {}>
 <cfset parm.datasource = application.site.datasource1>
 <cfobject component="#application.site.codePath#" name="ecfc">
@@ -42,49 +42,64 @@
 </cfif>
 <cfset parm.reportDateTo = Now()>
 <cfif StructKeyExists(form,"reportDateFrom")>
-	<cfset parm.reportDateFrom = form.reportDateFrom>
-	<cfset epos = ecfc.LoadEPOSTotals(parm)>
-	<p>Load EPOS totals...</p>
-	<!---<cfdump var="#epos#" label="epos" expand="true">--->
-	<cfquery name="QItemSum2" datasource="#parm.datasource#">
-		SELECT pcatGroup, prodCatID,prodEposCatID, eiClass,eiType, pgTitle,pgNomGroup, nomTitle, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
-		FROM `tblEPOS_Items`
-		INNER JOIN tblEPOS_Header ON ehID = eiParent
-		INNER JOIN tblProducts ON prodID = eiProdID
-		INNER JOIN tblProductCats ON pcatID = prodCatID
-		INNER JOIN tblProductGroups ON pgID = pcatGroup
-		INNER JOIN tblNominal ON pgNomGroup = nomCode
-		WHERE DATE( ehTimeStamp ) = '#form.reportDateFrom#'
-		GROUP by pgNomGroup
-	</cfquery>
-	<p>Load group summary...</p>
-	<!---<cfdump var="#QItemSum2#" label="QItemSum2" expand="false">--->
-	
-	<cfquery name="QItemSummary" datasource="#parm.datasource#">
-		SELECT pgTitle, pcatGroup, prodTitle,prodID,prodCatID,prodEposCatID, eiClass, eiType, SUM(eiQty) AS qty, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
-		FROM `tblEPOS_Items`
-		INNER JOIN tblEPOS_Header ON ehID = eiParent
-		INNER JOIN tblProducts ON prodID = eiProdID
-		INNER JOIN tblProductCats ON pcatID = prodCatID
-		INNER JOIN tblProductGroups ON pgID = pcatGroup
-		WHERE DATE( ehTimeStamp ) = '#form.reportDateFrom#'
-		GROUP by eiClass, eiType, pgTitle <!---,prodEposCatID--->
-	</cfquery>
-	<p>Load class summary...</p>
-	<!---<cfdump var="#QItemSummary#" label="QItemSummary" expand="false">--->
-	<cfquery name="QCashback" datasource="#parm.datasource#">
-		SELECT SUM(ehCashback) AS total
-		FROM tblEPOS_Header
-		WHERE DATE( ehTimeStamp ) = '#form.reportDateFrom#'
-	</cfquery>
-	<p>Load cashback summary...</p>
-	<cfquery name="QDayHeader" datasource="#parm.datasource#">
-		SELECT *
-		FROM tblepos_dayheader
-		WHERE DATE( dhTimeStamp ) = '#form.reportDateFrom#'
-	</cfquery>
-	<p>Load day header...</p>	
-	<cfset today = ep.QueryToStruct(QDayHeader)>
+	<cfoutput>
+		<cfset sysTime = GetTickCount()>
+		<cfset parm.reportDateFrom = form.reportDateFrom>
+		<cfset epos = ecfc.LoadEPOSTotals(parm)>
+		<cfset tickNow = GetTickCount()>
+		<p>#tickNow - sysTime#ms Load EPOS totals...</p>
+		<!---<cfdump var="#epos#" label="epos" expand="true">--->
+		
+		<cfset sysTime = GetTickCount()>
+		<cfquery name="QItemSum2" datasource="#parm.datasource#">
+			SELECT pcatGroup, prodCatID,prodEposCatID, eiClass,eiType, pgTitle,pgNomGroup, nomTitle, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
+			FROM `tblEPOS_Items`
+			INNER JOIN tblEPOS_Header ON ehID = eiParent
+			INNER JOIN tblProducts ON prodID = eiProdID
+			INNER JOIN tblProductCats ON pcatID = prodCatID
+			INNER JOIN tblProductGroups ON pgID = pcatGroup
+			INNER JOIN tblNominal ON pgNomGroup = nomCode
+			WHERE DATE( ehTimeStamp ) = '#form.reportDateFrom#'
+			GROUP by pgNomGroup
+		</cfquery>
+		<cfset tickNow = GetTickCount()>
+		<p>#tickNow - sysTime#ms Load group summary...</p>
+		<!---<cfdump var="#QItemSum2#" label="QItemSum2" expand="false">--->
+		
+		<cfset sysTime = GetTickCount()>
+		<cfquery name="QItemSummary" datasource="#parm.datasource#">
+			SELECT pgTitle, pcatGroup, prodTitle,prodID,prodCatID,prodEposCatID, eiClass, eiType, SUM(eiQty) AS qty, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
+			FROM `tblEPOS_Items`
+			INNER JOIN tblEPOS_Header ON ehID = eiParent
+			INNER JOIN tblProducts ON prodID = eiProdID
+			INNER JOIN tblProductCats ON pcatID = prodCatID
+			INNER JOIN tblProductGroups ON pgID = pcatGroup
+			WHERE DATE( ehTimeStamp ) = '#form.reportDateFrom#'
+			GROUP by eiClass, eiType, pgTitle <!---,prodEposCatID--->
+		</cfquery>
+		<cfset tickNow = GetTickCount()>
+		<p>#tickNow - sysTime#ms Load class summary...</p>
+		<!---<cfdump var="#QItemSummary#" label="QItemSummary" expand="false">--->
+		
+		<cfset sysTime = GetTickCount()>
+		<cfquery name="QCashback" datasource="#parm.datasource#">
+			SELECT SUM(ehCashback) AS total
+			FROM tblEPOS_Header
+			WHERE DATE( ehTimeStamp ) = '#form.reportDateFrom#'
+		</cfquery>
+		<cfset tickNow = GetTickCount()>
+		<p>#tickNow - sysTime#ms Load cashback summary...</p>
+		
+		<cfset sysTime = GetTickCount()>
+		<cfquery name="QDayHeader" datasource="#parm.datasource#">
+			SELECT *
+			FROM tblepos_dayheader
+			WHERE DATE( dhTimeStamp ) = '#form.reportDateFrom#'
+		</cfquery>
+		<cfset today = ep.QueryToStruct(QDayHeader)>
+		<cfset tickNow = GetTickCount()>
+		<p>#tickNow - sysTime#ms Load day header...</p>
+	</cfoutput>
 </cfif>
 
 	<cffunction name="GetTotal" access="public" returntype="numeric">
