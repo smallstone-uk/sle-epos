@@ -51,6 +51,23 @@
 			<cfset epos = ecfc.LoadEPOSTotals(parm)>
 			<cfset tickNow = GetTickCount()>
 			<p>#tickNow - sysTime#ms Load EPOS totals...</p>
+		
+		<cfset sysTime = GetTickCount()>
+		<cfquery name="QItemSum2" datasource="#parm.datasource#">
+			SELECT pcatGroup, prodCatID,prodEposCatID, eiClass,eiType, pgTitle,pgNomGroup, nomTitle, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
+			FROM `tblEPOS_Items`
+			INNER JOIN tblEPOS_Header ON ehID = eiParent
+			INNER JOIN tblProducts ON prodID = eiProdID
+			INNER JOIN tblProductCats ON pcatID = prodCatID
+			INNER JOIN tblProductGroups ON pgID = pcatGroup
+			INNER JOIN tblNominal ON pgNomGroup = nomCode
+			WHERE DATE( ehTimeStamp ) = '#form.reportDateFrom#'
+			GROUP by pgNomGroup
+		</cfquery>
+		<cfset tickNow = GetTickCount()>
+		<p>#tickNow - sysTime#ms Load group summary...</p>
+		<!---<cfdump var="#QItemSum2#" label="QItemSum2" expand="false">--->
+
 	</cfif>
 	<div>
 		<form method="post" enctype="multipart/form-data">
