@@ -29,6 +29,7 @@
 		});
 	</script>
 </head>
+<cfflush interval="200">
 <cfset parm = {}>
 <cfset parm.datasource = application.site.datasource1>
 <cfobject component="#application.site.codePath#" name="ecfc">
@@ -43,6 +44,7 @@
 <cfif StructKeyExists(form,"reportDateFrom")>
 	<cfset parm.reportDateFrom = form.reportDateFrom>
 	<cfset epos = ecfc.LoadEPOSTotals(parm)>
+	<p>Load EPOS totals...</p>
 	<!---<cfdump var="#epos#" label="epos" expand="true">--->
 	<cfquery name="QItemSum2" datasource="#parm.datasource#">
 		SELECT pcatGroup, prodCatID,prodEposCatID, eiClass,eiType, pgTitle,pgNomGroup, nomTitle, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
@@ -55,6 +57,7 @@
 		WHERE DATE( ehTimeStamp ) = '#form.reportDateFrom#'
 		GROUP by pgNomGroup
 	</cfquery>
+	<p>Load group summary...</p>
 	<!---<cfdump var="#QItemSum2#" label="QItemSum2" expand="false">--->
 	
 	<cfquery name="QItemSummary" datasource="#parm.datasource#">
@@ -67,18 +70,21 @@
 		WHERE DATE( ehTimeStamp ) = '#form.reportDateFrom#'
 		GROUP by eiClass, eiType, pgTitle <!---,prodEposCatID--->
 	</cfquery>
+	<p>Load class summary...</p>
 	<!---<cfdump var="#QItemSummary#" label="QItemSummary" expand="false">--->
 	<cfquery name="QCashback" datasource="#parm.datasource#">
 		SELECT SUM(ehCashback) AS total
 		FROM tblEPOS_Header
 		WHERE DATE( ehTimeStamp ) = '#form.reportDateFrom#'
 	</cfquery>
+	<p>Load cashback summary...</p>
 	<cfquery name="QDayHeader" datasource="#parm.datasource#">
 		SELECT *
 		FROM tblepos_dayheader
 		WHERE DATE( dhTimeStamp ) = '#form.reportDateFrom#'
 	</cfquery>
-	<cfset today = ep.QueryToStruct(QDayHeader)>	
+	<p>Load day header...</p>	
+	<cfset today = ep.QueryToStruct(QDayHeader)>
 </cfif>
 
 	<cffunction name="GetTotal" access="public" returntype="numeric">
