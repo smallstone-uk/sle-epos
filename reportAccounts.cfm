@@ -128,7 +128,7 @@
 			<cfset balance = val(loc.QSalesBFwd.Net)>
 			<cfset drTotal = 0>
 			<cfset crTotal = 0>
-			<div style="float:left">
+			<div style="float:left; page-break-before:always;">
 			<table class="tableList" width="600">
 				<tr>
 					<th colspan="7">Account Transactions for #accountName#</th>
