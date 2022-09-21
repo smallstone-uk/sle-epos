@@ -12,11 +12,12 @@ component extends = "Framework.Model"
     {
         var data = { 'accounts' = {} };
         var totals = this.where('totDate', date).get();
-
-        for (total in totals) {
-            structInsert(data.accounts, total.totAcc, total.totValue, true);
-        }
-
+ 		writeDumpToFile(totals);
+		if (IsArray(totals)) {
+			for (total in totals) {
+				structInsert(data.accounts, total.totAcc, total.totValue, true);
+			}
+		}
         return data;
     }
 }
