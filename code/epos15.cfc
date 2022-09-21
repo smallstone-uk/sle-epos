@@ -863,8 +863,9 @@
 		</cfif>
 		<cfset session.basket.info.busy = false>	<!--- was true --->
 		
-<!---<cfdump var="#args#" label="AddItem" expand="yes" format="html" 
-	output="#application.site.dir_logs#epos\slow-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+<!---
+<cfdump var="#args#" label="AddItem" expand="yes" format="html" 
+	output="#application.site.dir_logs#epos\item-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 <cfdump var="#session#" label="AddItem" expand="yes" format="html" 
 	output="#application.site.dir_logs#epos\slow-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
@@ -3299,21 +3300,20 @@
 		<cfset loc.result = {}>
 		<cfset loc.result.recs =[]>
 		<cfset loc.today = false>
+		<cfset loc.midnight = LSDateFormat(Now(),"yyyy-mm-dd")>
 		<cftry>
 			<cfquery name="loc.QDates" datasource="#GetDataSource()#">
-				SELECT DATE(totDate) AS dateOnly
+				SELECT DISTINCT totDate
 				FROM tblEPOS_Totals
-				WHERE 1
-				GROUP BY dateOnly
-				ORDER BY dateOnly DESC
+				WHERE totDate < '#loc.midnight#'
+				ORDER BY totDate DESC
 			</cfquery>
+			
 			<cfloop query="loc.QDates">
-				<cfset loc.today = loc.today OR (LSDateFormat(dateOnly,"yyyy-mm-dd") eq LSDateFormat(Now(),"yyyy-mm-dd"))>
-				<cfset ArrayAppend(loc.result.recs,{"value"=LSDateFormat(dateOnly,"yyyy-mm-dd"),"title"=LSDateFormat(dateOnly,"dd-mmm-yyyy")})>
+				<cfset loc.dateOnly = LSDateFormat(totDate,"yyyy-mm-dd")>
+				<cfset ArrayAppend(loc.result.recs,{"value"=loc.dateOnly,"title"=LSDateFormat(loc.dateOnly,"dd-mmm-yyyy")})>
 			</cfloop>
-			<cfif NOT loc.today>
-				<cfset ArrayPrepend(loc.result.recs,{"value"=LSDateFormat(Now(),"yyyy-mm-dd"),"title"=LSDateFormat(Now(),"dd-mmm-yyyy")})>
-			</cfif>
+			<cfset ArrayPrepend(loc.result.recs,{"value"=LSDateFormat(Now(),"yyyy-mm-dd"),"title"=LSDateFormat(Now(),"dd-mmm-yyyy")})>
 
 		<cfcatch type="any">
 			<cfdump var="#cfcatch#" label="GetDates" expand="yes" format="html"
