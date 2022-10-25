@@ -460,7 +460,7 @@
 		<div class="header">Tran Dump</div>
 		<cfset parm = {}>
 		<cfset parm.reportDateFrom = form.reportDateFrom>
-		<cfset parm.reportDateTo = form.reportDateFrom>
+		<cfset parm.reportDateTo = LSDateFormat(DateAdd("d",1,form.reportDateFrom),"yyyy-mm-dd")>
 		<cfset parm.fixTotals = StructKeyExists(form,"fixTotals")>
 		<cfset tillTotals = ecfc.DumpTrans(parm)>
 		<!---<cfdump var="#tillTotals#" label="tillTotals" expand="false">--->

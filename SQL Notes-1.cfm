@@ -73,3 +73,11 @@ INSERT INTO tblepos_empcats (eecEmployee,eecCategory,eecOrder)
 SELECT EMPLOYEE_ID,eecCategory,eecOrder FROM `tblepos_empcats` WHERE `eecEmployee` = 122
 
 
+// group report on till activity for specified period
+SELECT eiclass, eitype, sum( eiRetail ) AS retail, sum( eiNet ) AS net, sum( eiVAT ) AS VAT, sum( eiTrade ) AS trade
+FROM `tblepos_items`
+WHERE `eiTimestamp`
+BETWEEN '2022-05-01'
+AND '2022-05-20'
+GROUP BY eiclass, eiType
+LIMIT 0 , 30

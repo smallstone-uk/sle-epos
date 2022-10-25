@@ -86,6 +86,7 @@
 		
 				<cfset session.basket.payments = []>
 				<cfset session.basket.news = []>
+				<cfset session.basket.bunnery = []>
 				<cfset session.basket.lottery = []>
 				<cfset session.basket.scratchcard = []>
 				<cfset session.basket.lprize = []>
@@ -1093,6 +1094,28 @@
 								<cfset loc.itemCount++>
 								<cfif loc.news.itemID eq args.data.itemID AND loc.news.unitPrice eq args.data.credit>
 									<cfset ArrayDeleteAt(session.basket.news,loc.itemCount)>
+									<cfbreak>
+								</cfif>
+							</cfloop>
+							<cfset CheckDeals()>
+						</cfif>
+					</cfcase>
+					<cfcase value="BUNNERY">
+						<cfif args.form.addToBasket>
+							<cfif args.data.credit + args.data.cash neq 0>
+								<cfset args.data.gross = args.data.credit + args.data.cash>	<!--- calc gross transaction value --->
+								<cfset CalcValues(args.data)>
+								<cfif args.form.addToBasket><cfset ArrayAppend(session.basket.bunnery,args.data)></cfif>
+								<cfset CheckDeals()>
+							<cfelse>
+								<cfset session.basket.info.errMsg = "Invalid #args.form.itemClass# amount entered.">
+							</cfif>
+						<cfelse>
+							<cfset loc.itemCount = 0>
+							<cfloop array="#session.basket.bunnery#" index="loc.bunnery">
+								<cfset loc.itemCount++>
+								<cfif loc.bunnery.itemID eq args.data.itemID AND loc.bunnery.unitPrice eq args.data.credit>
+									<cfset ArrayDeleteAt(session.basket.bunnery,loc.itemCount)>
 									<cfbreak>
 								</cfif>
 							</cfloop>
@@ -2647,7 +2670,7 @@
 								</tr>
 								</cfif>
 							</cfcase>
-							<cfcase value="PAYSTATION|SRV|LOTTERY|SCRATCHCARD|SPRIZE|LPRIZE|NEWS|VOUCHER" delimiters="|">
+							<cfcase value="PAYSTATION|SRV|LOTTERY|SCRATCHCARD|SPRIZE|LPRIZE|NEWS|VOUCHER|BUNNERY" delimiters="|">
 								<cfswitch expression="#loc.tran.itemClass#">
 									<cfcase value="VOUCHER">
 										<cfset loc.prodID = 9>
@@ -2657,6 +2680,9 @@
 									</cfcase>
 									<cfcase value="PAYSTATION">
 										<cfset loc.prodID = 11>
+									</cfcase>
+									<cfcase value="BUNNERY">
+										<cfset loc.prodID = 137193>
 									</cfcase>
 									<cfdefaultcase>
 										<cfset loc.prodID = loc.tran.prodID>
@@ -3517,11 +3543,11 @@
 				WHERE 1
 				<cfif StructKeyExists(args,"accountID")>
 					AND eiParent IN (#args.aIDs#)
-					<cfif len(args.reportDateFrom)>AND DATE(ehTimeStamp) >= '#args.reportDateFrom#' </cfif>
-					<cfif len(args.reportDateTo)>AND DATE(ehTimeStamp) <= '#args.reportDateTo#' </cfif>
+					<cfif len(args.reportDateFrom)>AND ehTimeStamp >= '#args.reportDateFrom#' </cfif>
+					<cfif len(args.reportDateTo)>AND ehTimeStamp <= '#args.reportDateTo#' </cfif>
 				<cfelse>
-					<cfif len(args.reportDateFrom)>AND DATE(ehTimeStamp) = '#args.reportDateFrom#' </cfif>
-					<cfif len(args.reportDateTo)>AND DATE(ehTimeStamp) <= '#args.reportDateTo#' </cfif>
+					<cfif len(args.reportDateFrom)>AND ehTimeStamp >= '#args.reportDateFrom#' </cfif>
+					<cfif len(args.reportDateTo)>AND ehTimeStamp <= '#args.reportDateTo#' </cfif>
 				</cfif>
 				ORDER BY eiTimestamp, ehID, eiID
 			</cfquery>
@@ -3793,7 +3819,7 @@
 			<cfelse>
 				<cfset loc.result.msg = "Day Header not available. FixTotals option cannot be used.">
 			</cfif>
-			<cfif args.showAnalysis eq 1>
+			<cfif StructKeyExists(args,"showAnalysis")>
 				<!---<cfdump var="#loc.salesTotals#" label="salesTotals" expand="false">--->
 				<div style="float:left">
 					<table class="tableList">

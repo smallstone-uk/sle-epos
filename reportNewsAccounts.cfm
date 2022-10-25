@@ -44,7 +44,7 @@
 <cfset parm.datasource = application.site.datasource1>
 <cfset parm.accountID = accountID>
 <cfset parm.reportDateFrom = reportDateFrom>
-<cfset parm.reportDateTo = reportDateTo>
+<cfset parm.reportDateTo = DateAdd("d",1,parm.reportDateFrom)>
 <cfsetting requesttimeout="30">
 <cfflush interval="200">
 
