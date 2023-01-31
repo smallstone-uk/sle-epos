@@ -72,7 +72,7 @@
 		
 		<cfset sysTime = GetTickCount()>
 		<cfquery name="QItemSummary" datasource="#parm.datasource#">
-			SELECT pgTitle, pcatGroup, prodTitle,prodID,prodCatID,prodEposCatID, eiClass, eiType, SUM(eiQty) AS qty, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
+			SELECT pgTitle, pcatGroup, prodTitle,prodID,prodCatID,prodEposCatID, pgNomGroup, eiClass, eiType, SUM(eiQty) AS qty, SUM(eiNet) AS net, SUM(eiVAT) as vat, Count(*) AS itemCount
 			FROM `tblEPOS_Items`
 			INNER JOIN tblEPOS_Header ON ehID = eiParent
 			INNER JOIN tblProducts ON prodID = eiProdID
@@ -143,6 +143,7 @@
 		<table class="tableList" border="1">
 			<tr>
 				<th>Group</th>
+				<th>NCode</th>
 				<th>Category</th>
 				<th>Class</th>
 				<th>Type</th>
@@ -184,6 +185,7 @@
 				</cfif>
 				<tr>
 					<td>#pcatGroup#</td>
+					<td>#pgNomGroup#</td>
 					<td>#prodEposCatID#</td>
 					<td>#eiClass#</td>
 					<td>#eiType#</td>
@@ -196,6 +198,7 @@
 			<tr>
 				<td></td>
 				<td></td>
+				<td></td>
 				<td>SALES VAT TOTAL</td>
 				<td></td>
 				<td></td>
@@ -204,7 +207,7 @@
 				<td></td>
 			</tr>
 			<tr>
-				<th align="right" colspan="5">Totals</th>
+				<th align="right" colspan="6">Totals</th>
 				<th align="right">#DecimalFormat(drtotal)#</th>
 				<th align="right">#DecimalFormat(-crtotal)#</th>
 				<th align="right">#countTotal#</th>
@@ -212,7 +215,7 @@
 			<!---<cfdump var="#tillTotals#" label="tillTotals" expand="false">--->
 			<cfif abs(drtotal + crtotal) gt 0.001>
 				<tr>
-					<th align="right" colspan="4">Difference</th>
+					<th align="right" colspan="5">Difference</th>
 					<th></th>
 					<th align="right">#DecimalFormat(drtotal + crtotal)#</th>
 					<th></th>
