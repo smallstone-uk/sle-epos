@@ -3295,8 +3295,13 @@
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
 		
-		<cftry>		
-			<cfset loc.result.barcode = NumberFormat(Left(barcode,15),"0000000000000")>
+		<cftry>
+			<cfset loc.args = arguments>
+			<cfif len(barcode) lt 9>
+				<cfset loc.result.barcode = NumberFormat(Left(barcode,15),"0000000000000")>
+			<cfelse>
+				<cfset loc.result.barcode = barcode>
+			</cfif>
 			<cfquery name="loc.barcode" datasource="#GetDatasource()#">
 				SELECT barCode, barType, barProdID
 				FROM tblBarcodes
@@ -3332,9 +3337,11 @@
 					<cfset loc.result.encodedValue = loc.ibResult.value>
 					<cfset loc.result.minBalance = loc.ibResult.minBalance>
 				<cfelse>
-					<cfset loc.result.msg = "#barcode# barcode not found">
+					<cfset loc.result.msg = "#loc.result.barcode# barcode not found">
 				</cfif>
 			</cfif>
+			 <cfdump var="#loc#" label="LoadProductByBarcode" expand="yes" format="html" 
+			 	output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 			
 		<cfcatch type="any">
 			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
@@ -3369,7 +3376,7 @@
 			
 			<cfif Len(loc.samples.csRegExp)>
 				<cfset loc.processed = REFindNoCase(loc.samples.csRegExp, barcode, 0, true)>
-				<cfif arrayLen(loc.processed.len) eq 2>
+				<cfif arrayLen(loc.processed.len) gte 2>
 					<cfset loc.extracted = mid(barcode, loc.processed.pos[2], loc.processed.len[2])>
 					<cfif Len(loc.samples.csOperator)>
 						<cfswitch expression="#loc.samples.csOperator#">
@@ -3391,6 +3398,8 @@
 				</cfif>
 			</cfif>
 		</cfif>
+			 <cfdump var="#loc#" label="InterrogateBarcode" expand="yes" format="html" 
+			 	output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 		<cfcatch type="any">
 			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 

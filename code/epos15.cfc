@@ -2912,6 +2912,12 @@
 						) VALUES
 						#PreserveSingleQuotes(loc.itemStr)#
 					</cfquery>
+					<!--- update header --->
+					<cfquery name="loc.QUpdateHeader" datasource="#GetDataSource()#" result="loc.QUpdateResult">
+						UPDATE tblEPOS_Header
+						SET ehPayAcct = #loc.payID#
+						WHERE ehID = #loc.ID#
+					</cfquery>
 				</cfoutput>
 			<cfelse>
 				<cfset session.basket.info.errMsg = "Till operator's session timed out.">

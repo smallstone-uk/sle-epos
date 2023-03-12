@@ -1,3 +1,9 @@
+// update epos_header with pay account ID
+UPDATE tblepos_header 
+INNER JOIN tblepos_items ON ehID = eiParent 
+SET ehPayAcct = eiPayID 
+WHERE `eiPayID` > 1
+
 
 // Day sheet summary
 SELECT eiClass, eiType, SUM(eiNet) AS net, SUM(eiVAT) as vat

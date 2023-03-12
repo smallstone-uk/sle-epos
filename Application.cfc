@@ -104,6 +104,7 @@ component
      */
     public any function onError(any exception)
     {
+	 	setting requesttimeout=300;
         writeDumpToBoth(exception);
     }
 }
