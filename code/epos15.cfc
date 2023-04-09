@@ -2682,7 +2682,7 @@
 										<cfset loc.prodID = 11>
 									</cfcase>
 									<cfcase value="BUNNERY">
-										<cfset loc.prodID = 137193>
+										<cfset loc.prodID = 147772>
 									</cfcase>
 									<cfdefaultcase>
 										<cfset loc.prodID = loc.tran.prodID>
