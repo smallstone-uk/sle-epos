@@ -2395,12 +2395,12 @@
 			<cfset ClearBasket()>
 			<cfset SaveTillTotals()>
 
-			<!--- Create archive record of basket --->
+			<!--- Create archive record of basket DISABLED --->
 			<!--- Used in transaction barcode restoration --->
 			<!--- Returns archive ID --->
-			<cfset session.till.prevtran.archive = new App.EPOSArchive().save({
+			<!---<cfset session.till.prevtran.archive = new App.EPOSArchive().save({
 				'json' = serializeJSON(session.till.prevtran)
-			})>
+			})>--->
 		<cfcatch type="any">
 			<cfdump var="#cfcatch#" label="CloseTransaction" expand="yes" format="html" 
 				output="#application.site.dir_logs#epos\err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
