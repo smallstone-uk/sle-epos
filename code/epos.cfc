@@ -2621,7 +2621,7 @@
 	
 	<cffunction name="ProcessDiscounts" access="public" returntype="string">
 		<cfset var loc = {}>
-		<cfset loc.sign = (2 * int(session.basket.info.mode eq "reg")) - 1>
+		<cfset loc.sign = (2 * int(session.basket.info.mode neq "rfd")) - 1>	<!--- modes: reg = 1 waste = 1 refund = -1 --->
 		<cfset loc.grossValue = 0>
 		<cfset loc.discount = 0>
 		<cfset loc.message = "">
@@ -3340,8 +3340,6 @@
 					<cfset loc.result.msg = "#loc.result.barcode# barcode not found">
 				</cfif>
 			</cfif>
-			 <cfdump var="#loc#" label="LoadProductByBarcode" expand="yes" format="html" 
-			 	output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 			
 		<cfcatch type="any">
 			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 

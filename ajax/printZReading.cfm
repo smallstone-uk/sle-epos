@@ -5,7 +5,7 @@
 <cfset parm.datasource = application.site.datasource1>
 <cfset parm.url = application.site.normal>
 <cfset parm.randNum = RandRange(1024, 1220120, 'SHA1PRNG')>
-<cfset sign = (2 * int(session.basket.info.mode eq "reg")) - 1>
+<cfset sign = (2 * int(session.basket.info.mode neq "rfd")) - 1>	<!--- modes: reg = 1 waste = 1 refund = -1 --->
 <cfset zreading = epos.LoadZReading(parm)>
 <cfdump var="#zreading#" label="zreading" expand="yes">
 

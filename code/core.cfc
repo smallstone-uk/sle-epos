@@ -87,7 +87,7 @@
 		<cfset loc.basketSubType = StructFind(session.epos_frame.basket, args.type)>
 		<cfset loc.cashAcc = StructFind(session.epos_frame.basket.account, "cash")>
 		<cfset loc.creditAcc = StructFind(session.epos_frame.basket.account, "credit")>
-		<cfset loc.sign = (2 * int(session.basket.info.mode eq "reg")) - 1>		<!--- mode: reg = 1 refund = -1 --->
+		<cfset loc.sign = (2 * int(session.basket.info.mode neq "rfd")) - 1>	<!--- modes: reg = 1 waste = 1 refund = -1 --->
 		
 		<cfswitch expression="#args.type#">
 			<cfcase value="product|publication|paystation|deal" delimiters="|">

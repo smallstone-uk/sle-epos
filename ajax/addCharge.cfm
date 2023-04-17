@@ -3,7 +3,7 @@
 <cfset parm.datasource = application.site.datasource1>
 <cfset parm.url = application.site.normal>
 <cfset parm.form = form>
-<cfset sign = (2 * int(session.basket.info.mode eq "reg")) - 1>
+<cfset sign = (2 * int(session.basket.info.mode neq "rfd")) - 1>	<!--- modes: reg = 1 waste = 1 refund = -1 --->
 <cfset parm.form.value = (-val(parm.form.value)) * sign>
 
 <cfif StructKeyExists(session.epos_frame.basket.paystation, "charge")>

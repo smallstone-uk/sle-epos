@@ -10,7 +10,7 @@
 	<cfoutput>
 		<cfif StructKeyExists(session,"basket")>
 			<cfset loc.tranType = -1>
-			<cfset loc.rec.regMode = (2 * int(session.basket.info.mode eq "reg")) - 1>	<!--- modes: reg = 1 refund = -1 --->
+			<cfset loc.rec.regMode = (2 * int(session.basket.info.mode neq "rfd")) - 1>	<!--- modes: reg = 1 waste = 1 refund = -1 --->
 			<cfloop collection="#session.basket.deals#" item="loc.dealKey">
 				<cfset loc.dealData = StructFind(session.dealData,loc.dealKey)>
 				<cfset loc.dealRec = StructFind(session.basket.deals,loc.dealKey)>

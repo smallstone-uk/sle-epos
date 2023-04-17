@@ -113,7 +113,7 @@
 		<cfset var loc = {}>
 
 		<cftry>
-			<cfset loc.regMode = (2 * int(session.basket.info.mode eq "reg")) - 1>	<!--- modes: reg = 1 refund = -1 --->
+			<cfset loc.rec.regMode = (2 * int(session.basket.info.mode neq "rfd")) - 1>	<!--- modes: reg = 1 waste = 1 refund = -1 --->
 			<cfset loc.calcValue = true>
 			<cfset loc.tranType = -1>
 			<cfset session.basket.deals = {}>

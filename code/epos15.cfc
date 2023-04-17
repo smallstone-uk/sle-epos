@@ -137,7 +137,7 @@
 		<cfset var loc = {}>
 		<cftry>
 			<cfset loc.tranType = -1>
-			<cfset loc.rec.regMode = (2 * int(session.basket.info.mode eq "reg")) - 1>	<!--- modes: reg = 1 refund = -1 --->
+			<cfset loc.rec.regMode = (2 * int(session.basket.info.mode neq "rfd")) - 1>	<!--- modes: reg = 1 waste = 1 refund = -1 --->
 			<cfset session.basket.trans = []>
 			<cfset loc.today = CreateDate(year(now()),month(now()),day(now()))>
 			<cfloop collection="#session.basket.deals#" item="loc.dealKey">
@@ -593,7 +593,7 @@
 	<cffunction name="CheckDeals" access="public" returntype="void" hint="check basket for qualifying deals.">
 		<cfset var loc = {}>
 		<cftry>
-			<cfset loc.rec.regMode = (2 * int(session.basket.info.mode eq "reg")) - 1>	<!--- modes: reg = 1 refund = -1 --->
+			<cfset loc.rec.regMode = (2 * int(session.basket.info.mode neq "rfd")) - 1>	<!--- modes: reg = 1 waste = 1 refund = -1 --->
 			<cfset session.basket.deals = {}>
 			<cfloop collection="#session.basket.shopItems#" item="loc.key">
 				<cfset loc.item = StructFind(session.basket.shopItems,loc.key)>
@@ -756,7 +756,7 @@
 				<cfset loc.rec.qty = 0>
 			</cfif>
 
-			<cfset loc.rec.regMode = (2 * int(session.basket.info.mode eq "reg")) - 1>	<!--- modes: reg = 1 refund = -1 --->
+			<cfset loc.rec.regMode = (2 * int(session.basket.info.mode neq "rfd")) - 1>	<!--- modes: reg = 1 waste = 1 refund = -1 --->
 			<cfset loc.vatRate = 1 + (val(loc.rec.vrate) / 100)>
 			<cfset loc.rec.discountable = StructKeyExists(args.form,"discountable") AND args.form.discountable>
 			<cfset loc.rec.cashonly = args.form.cashonly>
@@ -810,7 +810,7 @@
 		<cfset loc.tranType = -1>
 		<cfset loc.vatrate = 1 + (val(args.vrate) / 100)>
 
-		<cfset args.regMode = (2 * int(session.basket.info.mode eq "reg")) - 1>	<!--- modes: reg = 1 refund = -1 --->
+		<cfset args.regMode = (2 * int(session.basket.info.mode neq "rfd")) - 1>	<!--- modes: reg = 1 waste = 1 refund = -1 --->
 		<cfset args.unitPrice = args.cash + args.credit>
 		<cfset args.retail = args.qty * args.unitPrice>
 		<cfset args.totalGross = args.retail>
@@ -1257,7 +1257,7 @@
 			
 			<cfset session.basket.info.busy = false>	<!--- was true --->
 			<cfset session.till.isTranOpen = true>
-			<cfset loc.regMode = (2 * int(session.basket.info.mode eq "reg")) - 1>	<!--- modes: reg = 1 refund = -1 --->
+			<cfset loc.regMode = (2 * int(session.basket.info.mode neq "rfd")) - 1>	<!--- modes: reg = 1 waste = 1 refund = -1 --->
 			<cfset loc.tranType = 1>
 			<cfset args.data.cash = abs(val(args.form.cash)) * loc.tranType * loc.regMode> <!--- all form values are +ve numbers --->
 			<cfset args.data.credit = abs(val(args.form.credit)) * loc.tranType * loc.regMode>	<!--- apply mode & type to set sign correctly --->
@@ -3608,7 +3608,7 @@
 				<cfset loc.salesTotals = {}>
 				<cfset loc.tillTotals.cashINDW = 0>
 				<cfloop query="loc.QTrans">
-					<cfset loc.mode = 2 * int(ehMode eq 'reg') - 1>
+					<cfset loc.mode = (2 * int(session.basket.info.mode neq "rfd")) - 1>	<!--- modes: reg = 1 waste = 1 refund = -1 --->
 					<cfif loc.tran gt 0 AND loc.tran neq eiParent>
 						<cfif loc.showDetail>
 							<cfif abs(loc.balance) gt 0.001>
