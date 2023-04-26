@@ -58,6 +58,7 @@
 		.porGood {background-color:#00FF33;}
 		.porBad {background-color:#F00;}
 		.porNone {background-color:#FFF;}
+		.porNear {background-color:#F90;}
 	</style>
 </head>
 <body>
@@ -181,6 +182,9 @@
 						<cfset cellClass = "porGood">
 					<cfelseif POR lt trgPOR AND trgPOR gt 0>
 						<cfset cellClass = "porBad">
+						<cfif POR gt (trgPOR * 0.9)>
+							<cfset cellClass = "porNear">
+						</cfif>
 					</cfif>
 					<tr>
 						<td>#pgNomGroup#</td>
