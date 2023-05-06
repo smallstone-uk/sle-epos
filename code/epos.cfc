@@ -779,6 +779,7 @@
 					<cfset loc.result.mode = 3>
 				</cfif>
 			<cfelse>
+				<cffile action="append" file="#application.site.dir_logs#epos\list-#DateFormat(Now(),'yyyymmdd')#.txt" addnewline="yes" output="#args.form.barcode#">
 				<cfset loc.result.error = "Product not found: #args.form.barcode#">
 				<cfset loc.result.mode = 1>
 			</cfif>
@@ -800,6 +801,7 @@
 					<cfset loc.result.mode = 3>
 				</cfif>
 			<cfelse>
+				<cffile action="append" file="#application.site.dir_logs#epos\list-#DateFormat(Now(),'yyyymmdd')#.txt" addnewline="yes" output="#args.form.barcode#">
 				<cfset loc.result.error = "Product not found: #val(args.form.id)#">
 				<cfset loc.result.mode = 1>
 			</cfif>
@@ -3294,6 +3296,7 @@
 		<cfargument name="barcode" type="string" required="yes">
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
+		<cffile action="append" file="#application.site.dir_logs#epos\list-#DateFormat(Now(),'yyyymmdd')#.txt" addnewline="yes" output="#barcode#">
 		
 		<cftry>
 			<cfset loc.args = arguments>
@@ -3396,8 +3399,6 @@
 				</cfif>
 			</cfif>
 		</cfif>
-			 <cfdump var="#loc#" label="InterrogateBarcode" expand="yes" format="html" 
-			 	output="#application.site.dir_logs#epos\dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
 
 		<cfcatch type="any">
 			 <cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 

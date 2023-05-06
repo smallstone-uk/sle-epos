@@ -1097,7 +1097,7 @@
 					}
 				} else {
 					sound('error');
-					$.confirmation("Product not found",true,true);
+					$.confirmation("Product not found [" + barcode + "]",true,true);
 				}
 			}
 		});
