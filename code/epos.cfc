@@ -3296,12 +3296,13 @@
 		<cfargument name="barcode" type="string" required="yes">
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
-		<cffile action="append" file="#application.site.dir_logs#epos\list-#DateFormat(Now(),'yyyymmdd')#.txt" addnewline="yes" output="#barcode#">
 		
 		<cftry>
 			<cfset loc.args = arguments>
 			<cfif len(barcode) lt 9>
 				<cfset loc.result.barcode = NumberFormat(Left(barcode,15),"0000000000000")>
+			<cfelseif len(barcode) lt 13>
+				<cfset loc.result.barcode = NumberFormat(Left(barcode,13),"0000000000000")>
 			<cfelse>
 				<cfset loc.result.barcode = barcode>
 			</cfif>
@@ -3311,6 +3312,8 @@
 				WHERE barCode = '#loc.result.barcode#'
 				LIMIT 1;
 			</cfquery>
+			<cfset loc.str = "#DateFormat(Now(),'yyy-ymm-dd')#-#TimeFormat(Now(),'HH:MM:SS')# - #loc.result.barcode#">
+			<cffile action="append" file="#application.site.dir_logs#epos\list-#DateFormat(Now(),'yyyymmdd')#.txt" addnewline="yes" output="#loc.str#">
 			<cfset loc.result.Qbarcode = loc.barcode>
 			<cfif loc.barcode.recordcount gt 0>
 				<cfloop query="loc.barcode">
