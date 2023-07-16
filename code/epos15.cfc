@@ -3397,8 +3397,6 @@
 				AND edEnds >= DATE(#Now()#)
 				ORDER BY ercTitle,edTitle
 			</cfquery>
-			<!---<cfdump var="#loc.QActiveDeals#" label="QActiveDeals" expand="yes" format="html" 
-				output="#application.site.dir_logs#dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">--->
 
 			<cfset session.deals = loc.QActiveDeals>
 			<cfset session.dealdata = {}>
@@ -3554,10 +3552,10 @@
 				<cfif StructKeyExists(args,"accountID")>
 					AND eiParent IN (#args.aIDs#)
 					<cfif len(args.reportDateFrom)>AND ehTimeStamp >= '#args.reportDateFrom#' </cfif>
-					<cfif len(args.reportDateTo)>AND ehTimeStamp <= '#loc.midnight#' </cfif>
+					<cfif len(args.reportDateTo)>AND ehTimeStamp <= '#args.reportDateTo#' </cfif>
 				<cfelse>
 					<cfif len(args.reportDateFrom)>AND ehTimeStamp >= '#args.reportDateFrom#' </cfif>
-					<cfif len(args.reportDateTo)>AND ehTimeStamp <= '#loc.midnight#' </cfif>
+					<cfif len(args.reportDateTo)>AND ehTimeStamp <= '#args.reportDateTo#' </cfif>
 				</cfif>
 				ORDER BY eiTimestamp, ehID, eiID
 			</cfquery>
@@ -3778,6 +3776,7 @@
 					FROM tblEPOS_Totals
 					WHERE totDate='#args.reportDateFrom#'
 				</cfquery>
+
 				<cfset loc.result.newTotals = {}>
 				<cfloop query="loc.result.QTotals">
 					<cfif StructKeyExists(loc.tillTotals,totAcc)>

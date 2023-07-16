@@ -42,7 +42,8 @@
 <cfset parm.datasource = application.site.datasource1>
 <cfset parm.accountID = accountID>
 <cfset parm.reportDateFrom = reportDateFrom>
-<cfset parm.reportDateTo = reportDateTo>
+<!---<cfset parm.reportDateTo = reportDateTo>--->
+<cfset parm.reportDateTo = LSDateFormat(DateAdd("d",1,reportDateTo),"yyyy-mm-dd")>
 <cfset parm.showAnalysis = showAnalysis>
 <cfset dates = ecfc.GetDates(parm)>
 
