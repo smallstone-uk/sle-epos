@@ -3397,6 +3397,9 @@
 				AND edEnds >= DATE(#Now()#)
 				ORDER BY ercTitle,edTitle
 			</cfquery>
+			<!---<cfdump var="#loc.QActiveDeals#" label="QActiveDeals" expand="yes" format="html" 
+				output="#application.site.dir_logs#dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">--->
+
 			<cfset session.deals = loc.QActiveDeals>
 			<cfset session.dealdata = {}>
 			<cfset session.dealOrder = []>
@@ -3525,6 +3528,7 @@
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
 		<cfset loc.result.msg = "">
+		<cfset loc.midnight = DateFormat(DateAdd("d",1,args.reportDateTo),"yyyy-mm-dd")>
 
 		<cftry>
 			<cfset loc.dayHeader = LoadDayHeader({"reportDate" = args.reportDateFrom})>
@@ -3550,10 +3554,10 @@
 				<cfif StructKeyExists(args,"accountID")>
 					AND eiParent IN (#args.aIDs#)
 					<cfif len(args.reportDateFrom)>AND ehTimeStamp >= '#args.reportDateFrom#' </cfif>
-					<cfif len(args.reportDateTo)>AND ehTimeStamp <= '#args.reportDateTo#' </cfif>
+					<cfif len(args.reportDateTo)>AND ehTimeStamp <= '#loc.midnight#' </cfif>
 				<cfelse>
 					<cfif len(args.reportDateFrom)>AND ehTimeStamp >= '#args.reportDateFrom#' </cfif>
-					<cfif len(args.reportDateTo)>AND ehTimeStamp <= '#args.reportDateTo#' </cfif>
+					<cfif len(args.reportDateTo)>AND ehTimeStamp <= '#loc.midnight#' </cfif>
 				</cfif>
 				ORDER BY eiTimestamp, ehID, eiID
 			</cfquery>
