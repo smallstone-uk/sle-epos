@@ -63,7 +63,7 @@
 	</cfquery>
 	<cfset parm.aIDs = QuotedValueList(QAccountPurchases.eiParent,",")>
 	<cfset parm.aIDs = Replace(parm.aIDs,"'","","all")>		<!--- create csv list to pass on to tran dump --->
-	
+	<cfset midnight = DateFormat(DateAdd("d",1,parm.reportDateTo),"yyyy-mm-dd")>
 	<cfquery name="QAccountPayments" datasource="#parm.datasource#">
 		SELECT *
 		FROM `tblepos_items`
@@ -71,7 +71,7 @@
 		WHERE eiType IN ('ACCPAY','ACCINDW')
 		AND (`eiPayID` = #parm.accountID#
 				OR `eiAccID` = #parm.accountID#)
-		AND DATE(ehTimeStamp) BETWEEN '#parm.reportDateFrom#' AND '#parm.reportDateTo#'
+		AND DATE(ehTimeStamp) BETWEEN '#parm.reportDateFrom#' AND '#midnight#'
 		ORDER BY ehTimeStamp
 	</cfquery>
 	<cfquery name="loc.QSalesBFwd" datasource="#parm.datasource#">
