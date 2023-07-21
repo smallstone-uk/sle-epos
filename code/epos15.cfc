@@ -3705,13 +3705,14 @@
 								<td align="right"><cfif loc.trade neq 0>#DecimalFormat(loc.trade)#</cfif></td>
 								<td align="right"><cfif loc.retail neq 0>#DecimalFormat(loc.retail)#</cfif></td>
 								
-								<cfif eiNet lt 0 OR ehMode eq 'wst' OR ehMode eq 'rfd'>	<!--- normal sale --->
-									<cfset loc.profit = -(eiNet + loc.trade)><!---<td align="right">a #eiNet# + #loc.trade# = #loc.profit#</td>--->
-								<cfelse>	<!--- bogof (zero net) --->
-									<cfset loc.profit = eiNet - loc.trade><!---<td align="right">c #eiNet# - #loc.trade# = #loc.profit#</td>--->
+								<cfif ehMode neq 'rfd'>
+									<cfset loc.profit = -(eiNet + loc.trade)>	<!--- positive result --->
+									<cfset loc.discount = loc.retail +  eiNet + eiVAT>
+								<cfelse>
+									<cfset loc.profit = loc.trade - eiNet>	<!--- negative result --->
+									<cfset loc.discount = loc.retail -  eiNet - eiVAT>
 								</cfif>
 								<td align="right">#DecimalFormat(loc.profit)#</td>
-								<cfset loc.discount = loc.retail +  eiNet + eiVAT>
 								<td align="right" class="rhborder">#DecimalFormat(loc.discount)#</td>
 							<cfelse>
 								<td colspan="4" class="rhborder"></td>
