@@ -16,7 +16,7 @@
 			<div id="xreading2" class="totalPanel">
 				<table>
 					<tr>
-						<th colspan="2">Cash In Drawer</th>
+						<th colspan="2">Cash In the Drawer</th>
 					</tr>
 					<cfloop array="#poundArray#" index="denom">
 						<cfset dataMOD = denom * 100>
