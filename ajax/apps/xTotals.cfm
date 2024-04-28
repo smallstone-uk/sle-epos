@@ -1,6 +1,6 @@
 <cftry>
 	<cfif NOT StructKeyExists(session,"till")>
-		Your session has timed out, please log-in again.
+		Your session has timed out, please log-in again. fb dgdgdgdgdg
 		<cfexit>
 	</cfif>
 	<cfscript>
@@ -16,7 +16,7 @@
 			<div id="xreading2" class="totalPanel">
 				<table>
 					<tr>
-						<th colspan="2">Cash In the Drawer</th>
+						<th colspan="2">Cash In Drawer</th>
 					</tr>
 					<cfloop array="#poundArray#" index="denom">
 						<cfset dataMOD = denom * 100>
