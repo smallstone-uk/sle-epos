@@ -1,0 +1,16 @@
+{
+    "name": "smallstone-uk/sle-epos",
+    "description": "EPOS System.",
+    "type": "project",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "ingenico-epayments/connect-sdk-php": "dev-master",
+        "vlucas/phpdotenv": "^2.4@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "ePayments\\": "ePayments/"
+        }
+    }
+}

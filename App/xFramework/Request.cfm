@@ -1,0 +1,3 @@
+<cfscript>
+    route().handle();
+</cfscript>

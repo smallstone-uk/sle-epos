@@ -1,0 +1,61 @@
+{
+    "company": {
+        "name": "Shortlanesend Store",
+        "companyname": "Shortlanesend Store",
+        "financialyear": "01-04-2017",
+        "webmaster": "info@shortlanesendstore.co.uk",
+        "telephone": "01872 275102",
+        "po_telephone": "01872 223670",
+        "vat_number": "152 5803 21"
+    },
+    "site": {
+        "datasource0": "kcc_cms",
+        "datasource1": "kcc_sle_production",
+        "datasource2": "mvc_sle",
+        "mapping1": "/kccCMS/",
+        "useAlias": false,
+        "userControlsItemShown": false,
+        "MapIIS": "common/",
+        "MapCF": "/kccCMS/",
+		"parentURL": "http://tweb.sle-admin.co.uk/",
+        "sourceDir": "source",
+        "clientID": 143,
+        "disableDrawer": false,
+        "vat": {
+            "0": 0,
+            "1": 0,
+            "2": 0.20,
+            "3": 0.05
+        },
+        "days": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+        ]
+    },
+    "printer": {
+        "ip": "192.168.234.189",
+        "port": "80"
+    },
+    "core": {
+        "imgSuffix": "jpeg|jpg|gif|png|tiff|psd|pcd|jpc|jp2|ico|bmp|mng|ptif|fax|fits|avs|pict|palm|pdb|mtv|sgi|sun|swf",
+        "showdebug": false,
+        "showdumps": false,
+        "borders": "border:dotted 1px black; padding:1px;",
+        "bordervisible": false,
+        "basecolour": 112,
+        "lotto_prize_id": 28622
+    },
+    "size": {
+        "thumb": 100,
+        "medium": 200,
+        "super": 690,
+        "detail": 500,
+        "toenail": 150,
+        "profile": 200
+    }
+}

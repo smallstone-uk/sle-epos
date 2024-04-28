@@ -1,0 +1,11 @@
+.noselect {-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
+.touchselect {position: fixed;left: 0;top: 0;right: 0;bottom: 0;background-color: #111;z-index: 999999;color: #FFF;}
+.touchselect.slide {-webkit-transform: translateY(0);-webkit-animation-name: slide;-webkit-animation-timing-function: ease-in-out;-webkit-animation-duration: 250ms;}
+.touchselect.slide.slide_end {-webkit-transform: translateY(100%);-webkit-animation-name: slide_end;-webkit-animation-timing-function: ease-in-out;-webkit-animation-duration: 250ms;}
+.touchselect .list li {float: left;width: 100%;list-style-type: none;font-size: 28px;text-align: center;height: 50px;line-height: 50px;cursor: pointer;}
+.touchselect .list li[data-selected="true"] {color: #C00;}
+.touchselect .controls {position: fixed;bottom: 0;left: 0;right: 0;height: 100px;color: #FFF;z-index: 99999999999;font-size: 38px;background-color: #000;}
+.touchselect .list {position: fixed;top: 0;left: 0;right: 0;bottom: 100px;overflow-y: auto;padding: 20px 0;}
+.touchselect .controls span {float: left;font-size: 40px;color: #FFF;width: 100%;height: 100px;text-align: center;line-height: 100px;cursor: pointer;}
+@-webkit-keyframes slide {from {-webkit-transform: translateY(100%);}to {-webkit-transform: translateY(0);}}
+@-webkit-keyframes slide_end {from {-webkit-transform: translateY(0);}to {-webkit-transform: translateY(100%);}}
