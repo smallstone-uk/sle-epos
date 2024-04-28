@@ -1,3 +1,4 @@
+<!---28/04/2024--->
 <cfcomponent displayname="EPOS15" hint="version 15. EPOS Till Functions">
 
 	<cfset this.closeTranNow = false>
