@@ -72,6 +72,7 @@ WHERE prodOurPrice!=siOurPrice
 INSERT INTO tblepos_empcats (eecEmployee,eecCategory,eecOrder) 
 SELECT EMPLOYEE_ID,eecCategory,eecOrder FROM `tblepos_empcats` WHERE `eecEmployee` = 122
 
+
 // Insert product records based on source data from labels table.
 INSERT INTO tblProducts (prodCatID,prodSuppID,prodTitle)
 SELECT 332,labID,labTitle FROM tblLabels WHERE prodCatID IN (6892,19882,19892)

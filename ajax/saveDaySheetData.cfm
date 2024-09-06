@@ -3,12 +3,15 @@
 checking data...
 <cfdump var="#form#" label="form" expand="true">
 
+
+
+
 	<cffunction name="LoadSalesData" access="public" returntype="struct">
 		<cfargument name="args" type="struct" required="yes">
 		<cfset loc = {}>
 		<cfset loc.result = {}>
 		<cfset loc.endofDay = DateFormat(DateAdd("d",1,args.form.reportDateFrom),"yyyy-mm-dd")>
-		
+		<cfdump var="#args#" label="LoadSalesData" expand="false">
 		<!--- check for existing sales transaction --->
 		<cfquery name="loc.QTran" datasource="#args.datasource#">
 			SELECT trnID
@@ -111,7 +114,11 @@ checking data...
 					<cfset loc.checkTotal = 0>
 					<cfloop query="loc.QEPOSItems">
 						<cfif currentrow lt loc.QEPOSItems.recordcount><cfset loc.dl = ","><cfelse><cfset loc.dl = ""></cfif>
-						<cfset loc.str = "#loc.str#(#nomID#,#loc.tranID#,#net#,#vat#)#loc.dl##loc.lfcr#">
+						<cfif StructKeyExists(args.form,"grossMode")>
+							<cfset loc.str = "#loc.str#(#nomID#,#loc.tranID#,#net + vat#,0)#loc.dl##loc.lfcr#">
+						<cfelse>
+							<cfset loc.str = "#loc.str#(#nomID#,#loc.tranID#,#net#,#vat#)#loc.dl##loc.lfcr#">
+						</cfif>
 						<cfset loc.checkTotal += (net + vat)>check: #loc.checkTotal#<br>
 						<cfif net lte 0>
 							<cfset loc.cr += (net + vat)>
@@ -154,5 +161,26 @@ checking data...
 	<cfset parm = {}>
 	<cfset parm.datasource = application.site.datasource1>
 	<cfset parm.form = form>
+	<cfset parm.tranID = LoadTransaction(parm)>
 	<cfset data = LoadSalesData(parm)>
-	<!---<cfdump var="#data#" label="data" expand="true">--->
+	<cfdump var="#data#" label="LoadSalesData" expand="true">
+	<cfset data2 = LoadData(parm)>
+	<cfdump var="#data2#" label="LoadData" expand="true">
+
+	
+<!---
+	load/create transaction record.
+	load sales data and display.
+	load existing nominal items (if any) and display.
+	perform integrity check.
+	create/update nominal items.
+--->
+
+
+
+
+
+
+
+
+

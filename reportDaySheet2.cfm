@@ -33,6 +33,7 @@
 			});
 			$('#btnSave').click(function(event) {
 				$('#postData').html("loading...");
+			//	console.log($('#account-form').serialize());
 				$.ajax({
 					type: "POST",
 					url: "ajax/saveDaySheetData.cfm",
@@ -68,6 +69,7 @@
 <cfsetting requesttimeout="900">
 <cfoutput>
 	<cfset parm = {}>
+	<cfset parm.form = form>
 	<cfset parm.datasource = application.site.datasource1>
 	<cfset parm.url = application.site.normal>
 	<cfset dates = ecfc.GetDates(parm)>
@@ -77,6 +79,8 @@
 		<cfset parm.reportDateFrom = Now()>
 	</cfif>
 	<cfset parm.reportDateTo = Now()>
+	<cfdump var="#parm#" label="parm" expand="false">
+	
 	<cfif StructKeyExists(form,"reportDateFrom")>
 		<p>Starting the report...</p>
 		<cfset sysTime = GetTickCount()>
@@ -87,7 +91,8 @@
 		<cfset endofDay = DateFormat(DateAdd("d",1,form.reportDateFrom),"yyyy-mm-dd")>
 		<cfset sysTime = GetTickCount()>
 		<cfquery name="QItemSum2" datasource="#parm.datasource#">
-			SELECT pcatGroup, prodCatID,prodEposCatID, eiClass,eiType, pgTitle,pgNomGroup,pgTarget, nomTitle, SUM(eiNet) AS net, SUM(eiVAT) as vat, SUM(eiTrade) AS trade, Count(*) AS itemCount
+			SELECT pcatGroup, prodCatID,prodEposCatID, eiClass,eiType, pgTitle,pgNomGroup,pgTarget, nomTitle, SUM(eiNet) AS net, SUM(eiVAT) as vat, 
+				SUM(eiTrade) AS trade, Count(*) AS itemCount
 			FROM `tblEPOS_Items`
 			INNER JOIN tblEPOS_Header ON ehID = eiParent
 			INNER JOIN tblProducts ON prodID = eiProdID
@@ -111,7 +116,8 @@
 				<option value="#item.value#" <cfif parm.reportDateFrom eq item.value> selected</cfif>>#item.title#</option>
 				</cfloop>
 			</select>
-			<input type="checkbox" name="fixTotals" value="1" />Repair Till Totals
+			<input type="checkbox" name="fixTotals" value="1" />Repair Till Totals?
+			<input type="checkbox" name="grossMode" value="1" checked="checked" />Gross Mode?
 			<input type="submit" name="btnGo" value="Go">
 		</form>
 	</div>
