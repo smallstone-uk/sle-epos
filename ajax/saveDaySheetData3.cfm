@@ -108,7 +108,6 @@
 						</tr>
 					</table>
 				<cfelse>
-					 insert data ...<cfdump var="#args#" label="args" expand="false">
 					<cfset loc.lfcr = "#chr(13)##chr(10)#">
 					<cfset loc.str = "">
 					<cfset loc.dl = ",">
