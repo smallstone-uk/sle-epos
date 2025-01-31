@@ -36,8 +36,8 @@
 		<cfset session.till.info = {}>
 		<cfset session.till.prevtran = {}>
 		<cfset session.till.catKeys = []>
-		<cfset session.till.total.float = -200>
-		<cfset session.till.total.cashINDW = 200>
+		<cfset session.till.total.float = -application.site.initialFloat>
+		<cfset session.till.total.cashINDW = application.site.initialFloat>
 		<cfset session.till.prefs.mincard = 0.00>
 		<cfset session.till.prefs.service = 0.50>
 		<cfset session.till.prefs.discount = 0.10>

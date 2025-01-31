@@ -312,14 +312,14 @@
 	<cfset ecfc.LoadVAT()>
 	<cfset ecfc.LoadCatKeys()>
 </cfif>
+<cfset parm = {}>
+<cfset dateArray = ecfc.GetDates(parm)>
 <cfif NOT StructKeyExists(session,"products")>	<!--- load test products --->
-	<cfset parm = {}>
 	<cfset parm.datasource = GetDataSource()>
 	<cfset parm.form.reportDate = LSDateFormat(Now(),"yyyy-mm-dd")>
 	<cfset session.products = LoadProducts(parm)>
 	<cfset session.papers = LoadPapers(parm)>
 	<cfset session.customers = ecfc.GetAccounts(parm)>
-	<cfset dateArray = ecfc.GetDates(parm)><cfdump var="#dateArray#" label="dateArray" expand="false">
 </cfif>
 <cfif mode neq 0>
 	<cfswitch expression="#mode#">
@@ -644,6 +644,7 @@
 
 <div style="float:left; margin:10px;">
 	<cfdump var="#session#" label="session" expand="no">
+	<cfdump var="#application#" label="application" expand="no">
 </div>
 
 </body>
