@@ -11,7 +11,7 @@
 		<cftry>
 			<cfquery name="loc.QUpdate" datasource="#args.datasource#" result="loc.QQueryResult">
 				UPDATE tblTrans
-				SET trnAmnt1 = #val(drTotal)#
+				SET trnAmnt1 = -#val(drTotal)#
 				WHERE trnID = #val(args.tranID)#
 			</cfquery>
 		<cfcatch type="any">
@@ -79,6 +79,7 @@
 				AND ehTimeStamp < '#loc.endofDay#'
 				GROUP by pgNomGroup
 			</cfquery>
+			<cfdump var="#loc.QEPOSItems#" label="QEPOSItems" expand="false">
 			<cfif loc.QEPOSItems.recordcount gt 0>
 				<!--- found EPOS sales data for specified day. Create struct of structs of EPOS data --->
 				<cfset loc.result.eposData = {}>
