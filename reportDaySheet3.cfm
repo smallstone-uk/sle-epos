@@ -101,7 +101,7 @@
 		<cfif StructKeyExists(form,"reportDateFrom")>
 			<cfset parm.tranID = rep.LoadTransaction(parm)>
 			<cfset data1 = rep.LoadData(parm)>
-			<cfdump var="#data1#" label="data1" expand="false">
+			<!---<cfdump var="#data1#" label="data1" expand="false">--->
 			<cfif !StructKeyExists(data1,"EPOSData")>
 				No Sales data found.
 			<cfelse>

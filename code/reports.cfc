@@ -110,7 +110,9 @@
 								<cfset loc.profit = loc.retailPrice - 1>
 								<cfset loc.targetPOR = int((loc.profit / loc.retailPrice) * 10000) / 100>
 								<cfset loc.actualProfit = -(net + trade)>
-								<cfset loc.actualPOR = int((loc.actualProfit / -net) * 10000) / 100>
+								<cfif net neq 0>
+									<cfset loc.actualPOR = int((loc.actualProfit / -net) * 10000) / 100>
+								</cfif>
 							</cfif>
 							<cfif eiType eq 'VOUCHER'>
 								<cfset loc.drValue = loc.gross>
