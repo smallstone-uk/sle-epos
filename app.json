@@ -21,6 +21,7 @@
         "MapCF": "/kccCMS/",
         "sourceDir": "source",
         "clientID": 143,
+		"initialFloat": 300,
         "disableDrawer": false,
         "vat": {
             "0": 0,
