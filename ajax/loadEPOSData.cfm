@@ -7,7 +7,7 @@
 <cfset rpt = report.LoadSalesData(parm)>
 <cfif !StructKeyExists(rpt,"keys")>
 	<cfoutput>#rpt.msg#</cfoutput>
-	<cfdump var="#rpt#" label="rpt" expand="false">
+	<!---<cfdump var="#rpt#" label="rpt" expand="false">--->
 	<cfabort>
 </cfif>
 <cfif StructKeyExists(form,"srchDateFrom")>
@@ -103,10 +103,10 @@
 					</td>
 				</cfloop>
 				<td align="right">
-					<span class="qty">#report.formatNum(item.rowTotalQty,'0')#</span><br>
-					#report.formatNum(item.rowTotalNet)#<br>
-					#report.formatNum(item.rowTotalVAT)#<br>
-					<span class="trade">#report.formatNum(item.rowTotalTrade)#</span>
+					<span class="qty">&nbsp;#report.formatNum(item.rowTotalQty,'0')#</span><br>
+					&nbsp;#report.formatNum(item.rowTotalNet)#<br>
+					&nbsp;#report.formatNum(item.rowTotalVAT)#<br>
+					<span class="trade">&nbsp;#report.formatNum(item.rowTotalTrade)#</span>
 				</td>
 			</tr>
 		</cfloop>
