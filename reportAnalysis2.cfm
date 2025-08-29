@@ -34,6 +34,9 @@
 	</script>
 	<style>
 		.negativeNum {color:#FF0000}
+		.qty {color:#FF00FF}
+		.trade {color:#0000FF}
+		.smallTitle {font-size:12px;}
 	</style>
 </head>
 
@@ -57,11 +60,13 @@
 						<td>Report To:</td>
 						<td><input type="text" name="srchDateTo" id="srchDateTo" class="datepicker" size="10" autocomplete="off"  /></td>
 						<td>
+<!---
 							<select name="reportMode" id="reportMode">
 								<option value="reg" <cfif reportMode eq "reg"> selected</cfif>>Reg Mode</option>
 								<option value="rfd" <cfif reportMode eq "rfd"> selected</cfif>>Refund Mode</option>
 								<option value="wst" <cfif reportMode eq "wst"> selected</cfif>>Waste Mode</option>
 							</select>
+--->
 						</td>
 					</tr>
 					<tr>

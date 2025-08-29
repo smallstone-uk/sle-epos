@@ -121,6 +121,9 @@
 			<cfset loc.result = {}>
 			<cfset loc.startDay = FormatDate(args.form.srchDateFrom,"yyyy-mm-dd")>
 			<cfset loc.endDay = FormatDate(args.form.srchDateTo,"yyyy-mm-dd")>
+			<cfif !IsDate(loc.startDay) OR !IsDate(loc.endDay)>
+				<cfreturn {"msg" = "Date range not specified"}>
+			</cfif>
 			<cfset loc.nextDay = DateAdd("d",1,loc.endDay)>
 			<cfset loc.endDay = FormatDate(loc.nextDay,"yyyy-mm-dd")>
 			<cfset loc.data = {}>

@@ -6,14 +6,18 @@
 <cfset parm.form = form>
 <cfset rpt = report.LoadSalesData(parm)>
 <cfif !StructKeyExists(rpt,"keys")>
-	Broken!
+	<cfoutput>#rpt.msg#</cfoutput>
 	<cfdump var="#rpt#" label="rpt" expand="false">
 	<cfabort>
 </cfif>
 <cfif StructKeyExists(form,"srchDateFrom")>
 	<!---<cfdump var="#rpt#" label="rpt" expand="false">--->
+	<cfset colCount = srchHourTo - srchHourFrom + 1>
 	<cfoutput>
 	<table class="tableList" border="1">
+		<tr>
+			<th colspan="#colCount + 5#">Shop Analysis by Hour From: #srchDateFrom# &nbsp; To: #srchDateTo# &nbsp; #srchHourFrom#:00 - #srchHourTo#:00 &nbsp; (#colCount# hours)</th>
+		</tr>
 		<tr>
 			<th align="left">Class</th>
 			<th align="left">Group</th>
@@ -87,22 +91,22 @@
 				<td>#item.eiClass#</td>
 				<td>#item.pgNomGroup#</td>
 				<td>#item.pgTitle#</td>
-				<td>Qty<br>Net<br>Trade<br>VAT</td>
+				<td class="smallTitle">Qty<br>Net<br>VAT<br>Trade</td>
 				<cfloop from="#srchHourFrom#" to="#srchHourTo#" index="i">
 					<cfset ii = NumberFormat(i,'00')>
 					<cfset slot = StructFind(item.slots,ii)>
 					<td align="right">
-						&nbsp;#report.formatNum(slot.qty,'0')#<br>
+						<span class="qty">&nbsp;#report.formatNum(slot.qty,'0')#</span><br>
 						&nbsp;#report.formatNum(slot.net)#<br>
-						&nbsp;#report.formatNum(slot.trade)#<br>
-						&nbsp;#report.formatNum(slot.VAT)#
+						&nbsp;#report.formatNum(slot.VAT)#<br>
+						<span class="trade">&nbsp;#report.formatNum(slot.trade)#</span>
 					</td>
 				</cfloop>
 				<td align="right">
-					#report.formatNum(item.rowTotalQty,'0')#<br>
+					<span class="qty">#report.formatNum(item.rowTotalQty,'0')#</span><br>
 					#report.formatNum(item.rowTotalNet)#<br>
-					#report.formatNum(item.rowTotalTrade)#
-					#report.formatNum(item.rowTotalVAT)#
+					#report.formatNum(item.rowTotalVAT)#<br>
+					<span class="trade">#report.formatNum(item.rowTotalTrade)#</span>
 				</td>
 			</tr>
 		</cfloop>
