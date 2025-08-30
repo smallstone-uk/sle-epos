@@ -91,22 +91,41 @@
 				<td>#item.eiClass#</td>
 				<td>#item.pgNomGroup#</td>
 				<td>#item.pgTitle#</td>
-				<td class="smallTitle">Qty<br>Net<br>VAT<br>Trade</td>
+				<td class="smallTitle">
+					<table class="smallTable" border="0">
+						<tr><td class="qty">Qty</td></tr>
+						<tr><td>Net</td></tr>
+						<tr><td>VAT</td></tr>
+						<tr><td class="trade">Trade</td></tr>								
+					</table>
+				<!---Qty<br>Net<br>VAT<br>Trade</td>--->
 				<cfloop from="#srchHourFrom#" to="#srchHourTo#" index="i">
 					<cfset ii = NumberFormat(i,'00')>
 					<cfset slot = StructFind(item.slots,ii)>
 					<td align="right">
-						<span class="qty">&nbsp;#report.formatNum(slot.qty,'0')#</span><br>
+						<table class="smallTable" border="0">
+							<tr><td align="right" class="qty">#report.formatNum(slot.qty,'0')#</td></tr>
+							<tr><td align="right">#report.formatNum(slot.net)#</td></tr>
+							<tr><td align="right">#report.formatNum(slot.VAT)#</td></tr>
+							<tr><td align="right" class="trade">#report.formatNum(slot.trade)#</td></tr>								
+						</table>
+						<!---<span class="qty">&nbsp;#report.formatNum(slot.qty,'0')#</span><br>
 						&nbsp;#report.formatNum(slot.net)#<br>
 						&nbsp;#report.formatNum(slot.VAT)#<br>
-						<span class="trade">&nbsp;#report.formatNum(slot.trade)#</span>
+						<span class="trade">&nbsp;#report.formatNum(slot.trade)#</span>--->
 					</td>
 				</cfloop>
 				<td align="right">
-					<span class="qty">&nbsp;#report.formatNum(item.rowTotalQty,'0')#</span><br>
+					<table class="smallTable" border="0">
+						<tr><td align="right" class="qty">#report.formatNum(item.rowTotalQty,'0')#</td></tr>
+						<tr><td align="right">#report.formatNum(item.rowTotalNet)#</td></tr>
+						<tr><td align="right">#report.formatNum(item.rowTotalVAT)#</td></tr>
+						<tr><td align="right" class="trade">#report.formatNum(item.rowTotalTrade)#</td></tr>								
+					</table>
+					<!---<span class="qty">&nbsp;#report.formatNum(item.rowTotalQty,'0')#</span><br>
 					&nbsp;#report.formatNum(item.rowTotalNet)#<br>
 					&nbsp;#report.formatNum(item.rowTotalVAT)#<br>
-					<span class="trade">&nbsp;#report.formatNum(item.rowTotalTrade)#</span>
+					<span class="trade">&nbsp;#report.formatNum(item.rowTotalTrade)#</span>--->
 				</td>
 			</tr>
 		</cfloop>

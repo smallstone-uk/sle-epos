@@ -138,6 +138,7 @@
 				INNER JOIN tblProductGroups ON pgID = pcatGroup
 				WHERE ehTimeStamp > '#loc.startDay#'
 				AND ehTimeStamp < '#loc.endDay#'
+				<cfif len(args.form.reportMode)>AND ehMode = '#args.form.reportMode#'</cfif>
 				GROUP BY eiClass, pgNomGroup, theHour
 			</cfquery>
 			<!--- set-up ordered class keys --->

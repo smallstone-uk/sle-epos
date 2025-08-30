@@ -37,13 +37,16 @@
 		.qty {color:#FF00FF}
 		.trade {color:#0000FF}
 		.smallTitle {font-size:12px;}
+		.smallTable {border-collapse:collapse;}
+		.smallTable tr {height:14px; white-space: nowrap;}
+		.smallTable td {height:14px; line-height:14px}
 	</style>
 </head>
 
 <body>
 <cfobject component="#application.site.codePath#" name="ecfc">
 <cfobject component="code/reports" name="report">
-<cfparam name="reportMode" default="">
+<cfparam name="reportMode" default="reg">
 <cfparam name="srchHourFrom" default="6">
 <cfparam name="srchHourTo" default="19">
 
@@ -60,13 +63,12 @@
 						<td>Report To:</td>
 						<td><input type="text" name="srchDateTo" id="srchDateTo" class="datepicker" size="10" autocomplete="off"  /></td>
 						<td>
-<!---
 							<select name="reportMode" id="reportMode">
+								<option value="" <cfif reportMode eq ""> selected</cfif>>Any Mode</option>
 								<option value="reg" <cfif reportMode eq "reg"> selected</cfif>>Reg Mode</option>
 								<option value="rfd" <cfif reportMode eq "rfd"> selected</cfif>>Refund Mode</option>
 								<option value="wst" <cfif reportMode eq "wst"> selected</cfif>>Waste Mode</option>
 							</select>
---->
 						</td>
 					</tr>
 					<tr>
