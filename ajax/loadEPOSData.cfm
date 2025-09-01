@@ -182,8 +182,10 @@
 			<th>Goal</th>
 			<th>Diff</th>
 		</tr>
+		<cfset row = 0>
 		<cfset diffLog = {}>
 		<cfloop query="rpt.QEPOSItems">
+			<cfset row++>
 			<cfset profit = 0>
 			<cfset POR = 0>
 			<cfset legend = "normal">
@@ -225,15 +227,31 @@
 				<td class="#legend#">#diff#%</td>
 			</tr>
 		</cfloop>
-	</table>
-	<table class="tableList" border="1">
-		<cfloop collection="#diffLog#" item="key">
-			<tr>
-				<td>#key#</td>
-				<td>#diffLog[key]#</td>
-			</tr>
-		</cfloop>
-	</table>
+		</table>
+		<cfif row gt 0>
+			<table class="tableList" border="1" width="300">
+				<tr>
+					<th>Goal</th>
+					<th align="right">Count</th>
+					<th align="right">Proportion</th>
+				</tr>
+				<cfset propTot = 0>
+				<cfloop collection="#diffLog#" item="key">
+					<cfset prop = int((diffLog[key] / row) * 1000) / 10>
+					<cfset propTot += prop>
+					<tr>
+						<td>#key#</td>
+						<td align="right">#diffLog[key]#</td>
+						<td align="right">#prop#%</td>
+					</tr>
+				</cfloop>
+				<tr>
+					<th>Totals</th>
+					<th align="right">#row#</th>
+					<th align="right">#propTot#%</th>
+				</tr>
+			</table>
+		</cfif>
 	</cfoutput>
 </cfif>
 
