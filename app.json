@@ -45,7 +45,7 @@
 		"url2": "http://tweb.epos.co.uk/"
     },
     "printer": {
-        "ip": "192.168.234.73",
+        "ip": "192.168.234.72",
         "port": "80"
     },
     "settings": {
