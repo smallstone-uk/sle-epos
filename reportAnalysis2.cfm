@@ -40,6 +40,11 @@
 		.smallTable {border-collapse:collapse;}
 		.smallTable tr {height:14px; white-space: nowrap;}
 		.smallTable td {height:14px; line-height:14px}
+		.vlow {background-color:#00FFFF;}
+		.low {background-color:#FFFF33;}
+		.normal {background-color:#0F0;}
+		.high {background-color:#F90;}
+		.vhigh {background-color:#FF0000; color:#fff;}
 	</style>
 </head>
 
@@ -47,6 +52,7 @@
 <cfobject component="#application.site.codePath#" name="ecfc">
 <cfobject component="code/reports" name="report">
 <cfparam name="reportMode" default="reg">
+<cfparam name="srchReport" default="1">
 <cfparam name="srchHourFrom" default="6">
 <cfparam name="srchHourTo" default="19">
 
@@ -57,6 +63,16 @@
 		<div class="noPrint">
 			<form method="post" name="srchForm" id="srchForm" enctype="multipart/form-data">
 				<table class="tableList" border="1">
+					<tr>
+						<td><b>Report</b></td>
+						<td>
+							<select name="srchReport">
+								<option value="">Select...</option>
+								<option value="1"<cfif srchReport eq "1"> selected="selected"</cfif>>EPOS Analysis by Hour</option>
+								<option value="2"<cfif srchReport eq "2"> selected="selected"</cfif>>EPOS Transactions</option>
+							</select>
+						</td>
+					</tr>
 					<tr>
 						<td>Report From:</td>
 						<td><input type="text" name="srchDateFrom" id="srchDateFrom" class="datepicker" size="10" autoComplete="off"  /></td>

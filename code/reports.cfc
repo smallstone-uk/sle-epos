@@ -114,6 +114,43 @@
 		<cfreturn loc.result> 
 	</cffunction>
 
+	<cffunction name="LoadEPOSTransactions" access="public" returntype="struct">
+		<cfargument name="args" type="struct" required="yes">
+		<cftry>
+			<cfset var loc = {}>
+			<cfset loc.result = {}>
+			<cfset loc.startDay = FormatDate(args.form.srchDateFrom,"yyyy-mm-dd")>
+			<cfset loc.endDay = FormatDate(args.form.srchDateTo,"yyyy-mm-dd")>
+			<cfif !IsDate(loc.startDay) OR !IsDate(loc.endDay)>
+				<cfreturn {"msg" = "Date range not specified"}>
+			</cfif>
+			<cfset loc.nextDay = DateAdd("d",1,loc.endDay)>
+			<cfset loc.endDay = FormatDate(loc.nextDay,"yyyy-mm-dd")>
+			<cfset loc.data = {}>
+			<cfset loc.totals = {}>
+			<!--- get the sales transactions --->
+			<cfquery name="loc.result.QEPOSItems" datasource="#args.datasource#">
+				SELECT pgID,pgTitle,pgNomGroup,pgTarget, pcatID,pcatTitle, prodID,prodTitle, eiParent,eiTimeStamp,eiClass,eiType,eiQty,eiNet,eiVAT,eiTrade
+				FROM tblEPOS_Items
+				INNER JOIN tblEPOS_Header ON ehID = eiParent
+				INNER JOIN tblProducts ON prodID = eiProdID
+				INNER JOIN tblProductCats ON pcatID = prodCatID
+				INNER JOIN tblProductGroups ON pgID = pcatGroup
+				WHERE ehTimeStamp > '#loc.startDay#'
+				AND ehTimeStamp < '#loc.endDay#'
+				AND eiClass = 'sale'
+				<cfif len(args.form.reportMode)>AND ehMode = '#args.form.reportMode#'</cfif>
+				ORDER BY pgNomGroup, pcatID, prodID, eiTimeStamp ASC
+			</cfquery>
+			
+		<cfcatch type="any">
+			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+			output="#application.site.dir_logs#err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+		</cfcatch>
+		</cftry>
+		<cfreturn loc.result>
+	</cffunction>
+
 	<cffunction name="LoadSalesData" access="public" returntype="struct">
 		<cfargument name="args" type="struct" required="yes">
 		<cftry>

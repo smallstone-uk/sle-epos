@@ -7,7 +7,10 @@
         "telephone": "01872 275102",
         "po_telephone": "01872 223670",
         "vat_number": "152 5803 21"
-    },
+ 		"bankname": "Lloyds Bank",
+		"sortcode": "30-98-76",
+		"accountno": "3534 5860"
+   },
     "site": {
         "datasource0": "kcc_cms",
         "datasource1": "kcc_sle_production",
@@ -37,7 +40,9 @@
             "Friday",
             "Saturday",
             "Sunday"
-        ]
+        ],
+		"url1": "http://tweb.sle-admin.co.uk/",
+		"url2": "http://tweb.epos.co.uk/"
     },
     "printer": {
         "ip": "192.168.234.73",
