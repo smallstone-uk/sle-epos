@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>Report</title>
+	<title>Shop Analysis by Hour</title>
 	<link href="css/main3.css" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" type="text/css" href="css/chosen.css" rel="stylesheet" />
 	<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.10.3.custom.min.css" />

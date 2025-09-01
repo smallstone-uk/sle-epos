@@ -43,7 +43,7 @@
 						<cfset rowClassTotal += slotTotal>
 						<th align="right">#report.formatNum(slotTotal)#</th>
 					</cfloop>
-					<th>#report.formatNum(rowClassTotal)#</th>
+					<th align="right">#report.formatNum(rowClassTotal)#</th>
 				</tr>
 				<cfif class eq "sale">
 				<tr>
@@ -55,7 +55,7 @@
 						<cfset rowClassTotal += total.trade>
 						<th align="right">#report.formatNum(total.trade)#</th>
 					</cfloop>
-					<th>#report.formatNum(rowClassTotal)#</th>
+					<th align="right">#report.formatNum(rowClassTotal)#</th>
 				</tr>
 				<tr>
 					<th colspan="4">Profit</th>
@@ -67,7 +67,7 @@
 						<cfset rowClassTotal += profit>
 						<th align="right">#report.formatNum(profit)#</th>
 					</cfloop>
-					<th>#report.formatNum(rowClassTotal)#</th>
+					<th align="right">#report.formatNum(rowClassTotal)#</th>
 				</tr>
 				</cfif>
 				<tr>
@@ -81,9 +81,9 @@
 						<cfset colTotal += total.qty>
 						<cfset rowClassTotal += total.qty>
 						<cfif colTotal lt 0.001><cfset colTotal = 0></cfif>
-						<th align="right">#report.formatNum(colTotal,'0')#</th>
+						<th align="right">#report.formatNum(colTotal,',')#</th>
 					</cfloop>
-					<th>#report.formatNum(rowClassTotal,'0')#</th>
+					<th align="right">#report.formatNum(rowClassTotal,',')#</th>
 				</tr>
 			</cfif>
 			<cfset class = item.eiClass>
@@ -98,34 +98,25 @@
 						<tr><td>VAT</td></tr>
 						<tr><td class="trade">Trade</td></tr>								
 					</table>
-				<!---Qty<br>Net<br>VAT<br>Trade</td>--->
 				<cfloop from="#srchHourFrom#" to="#srchHourTo#" index="i">
 					<cfset ii = NumberFormat(i,'00')>
 					<cfset slot = StructFind(item.slots,ii)>
 					<td align="right">
 						<table class="smallTable" border="0">
-							<tr><td align="right" class="qty">#report.formatNum(slot.qty,'0')#</td></tr>
+							<tr><td align="right" class="qty">#report.formatNum(slot.qty,',')#</td></tr>
 							<tr><td align="right">#report.formatNum(slot.net)#</td></tr>
 							<tr><td align="right">#report.formatNum(slot.VAT)#</td></tr>
 							<tr><td align="right" class="trade">#report.formatNum(slot.trade)#</td></tr>								
 						</table>
-						<!---<span class="qty">&nbsp;#report.formatNum(slot.qty,'0')#</span><br>
-						&nbsp;#report.formatNum(slot.net)#<br>
-						&nbsp;#report.formatNum(slot.VAT)#<br>
-						<span class="trade">&nbsp;#report.formatNum(slot.trade)#</span>--->
 					</td>
 				</cfloop>
 				<td align="right">
 					<table class="smallTable" border="0">
-						<tr><td align="right" class="qty">#report.formatNum(item.rowTotalQty,'0')#</td></tr>
+						<tr><td align="right" class="qty">#report.formatNum(item.rowTotalQty,',')#</td></tr>
 						<tr><td align="right">#report.formatNum(item.rowTotalNet)#</td></tr>
 						<tr><td align="right">#report.formatNum(item.rowTotalVAT)#</td></tr>
 						<tr><td align="right" class="trade">#report.formatNum(item.rowTotalTrade)#</td></tr>								
 					</table>
-					<!---<span class="qty">&nbsp;#report.formatNum(item.rowTotalQty,'0')#</span><br>
-					&nbsp;#report.formatNum(item.rowTotalNet)#<br>
-					&nbsp;#report.formatNum(item.rowTotalVAT)#<br>
-					<span class="trade">&nbsp;#report.formatNum(item.rowTotalTrade)#</span>--->
 				</td>
 			</tr>
 		</cfloop>
@@ -140,14 +131,14 @@
 					<cfset rowClassTotal += (total.net + total.VAT)>
 					<th align="right">#report.formatNum(total.net + total.VAT)#</th>
 				</cfloop>
-				<th>#report.formatNum(rowClassTotal)#</th>
+				<th align="right">#report.formatNum(rowClassTotal)#</th>
 			</tr>
 			<tr>
 				<th colspan="4">Check Totals</th>
+				<cfset rowClassTotal = 0>
 				<cfloop from="#srchHourFrom#" to="#srchHourTo#" index="i">
 					<cfset ii = NumberFormat(i,'00')>
 					<cfset colTotal = 0>
-					<cfset rowClassTotal = 0>
 					<cfloop list="sale,item,pay,supp" index="itemClass" delimiters=",">
 						<cfset slot = StructFind(rpt.totals,itemClass)>
 						<cfset total = StructFind(slot,ii)>
@@ -157,7 +148,7 @@
 					<cfif colTotal lt 0.001><cfset colTotal = 0></cfif>
 					<th align="right">#DecimalFormat(colTotal)#</th>
 				</cfloop>
-				<th>#DecimalFormat(rowClassTotal)#</th>
+				<th align="right">#DecimalFormat(rowClassTotal)#</th>
 			</tr>
 		<cfelse>
 			<tr>
