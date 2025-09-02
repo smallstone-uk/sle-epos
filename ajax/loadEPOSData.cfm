@@ -18,7 +18,10 @@
 		<cfoutput>
 		<table class="tableList" border="1">
 			<tr>
-				<th colspan="#colCount + 5#">Shop Analysis by Hour From: #srchDateFrom# &nbsp; To: #srchDateTo# &nbsp; #srchHourFrom#:00 - #srchHourTo#:00 &nbsp; (#colCount# hours)</th>
+				<th colspan="#colCount + 5#">
+					Shop Analysis by Hour From: #srchDateFrom# &nbsp; To: #srchDateTo# &nbsp; 
+					#srchHourFrom#:00 - #srchHourTo#:00 &nbsp; (#colCount# hours)
+				</th>
 			</tr>
 			<tr>
 				<th align="left">Class</th>
@@ -41,36 +44,66 @@
 						<cfloop from="#srchHourFrom#" to="#srchHourTo#" index="i">
 							<cfset ii = NumberFormat(i,'00')>
 							<cfset slot = StructFind(classTotal,ii)>
-							<cfset slotTotal = -(slot.net + slot.VAT)>
+							<cfset slotTotal = -slot.net>
+							<cfset rowClassTotal += slotTotal>
+							<th align="right">#report.formatNum(slotTotal)#</th>
+						</cfloop>
+						<th align="right">#report.formatNum(rowClassTotal)#</th>
+					</tr>
+					<tr>
+						<th colspan="4">VAT totals</th>
+						<cfset rowClassTotal = 0>
+						<cfloop from="#srchHourFrom#" to="#srchHourTo#" index="i">
+							<cfset ii = NumberFormat(i,'00')>
+							<cfset slot = StructFind(classTotal,ii)>
+							<cfset slotTotal = -slot.VAT>
 							<cfset rowClassTotal += slotTotal>
 							<th align="right">#report.formatNum(slotTotal)#</th>
 						</cfloop>
 						<th align="right">#report.formatNum(rowClassTotal)#</th>
 					</tr>
 					<cfif class eq "sale">
-					<tr>
-						<th colspan="4">Trade Value</th>
-						<cfset rowClassTotal = 0>
-						<cfloop from="#srchHourFrom#" to="#srchHourTo#" index="i">
-							<cfset ii = NumberFormat(i,'00')>
-							<cfset total = StructFind(classTotal,ii)>
-							<cfset rowClassTotal += total.trade>
-							<th align="right">#report.formatNum(total.trade)#</th>
-						</cfloop>
-						<th align="right">#report.formatNum(rowClassTotal)#</th>
-					</tr>
-					<tr>
-						<th colspan="4">Profit</th>
-						<cfset rowClassTotal = 0>
-						<cfloop from="#srchHourFrom#" to="#srchHourTo#" index="i">
-							<cfset ii = NumberFormat(i,'00')>
-							<cfset total = StructFind(classTotal,ii)>
-							<cfset profit = -(total.net + total.VAT + total.trade)>
-							<cfset rowClassTotal += profit>
-							<th align="right">#report.formatNum(profit)#</th>
-						</cfloop>
-						<th align="right">#report.formatNum(rowClassTotal)#</th>
-					</tr>
+						<tr>
+							<th colspan="4">Trade Value</th>
+							<cfset rowClassTotal = 0>
+							<cfloop from="#srchHourFrom#" to="#srchHourTo#" index="i">
+								<cfset ii = NumberFormat(i,'00')>
+								<cfset total = StructFind(classTotal,ii)>
+								<cfset rowClassTotal += total.trade>
+								<th align="right">#report.formatNum(total.trade)#</th>
+							</cfloop>
+							<th align="right">#report.formatNum(rowClassTotal)#</th>
+						</tr>
+						<tr>
+							<th colspan="4">Profit</th>
+							<cfset rowClassTotal = 0>
+							<cfloop from="#srchHourFrom#" to="#srchHourTo#" index="i">
+								<cfset ii = NumberFormat(i,'00')>
+								<cfset total = StructFind(classTotal,ii)>
+								<cfset profit = -(total.net + total.trade)>
+								<cfset rowClassTotal += profit>
+								<th align="right">#report.formatNum(profit)#</th>
+							</cfloop>
+							<th align="right">#report.formatNum(rowClassTotal)#</th>
+						</tr>
+						<tr>
+							<th colspan="4">POR%</th>
+							<cfset rowClassTotal = 0>
+							<cfset rowNetTotal = 0>
+							<cfset POR = 0>
+							<cfset PORTotal = 0>
+							<cfloop from="#srchHourFrom#" to="#srchHourTo#" index="i">
+								<cfset ii = NumberFormat(i,'00')>
+								<cfset total = StructFind(classTotal,ii)>
+								<cfset profit = -(total.net + total.trade)>
+								<cfset rowClassTotal += profit>
+								<cfset rowNetTotal += -total.net>
+								<cfif total.net neq 0><cfset POR = int((profit / -total.net) * 1000) / 10></cfif>
+								<th align="right">#report.formatNum(POR,'0.0')#%</th>
+							</cfloop>
+							<cfif rowNetTotal neq 0><cfset PORTotal = int((rowClassTotal / rowNetTotal) * 1000) / 10></cfif>
+							<th align="right"><cfif rowNetTotal neq 0>#report.formatNum(PORTotal,'0.0')#%</cfif></th>
+						</tr>
 					</cfif>
 					<tr>
 						<th colspan="4">Item Count</th>
