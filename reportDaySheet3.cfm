@@ -82,6 +82,7 @@
 		<cfset parm.reportDateFrom = Now()>
 	</cfif>
 	<cfset parm.reportDateTo = Now()>
+
 	<body>
 		<div>
 			<form method="post" enctype="multipart/form-data" id="account-form">
@@ -185,7 +186,7 @@
 								<cfif !StructKeyExists(data1,"nomItems")>
 									Sales transaction does not exist. Click Save Transaction.
 								<cfelse>
-									Transaction ID: <a href="#application.site.parentURL#salesMain3.cfm?acc=1&tran=#parm.tranID#" target="#parm.tranID#">#parm.tranID#</a>
+									Transaction ID: <a href="#application.site.url1#salesMain3.cfm?acc=1&tran=#parm.tranID#" target="#parm.tranID#">#parm.tranID#</a>
 								</cfif>
 							</th> 
 							<cfif !parm.grossMode>

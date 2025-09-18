@@ -31,7 +31,7 @@
 		<cftry>
 			<cfquery name="loc.QUpdate" datasource="#args.datasource#" result="loc.QQueryResult">
 				UPDATE tblTrans
-				SET trnAmnt1 = -#val(drTotal)#
+				SET trnAmnt1 = #val(drTotal)#
 				WHERE trnID = #val(args.tranID)#
 			</cfquery>
 		<cfcatch type="any">

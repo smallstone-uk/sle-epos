@@ -64,7 +64,7 @@
 				<cfif StructKeyExists(loc.data,"nomItems")>
 					<table class="tableList" width="400">
 						<tr>
-							<th colspan="5">Sales Transaction ID: <a href="#application.site.parentURL#salesMain3.cfm?acc=1&tran=#args.tranID#" target="#args.tranID#">#args.tranID#</a></th>
+							<th colspan="5">Sales Transaction ID: <a href="#application.site.url1#salesMain3.cfm?acc=1&tran=#args.tranID#" target="#args.tranID#">#args.tranID#</a></th>
 						</tr>
 						<tr>
 							<th>Key</th><th align="right">EPOS Value</th><th align="right">Nom Value</th><th align="right">Diff</th><th>Status</th>
@@ -115,7 +115,7 @@
 					<cfset loc.str = "#loc.str#(niNomID,niTranID,niAmount,niVATAmount) VALUES#loc.lfcr#">
 					<table class="tableList" width="400">
 						<tr>
-							<th colspan="5">Transaction ID: <a href="#application.site.parentURL#salesMain3.cfm?acc=1&tran=#args.tranID#" target="#args.tranID#">#args.tranID#</a></th>
+							<th colspan="5">Transaction ID: <a href="#application.site.url1#salesMain3.cfm?acc=1&tran=#args.tranID#" target="#args.tranID#">#args.tranID#</a></th>
 						</tr>
 						<tr>
 							<th>Key</th><th align="right">EPOS Value</th><th align="right">Nom Value</th><th align="right">Diff</th><th>Status</th>

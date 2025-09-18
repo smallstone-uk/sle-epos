@@ -79,7 +79,7 @@
 				
 				<td>
 					<cfif eiType eq 'shop'>
-						<a href="#application.site.parentURL#productStock6.cfm?product=#eiProdID#" target="_new">#eiProdID#</a>
+						<a href="#application.site.url1#productStock6.cfm?product=#eiProdID#" target="_new">#eiProdID#</a>
 					</cfif>
 				</td>
 				<td>#title#</td>
