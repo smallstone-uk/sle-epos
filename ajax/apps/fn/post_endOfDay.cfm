@@ -114,10 +114,10 @@
 			<td>Coin Total</td>
 			<td align="right">#coinTotal#</td>
 		</tr>
-		<tr>
+		<!---<tr>
 			<td>Lottery Coins</td>
 			<td align="right">#DecimalFormat(lottoCoins)#</td>
-		</tr>
+		</tr>--->
 		<tr>
 			<td>PayStation Coins</td>
 			<td align="right">#DecimalFormat(psCoins)#</td>
@@ -136,7 +136,7 @@
 		</tr>
 		<tr>
 			<td>Bank Coins</td>
-			<td align="right">#loc.bankCoins#</td>
+			<td align="right">#loc.bankCoins + lottoCoins#</td>
 		</tr>
 		<tr>
 			<td>Float Coins</td>

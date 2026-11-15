@@ -12,7 +12,63 @@
 		scratchPrizes = dayHeader.scratchPrizes();
 		today = dayHeader.today();
 		yesterday = dayHeader.yesterday();
+		scratchGameData = ScratchGames();
 	</cfscript>
+
+	<cfif StructIsEmpty(yesterday)>
+			<cfquery name="loc.QYesterday" datasource="#GetDataSource()#">		<!--- load product and latest stock item --->
+				SELECT	*
+				FROM tblepos_dayheader
+				ORDER BY dhID DESC LIMIT 1;
+			</cfquery>
+			<cfset yesterday = {}>
+			<cfloop list="#loc.QYesterday.columnList#" index="col">
+   				<cfset yesterday[col] = loc.QYesterday[col][1]>
+			</cfloop>
+		<cfdump var="#yesterday#" label="yesterday" expand="yes" format="html" 
+			output="#application.site.dir_logs#dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+	<cfelse>
+		<cfdump var="#yesterday#" label="yesterday" expand="yes" format="html" 
+			output="#application.site.dir_logs#dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+	</cfif>
+	
+	<cffunction name="ScratchGames" access="public" returntype="struct">
+		<cfset var loc = {}>
+		<cfset loc.result = {}>
+		<cfset loc.result.games = []>
+		
+		<cftry>
+			<cfquery name="loc.QProducts" datasource="#GetDataSource()#">		<!--- load product and latest stock item --->
+				SELECT
+					prodID,prodRef,prodTitle,siPackQty,siOurPrice
+					FROM tblProducts
+					LEFT JOIN tblStockItem ON prodID = siProduct
+					INNER JOIN tblStockOrder ON soID = siOrder
+					AND tblStockItem.siID = (
+						SELECT MAX( siID )
+						FROM tblStockItem
+						WHERE prodID = siProduct
+					)
+					WHERE prodEPOSCatID = 251
+					ORDER BY prodRef
+			</cfquery>
+			<cfloop query="loc.QProducts">
+				<cfset ArrayAppend(loc.result.games, {
+					prodID = prodID,
+					prodRef = prodRef,
+					prodTitle = prodTitle,
+					siPackQty = siPackQty,
+					siOurPrice = siOurPrice
+				})>
+			</cfloop>
+			
+		<cfcatch type="any">
+			<cfdump var="#cfcatch#" label="cfcatch" expand="yes" format="html" 
+				output="#application.site.dir_logs#err-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+		</cfcatch>
+		</cftry>
+		<cfreturn loc.result>
+	</cffunction>
 
 	<cfoutput>
 		<script>
@@ -32,17 +88,45 @@
 						value = nf(field.data("value"), "num"),
 						pack = nf(field.data('pack'), 'num');
 
-					var start = nf( $('input[name="dhsc_g' + game + '_start"]').val(), "num" );
+					/*var start = nf( $('input[name="dhsc_g' + game + '_start"]').val(), "num" );
 					var end = nf( $('input[name="dhsc_g' + game + '_end"]').val(), "num" );
 					var qty = nf( $('input[name="dhsc_g' + game + '_qty"]').val(), "num" );
 					var total = $('.dhsc_g' + game + '_total');
 
 					if ($('input[name="dhsc_g' + game + '_start"]').val().length > 0 && $('input[name="dhsc_g' + game + '_end"]').val().length > 0) {
-						var diff = (end < start) ? ((pack - start) + end) : (end - start);
+					//	var diff = (end < start) ? ((pack - start) + end) : (end - start);
+						var diff = start - end;
 						total.val(nf(diff * value, 'str'));
 						$('input[name="dhsc_g' + game + '_qty"]').val(diff);
 					}
-
+*/
+					var startVal = $('input[name="dhsc_g' + game + '_start"]').val().trim();
+					var endVal = $('input[name="dhsc_g' + game + '_end"]').val().trim();
+					
+					var total = $('.dhsc_g' + game + '_total');
+					var qtyField = $('input[name="dhsc_g' + game + '_qty"]');
+					
+					var diff = 0;
+					
+					if (startVal !== "") {
+					
+						if (endVal === "") {
+							// Blank End means pack is sold out
+							diff = Number(startVal) + 1;
+						} else if (Number(endVal) > Number(startVal)) {
+							diff = Number(startVal) + (pack - 1 - Number(endVal));
+						} else {
+							diff = Number(startVal) - Number(endVal);
+						}
+					
+						total.val(nf(diff * value, 'str'));
+						qtyField.val(diff);
+					
+					} else {
+						// No active pack
+						total.val("");
+						qtyField.val("");
+					}
 					dc.dhsc_total = 0;
 					for (var i = 1; i <= 8; i++) {
 						dc.dhsc_total += nf($('.dhsc_g' + i + '_total').val(), "num");
@@ -177,6 +261,8 @@
 					<span class="back icon-circle-left"></span>
 					Scratchcards
 				</span>
+				<!---<cfdump var="#scratchGameData#" label="scratchGameData" expand="yes" format="html" 
+					output="#application.site.dir_logs#dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">--->
 
 				<table border="0">
 					<tr>
@@ -188,8 +274,51 @@
 						<th>Qty</th>
 						<th>Total</th>
 					</tr>
+					<cfset game = 0>
 					<cfset totalSC = 0>
-					<cfset gameValues = [5,5,3,3,2,2,1,1]>
+					<cfloop array="#scratchGameData.games#" index="loc.item">
+						<cfset game++>
+						<cfset gStart = "dhsc_g#game#_start">
+						<cfset gEnd = "dhsc_g#game#_end">
+						<cfset sold = 0>
+						<cfset value = 0>
+						<cfset start = 0>
+						<cfset end = 0>
+						<cfif StructIsEmpty(today)>
+							<cfif StructIsEmpty(yesterday)>
+								<cfset start = "">
+								<cfset end = "">
+							<cfelse>
+								<cfset start = StructFind(yesterday,gEnd)>
+								<cfset end = "">
+							</cfif>
+						<cfelse>
+							<cfset start = StructFind(today,gStart)>
+							<cfset end = StructFind(today,gEnd)>
+						</cfif>
+						<cfset sold = val(start) - val(end)>
+						<cfset value = sold * loc.item.siOurPrice>
+						<cfset totalSC += value>
+						<tr>
+							<th>#loc.item.prodtitle#</th>
+							<th>#loc.item.siPackQty#</th>
+							<th>&pound;#loc.item.siOurPrice#</th>
+							<td><input type="text" name="#gStart#" autocomplete="off" value="#start#" 
+									data-qty="#loc.item.siPackQty#" data-value="#loc.item.siOurPrice#" data-maximum="#loc.item.siPackQty-1#"
+									data-wholenumber="true" data-pack="#loc.item.siPackQty#" data-game="#game#" data-minimum="0" class="scratch ui2" 
+								/>
+							</td>
+							<td><input type="text" name="#gEnd#" autocomplete="off" value="#end#"
+									data-qty="#loc.item.siPackQty#" data-value="#loc.item.siOurPrice#" data-maximum="#loc.item.siPackQty-1#"
+									data-wholenumber="true" data-pack="#loc.item.siPackQty#" data-game="#game#" data-minimum="0" class="scratch ui2" 
+								/>
+							</td>
+							<td><input type="text" name="dhsc_g#game#_qty" value="#sold#" class="scratch ui2" disabled="disabled" /></td>
+							<td><input type="text" name="dhsc_g#game#_total" value="#DecimalFormat(value)#" class="money dhsc_g#game#_total" disabled="disabled"></td>
+						</tr>
+					</cfloop>
+<!---				<cfset totalSC = 0>
+						<cfset gameValues = [5,5,3,3,2,2,1,1]>
 					<cfset packQtys = [60,60,60,60,120,120,180,180]>
 					<cfloop from="1" to="8" index="game">
 						<cfset gStart = "dhsc_g#game#_start">
@@ -207,10 +336,10 @@
 						<cfelse>
 							<cfset start = StructFind(today,gStart)>
 							<cfset end = StructFind(today,gEnd)>
-							<cfif end gt 0>
+							<!---<cfif end gt 0>
 								<cfset sold = val(end) - val(start)>
 								<cfset value = sold * gameValues[game]>
-							</cfif>
+							</cfif>--->
 						</cfif>
 						<cfset totalSC += value>
 						<cfif end eq 0><cfset end = ""></cfif>
@@ -231,7 +360,7 @@
 							<td><input type="text" name="dhsc_g#game#_total" value="#value#" class="money dhsc_g#game#_total" disabled="disabled"></td>
 						</tr>
 					</cfloop>
-					<tr>
+--->					<tr>
 						<td colspan="6" align="right">Total</td>
 						<td align="right"><input type="text" name="scrTotal" id="scrTotal" class="money" disabled="disabled" value="#DecimalFormat(totalSC)#" /></td>
 					</tr>

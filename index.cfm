@@ -8,8 +8,13 @@
 <head>
 <title>EPOS</title>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<script src="js/jquery-1.11.1.min.js"></script>
-
+<!---<script src="js/jquery-1.11.1.min.js"></script>--->
+<script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous">
+ </script>
+  
 <!--QZ Print Applet-->
 <!---<script type="text/javascript" src="js/3rdparty/deployJava.js"></script>--->
 <script type="text/javascript" src="js/3rdparty/jquery-1.10.2.js"></script>

@@ -1,3 +1,4 @@
+app.json
 core/config/kweb-Settings.xml
 core/config/tweb-Settings.xml
 core/config/www-Settings.xml
@@ -9,3 +10,4 @@ Archive/
 data/logs/
 Database/Logs/
 App/Framework
+app.json

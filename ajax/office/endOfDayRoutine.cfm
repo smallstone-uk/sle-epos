@@ -34,7 +34,7 @@
 			});
 		});
 	</script>
-	<div class="close-button s-close-button">x</div>
+	<div class="">x</div>
 	<div class="sandbox">
 		<div class="sectionHeader">End of Day</div>
 		<form method="post" enctype="multipart/form-data" id="DeclareCashForm">

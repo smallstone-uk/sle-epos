@@ -863,9 +863,11 @@
 				var closeTranNow = (data.trim().toLowerCase() == "yes") ? true : false;
 
 				if (closeTranNow) {
-					ajax.openTillDrawer({}, function(data) {
-						$('.printable').html(data);
-					});
+					$.openTill();
+					
+//					ajax.openTillDrawer({}, function(data) {
+//						$('.printable').html(data);
+//					});
 				}
 
 				if (typeof callback == "function") callback(params);
