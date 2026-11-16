@@ -16,22 +16,19 @@
 	</cfscript>
 
 	<cfif StructIsEmpty(yesterday)>
-			<cfquery name="loc.QYesterday" datasource="#GetDataSource()#">		<!--- load product and latest stock item --->
-				SELECT	*
-				FROM tblepos_dayheader
-				ORDER BY dhID DESC LIMIT 1;
-			</cfquery>
-			<cfset yesterday = {}>
-			<cfloop list="#loc.QYesterday.columnList#" index="col">
-   				<cfset yesterday[col] = loc.QYesterday[col][1]>
-			</cfloop>
-		<cfdump var="#yesterday#" label="yesterday" expand="yes" format="html" 
-			output="#application.site.dir_logs#dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
-	<cfelse>
-		<cfdump var="#yesterday#" label="yesterday" expand="yes" format="html" 
-			output="#application.site.dir_logs#dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+		<cfquery name="loc.QYesterday" datasource="#GetDataSource()#">		<!--- only for dev testing where yesterday --->
+			SELECT	*														<!--- could be several days ago --->
+			FROM tblepos_dayheader
+			ORDER BY dhID DESC LIMIT 1;
+		</cfquery>
+		<cfset yesterday = {}>
+		<cfloop list="#loc.QYesterday.columnList#" index="col">
+			<cfset yesterday[col] = loc.QYesterday[col][1]>
+		</cfloop>
 	</cfif>
-	
+	<cfdump var="#yesterday#" label="yesterday" expand="yes" format="html" 
+		output="#application.site.dir_logs#dump-#DateFormat(Now(),'yyyymmdd')#-#TimeFormat(Now(),'HHMMSS')#.htm">
+
 	<cffunction name="ScratchGames" access="public" returntype="struct">
 		<cfset var loc = {}>
 		<cfset loc.result = {}>
@@ -39,7 +36,7 @@
 		
 		<cftry>
 			<cfquery name="loc.QProducts" datasource="#GetDataSource()#">		<!--- load product and latest stock item --->
-				SELECT
+				SELECT															<!--- load scratchcards array --->
 					prodID,prodRef,prodTitle,siPackQty,siOurPrice
 					FROM tblProducts
 					LEFT JOIN tblStockItem ON prodID = siProduct
@@ -172,8 +169,12 @@
 					dc.dhsc_form = $(this).serialize();
 					$(this).fadeOut(function() {
 						var lottoTotal = 0;
-						for (c of ['lotto_draws','lotto_sc','lotto_prizes','lotto_sc_prizes'])
-							lottoTotal += Number($('input[name="' + c + '"]').val());
+						var fields = ['lotto_draws','lotto_sc','lotto_prizes','lotto_sc_prizes'];
+						$.each(fields, function(i, c) {
+							lottoTotal += Number($('input[name="' + c + '"]').val()) || 0;
+						});
+					//	for (var c of ['lotto_draws','lotto_sc','lotto_prizes','lotto_sc_prizes'])
+					//		lottoTotal += Number($('input[name="' + c + '"]').val());
 					//	$('input[name="lotto_sc"]').val(nf(dc.dhsc_total, "str"));
 						$('input[name="lotto_total"]').val(nf(lottoTotal, "str"));
 						$('.LotteryForm').fadeIn();
@@ -282,8 +283,8 @@
 						<cfset gEnd = "dhsc_g#game#_end">
 						<cfset sold = 0>
 						<cfset value = 0>
-						<cfset start = 0>
-						<cfset end = 0>
+						<cfset start = -1>
+						<cfset end = -2>
 						<cfif StructIsEmpty(today)>
 							<cfif StructIsEmpty(yesterday)>
 								<cfset start = "">
@@ -295,10 +296,10 @@
 						<cfelse>
 							<cfset start = StructFind(today,gStart)>
 							<cfset end = StructFind(today,gEnd)>
+							<cfset sold = val(start) - val(end)>
+							<cfset value = sold * loc.item.siOurPrice>
+							<cfset totalSC += value>
 						</cfif>
-						<cfset sold = val(start) - val(end)>
-						<cfset value = sold * loc.item.siOurPrice>
-						<cfset totalSC += value>
 						<tr>
 							<th>#loc.item.prodtitle#</th>
 							<th>#loc.item.siPackQty#</th>
