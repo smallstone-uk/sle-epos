@@ -28,6 +28,74 @@
 	<cfset parm.reportMinFrom = form.reportMinFrom>
 	<cfset parm.reportHourTo = form.reportHourTo>
 	<cfset parm.reportMinTo = form.reportMinTo>
+	
+<cfset parm.startDateTime = CreateDateTime(
+	Year(parm.reportDateFrom),
+	Month(parm.reportDateFrom),
+	Day(parm.reportDateFrom),
+	parm.reportHourFrom,
+	parm.reportMinFrom,
+	0
+)>
+
+<cfset parm.endDateTime = CreateDateTime(
+	Year(parm.reportDateTo),
+	Month(parm.reportDateTo),
+	Day(parm.reportDateTo),
+	parm.reportHourTo,
+	parm.reportMinTo,
+	0
+)>
+
+<!--- Include the entire selected ending minute --->
+<cfset parm.endDateTime = DateAdd("n",1,parm.endDateTime)>
+
+	<cfquery name="QItemAnalysis" datasource="#parm.datasource#" result="QItemAnalysisResult">
+		SELECT
+			prodID,
+			prodCatID,
+			prodTitle,
+			siUnitSize,
+			HOUR(ehTimeStamp) AS hh,
+			COUNT(*) AS recCount,
+			siUnitSize, eiClass,eiType,eiNet,eiVAT,
+			(SELECT pcatTitle
+		FROM tblProductCats
+		WHERE pcatID = prodCatID) AS catTitle,
+		(SELECT pgTitle
+			FROM tblProductGroups
+			INNER JOIN tblProductCats ON pcatGroup = pgID
+			WHERE pcatID = prodCatID) AS groupTitle
+			FROM tblEPOS_Items
+			INNER JOIN tblEPOS_Header ON ehID = eiParent
+			INNER JOIN tblProducts ON prodID = eiProdID
+			LEFT JOIN tblStockItem ON prodID = siProduct
+			AND tblStockItem.siID = (
+			SELECT MAX(siID)
+			FROM tblStockItem
+			WHERE prodID = siProduct
+			AND siStatus NOT IN ("returned","inactive")
+		)
+		WHERE ehTimeStamp >= <cfqueryparam value="#parm.startDateTime#" cfsqltype="cf_sql_timestamp">
+		AND ehTimeStamp < <cfqueryparam value="#parm.endDateTime#" cfsqltype="cf_sql_timestamp">
+		AND eiClass = 'sale'
+		
+		<cfif len(reportMode)>
+			AND ehMode = <cfqueryparam value="#reportMode#" cfsqltype="cf_sql_varchar">
+		</cfif>
+
+<!---		WHERE DATE(ehTimeStamp) >= '#parm.reportDateFrom#'
+		AND DATE(ehTimeStamp) <= '#parm.reportDateTo#'
+		AND HOUR(ehTimeStamp) >= '#parm.reportHourFrom#'
+		AND HOUR(ehTimeStamp) <= '#parm.reportHourTo#'
+		AND MINUTE(ehTimeStamp) >= '#parm.reportMinFrom#'
+		AND MINUTE(ehTimeStamp) <= '#parm.reportMinTo#'
+--->		AND eiClass LIKE 'sale'
+		<cfif len(form.reportMode)>AND ehMode LIKE '#form.reportMode#'</cfif>
+		GROUP BY prodID, HOUR(ehTimeStamp)
+	</cfquery>
+
+<!---
 	<cfquery name="QItemAnalysis" datasource="#parm.datasource#" result="QItemAnalysisResult">
 		SELECT prodID,prodCatID,prodEposCatID,prodTitle, siUnitSize, eiClass,eiType,eiNet,eiVAT,
 			ehID, ehTimeStamp, DATE(ehTimeStamp) AS yymmdd, HOUR(ehTimeStamp) AS hh, COUNT(*) AS recCount,
@@ -52,7 +120,7 @@
 		<cfif len(reportMode)>AND ehMode LIKE '#reportMode#'</cfif>
         GROUP BY groupTitle, catTitle, prodTitle, siUnitSize, eiNet, hh
 	</cfquery>
-	<!---<cfdump var="#QItemAnalysis#" label="QItemAnalysis" expand="false">--->
+--->	<!---<cfdump var="#QItemAnalysis#" label="QItemAnalysis" expand="false">--->
 <cfelse>
 	<p>Please select start date.</p>
 </cfif>
@@ -136,8 +204,16 @@
 					<cfset StructInsert(products,prodID,block)>
 					<cfset ArrayAppend(productArray,prodID)>
 				</cfif>
+<!---
 				<cfset theProduct = StructFind(products,prodID)>
 				<cfif !StructKeyExists(theProduct,hh)>
+					<cfset StructInsert(theProduct,hh,recCount)>
+				</cfif>
+--->
+				<cfset theProduct = StructFind(products,prodID)>				
+				<cfif StructKeyExists(theProduct,hh)>
+					<cfset theProduct[hh] += recCount>
+				<cfelse>
 					<cfset StructInsert(theProduct,hh,recCount)>
 				</cfif>
 			</cfloop>
